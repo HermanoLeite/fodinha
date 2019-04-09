@@ -1,0 +1,97 @@
+<div class="row">
+  <header class="col-md-12">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <p class="navbar-brand">Fodinha</p>
+          <p class="navbar-brand" *ngIf="jogadorAtual.nome">Jogador: {{jogadorAtual.nome}} - cor {{jogadorAtual.cor}} - {{jogadorAtual.vida}} vidas  ({{jogadorAtual.removido ? 'removido' : 'dentro'}})</p>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+  </header>
+</div>
+<section>
+  <div class="row" *ngIf="!jogoId">
+    <div class="col-md-6">
+      <table class="table table-hover">
+        <tr>
+          <th>#</th>
+          <th>Jogador</th>
+          <th>Cor</th>
+          <th>Começar</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+          <td>{{i + 1}}</td>
+          <td>{{jogador.nome}}</td>
+          <td>{{jogador.cor}}</td>
+          <td>{{jogador.comecar}}</td>
+          <td *ngIf="jogadorDocId">
+            <button (click)="removerJogador(jogador)" *ngIf="!jogador.removido">remover</button>
+            <p (click)="removerJogador(jogador)" *ngIf="jogador.removido">removido</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div *ngIf="!jogadorDocId" class="col-md-6">
+      <form #f="ngForm">
+        <div class="form-group">
+          <input [(ngModel)]="jogadorNome" name="jogadorNome" type="text" class="form-control" placeholder="Criar jogador" required>
+          <input [(ngModel)]="jogadorCor" name="jogadorCor" type="text" class="form-control" placeholder="Cor" required>
+        </div>
+
+        <p *ngIf="loading">
+          <i class="fa fa-spinner fa-spin"></i>
+        </p>
+
+        <div class="form-group">
+          <button class="btn btn-primary" [disabled]="!f.valid" (click)="saveJogador()">
+            Entrar
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="row" *ngIf="jogadorDocId && jogadorAtual">
+      <div class="col-md-6">
+        <button *ngIf="!jogadorAtual.removido" class="btn btn-success" (click)="comecarJogo()">
+          Começar
+        </button>
+        <button *ngIf="jogadorAtual.removido" class="btn btn-success" (click)="retornarAoJogo()">
+          Retornar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row" *ngIf="jogoId">
+    <div class="col-md-12">
+      <table class="table table-hover">
+        <tr>
+          <th>Jogador</th>
+          <th>Cor</th>
+          <th>Vidas</th>
+          <th>Palpite</th>
+          <th>Carta</th>
+          <th>Fez</th>
+        </tr>
+        <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+          <td>{{jogador.nome}}</td>
+          <td>{{jogador.cor}}</td>
+          <td>{{jogador.vida}}</td>
+          <td></td>
+          <td></td>
+          <td>0</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
