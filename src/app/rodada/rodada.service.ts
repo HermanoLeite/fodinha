@@ -1,4 +1,4 @@
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Rodada } from './rodada.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
@@ -9,7 +9,7 @@ export class RodadaService {
     private rodadasDoc: AngularFirestoreDocument<Rodada>;
   
     constructor(private db: AngularFirestore) { 
-        this.rodadas = db.collection(config.collection_endpoint);
+        this.rodadas = db.collection(config.rodadaDB);
     }
 
     addrodada(rodada) {

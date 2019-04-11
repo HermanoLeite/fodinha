@@ -1,5 +1,5 @@
 import { RodadaService } from './rodada.service';
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -30,7 +30,7 @@ export class RodadaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rodadas = this.db.collection(config.collection_endpoint).snapshotChanges()
+    this.rodadas = this.db.collection(config.rodadaDB).snapshotChanges()
     .pipe(map(actions => {
       return actions.map(a => {
         const data = a.payload.doc.data() as Rodada;

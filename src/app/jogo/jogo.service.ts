@@ -1,9 +1,9 @@
-import { CookieService } from 'ngx-cookie-service';
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Jogo } from './jogo.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Status, Etapa } from './jogo.status';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class JogoService {
@@ -11,11 +11,11 @@ export class JogoService {
     private jogosDoc: AngularFirestoreDocument<Jogo>;
   
     constructor(private db: AngularFirestore, private cookieService: CookieService) { 
-        this.jogos = db.collection(config.collection_endpoint);
+        this.jogos = db.collection(config.jogoDB);
     }
 
-    criarJogo(nomeJogo) {
-        var jogo = { nome: nomeJogo, status: Status.iniciado, etapa: Etapa.inicio }
+    criarJogo(nomeJogo, jogadoresParticipantes) {
+        var jogo = { nome: nomeJogo, status: Status.iniciado, etapa: Etapa.inicio, jogadores: jogadoresParticipantes }
         return this.addJogo(jogo)
     }
 
@@ -33,13 +33,13 @@ export class JogoService {
     }
 
     updateJogo(id, update) {
-        this.jogosDoc = this.db.doc<Jogo>(`${config.collection_endpoint}/${id}`);
+        this.jogosDoc = this.db.doc<Jogo>(`${config.jogoDB}/${id}`);
         this.jogosDoc.update(update);
     }
 
     deleteJogo(id) {
-        this.jogosDoc = this.db.doc<Jogo>(`${config.collection_endpoint}/${id}`);
+        this.jogosDoc = this.db.doc<Jogo>(`${config.jogoDB}/${id}`);
         this.jogosDoc.delete();
-     }
+    }
 }
 

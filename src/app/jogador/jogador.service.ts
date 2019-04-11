@@ -1,5 +1,5 @@
 import { CookieService } from 'ngx-cookie-service';
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Jogador } from './jogador.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
@@ -44,15 +44,29 @@ export class JogadorService {
         this.jogadorDoc.delete();
     }
 
-    comecarJogo() {
+    async comecarJogo() {
         var nomeJogo = 'nome padrao';
-        return this.jogoService.criarJogo(nomeJogo);
+        var jogadores = await this.jogadoresParaOJogo();
+        return this.jogoService.criarJogo(nomeJogo, jogadores);
+    }
+
+    jogadoresParaOJogo() {
+        var jogadoresId:string[] = [];
+        return new Promise(resolve => {
+            this.db.firestore.collection(config.jogadorDB).get().then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    const data = doc.data();
+                    if(!data.removido && data.comecar) jogadoresId.push(doc.id)
+                });
+                resolve(jogadoresId);
+            });
+        });
     }
 
     todosJogadoresComecaram() {
         var count = 0;
         return new Promise(resolve => {
-            this.db.firestore.collection("Jogador").get().then(function(querySnapshot) {
+            this.db.firestore.collection(config.jogadorDB).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     const data = doc.data();
                     if(!data.removido && !data.comecar) resolve(false);

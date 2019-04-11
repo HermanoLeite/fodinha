@@ -1,5 +1,5 @@
 import { JogoService } from './jogo.service';
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -44,16 +44,15 @@ export class JogoComponent implements OnInit {
     }
   }
 
-  deleteJogo(jogo) {
-    let jogoId = jogo.id;
-    this.jogoService.deleteJogo(jogoId);
+  deleteJogo({id}) {
+    this.jogoService.deleteJogo(id);
   }
+
   ngOnInit() {
-    this.jogos = this.db.collection(config.collection_endpoint).snapshotChanges()
+    this.jogos = this.db.collection(config.jogoDB).snapshotChanges()
     .pipe(map(actions => {
       return actions.map(a => {
         const data = a.payload.doc.data() as Jogo;
-        console.log("atualizacao!! - " + JSON.stringify(data));
         const id = a.payload.doc.id;
         return { id, ...data };
       });

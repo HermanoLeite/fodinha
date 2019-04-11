@@ -1,5 +1,5 @@
 import { JogadorService } from './jogador.service';
-import { config } from './collection.config';
+import { config } from '../collection.config';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import {Router} from '@angular/router';
