@@ -2,5 +2,5 @@ export const config = {
     jogadorDB: "Jogador",
     jogoDB: "Jogo",
     jogadaDB: "Jogo",
-    rodadaDB: "Jogo",
+    rodadaDB: "rodadas",
  };

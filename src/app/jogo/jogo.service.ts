@@ -14,9 +14,58 @@ export class JogoService {
         this.jogos = db.collection(config.jogoDB);
     }
 
-    criarJogo(nomeJogo, jogadoresParticipantes) {
-        var jogo = { nome: nomeJogo, status: Status.iniciado, etapa: Etapa.inicio, jogadores: jogadoresParticipantes }
-        return this.addJogo(jogo)
+    async criarJogo(nomeJogo, jogadoresParticipantes) {
+        const jogo = { nome: nomeJogo, status: Status.iniciado, rodada: 1 }
+        const id = await this.addJogo(jogo)
+        this.criarJogadores(jogadoresParticipantes, id)
+        this.criarRodada(jogadoresParticipantes, id);
+        return id;
+    }
+
+    criarJogadores(jogadoresParticipantes, id) {
+        jogadoresParticipantes.forEach(jogador => {
+            this.jogos.doc(id).collection("jogadores").doc(jogador.id).set({
+                nome: jogador.nome,
+                cor: jogador.cor,
+                vida: 5,
+                removido: false,
+                jogando: true
+            });
+        });
+    }
+
+    criarRodada(jogadoresParticipantes, id) {
+        var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc("1");
+
+        rodadaDoc.set({
+            manilha: null,
+            comeca: 0,
+            etapa: Etapa.palpite,
+            cartas: null,
+        });
+        
+        jogadoresParticipantes.forEach(jogador => {
+            rodadaDoc.collection("jogadores").doc(jogador.id).set({
+                nome: jogador.nome,
+                cor: jogador.cor,
+                fez: null,
+                cartas: null,
+                carta: null,
+                palpite: null
+            });
+        });
+    }
+
+    buscarJogo(id) : Promise<string> {
+        return new Promise(resolve => {
+            this.db.firestore.collection(config.jogoDB).doc(id).get().then(function(docRef) {
+                resolve(docRef.data());
+            }.bind(this))
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+                resolve(null);
+            });
+        });
     }
 
     addJogo(jogo) : Promise<string> {

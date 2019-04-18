@@ -15,17 +15,14 @@ export class JogadorComponent implements OnInit {
   jogadores;
   jogadorNome: string;
   jogadorCor: string;
-  editMode: boolean = false;
   jogadorDocId = "";
   jogadorAtual: Jogador = {          
     nome: '',
     cor: '',
     comecar: false,
-    vida: 5,
     removido: false,
     jogoId: "",
   };
-  removido: boolean = false;
   jogoId: string;
   constructor(private db: AngularFirestore, private jogadorService: JogadorService, private router: Router) { }
 
@@ -38,7 +35,7 @@ export class JogadorComponent implements OnInit {
       const jogoId = await this.jogadorService.comecarJogo();
       this.jogadorAtual.jogoId = jogoId;
       this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
-      this.router.navigate(['jogo']);
+      this.router.navigate(['jogo', jogoId]);
     }
   }
 
@@ -48,7 +45,6 @@ export class JogadorComponent implements OnInit {
           nome: this.jogadorNome,
           cor: this.jogadorCor,
           comecar: false,
-          vida: 5,
           removido: false,
           jogoId: ""
       };
@@ -78,18 +74,21 @@ export class JogadorComponent implements OnInit {
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data() as Jogador;
+          const id = a.payload.doc.id;
+          
           if (data.jogoId !== "")
             this.jogoId = data.jogoId;
           
-          const id = a.payload.doc.id;
           if (id === this.jogadorDocId) {
             this.jogadorAtual = data;
           }
 
-          if(this.jogoId && this.jogadorAtual && this.jogadorAtual.comecar && this.jogadorAtual.jogoId==="") {
-            this.jogadorAtual.jogoId = this.jogoId;
-            this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
-            this.router.navigate(['jogo']);
+          if(this.jogoId && this.jogadorAtual && this.jogadorAtual.comecar) { 
+            if (this.jogadorAtual.jogoId==="") {
+              this.jogadorAtual.jogoId = this.jogoId;
+              this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
+            }
+            this.router.navigate(['jogo', this.jogoId]);
           }
           return { id, ...data };
         });

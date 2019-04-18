@@ -46,19 +46,19 @@ export class JogadorService {
 
     async comecarJogo() {
         var nomeJogo = 'nome padrao';
-        var jogadores = await this.jogadoresParaOJogo();
+        const jogadores = await this.jogadoresParaOJogo();
         return this.jogoService.criarJogo(nomeJogo, jogadores);
     }
 
     jogadoresParaOJogo() {
-        var jogadoresId:string[] = [];
+        var jogadoresNoJogo:any[] = [];
         return new Promise(resolve => {
             this.db.firestore.collection(config.jogadorDB).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     const data = doc.data();
-                    if(!data.removido && data.comecar) jogadoresId.push(doc.id)
+                    if(!data.removido && data.comecar) jogadoresNoJogo.push({id: doc.id, ...data })
                 });
-                resolve(jogadoresId);
+                resolve(jogadoresNoJogo);
             });
         });
     }

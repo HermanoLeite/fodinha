@@ -1,2 +1,22 @@
-<app-jogador></app-jogador>
+<div class="row">
+    <header class="col-md-12">
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <p class="navbar-brand">Fodinha</p>
+            <p class="navbar-brand" *ngIf="jogadorAtual">Jogador: {{jogadorAtual.nome}} - cor {{jogadorAtual.cor}} - {{jogadorAtual.vida}} vidas  ({{jogadorAtual.removido ? 'removido' : 'dentro'}})</p>
+          </div>
+  
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+  
+  
+          </div>
+          <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+      </nav>
+    </header>
+</div>
 <router-outlet></router-outlet>

@@ -4,8 +4,8 @@ import { JogadorComponent } from './jogador/jogador.component';
 import { JogoComponent } from './jogo/jogo.component';
 
 const routes: Routes = [
-  { path: 'jogador', component: JogadorComponent },
-  { path: 'jogo', component: JogoComponent },
+  { path: '', component: JogadorComponent },
+  { path: 'jogo/:id', component: JogoComponent },
 ];
 
 @NgModule({
