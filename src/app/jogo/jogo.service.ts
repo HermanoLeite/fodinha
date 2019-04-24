@@ -22,6 +22,10 @@ export class JogoService {
         return id;
     }
 
+    jogadorCriado () {
+        return this.cookieService.get("userId");
+    }
+
     criarJogadores(jogadoresParticipantes, id) {
         jogadoresParticipantes.forEach(jogador => {
             this.jogos.doc(id).collection("jogadores").doc(jogador.id).set({
@@ -35,25 +39,29 @@ export class JogoService {
     }
 
     criarRodada(jogadoresParticipantes, id) {
+        var count = 0;
         var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc("1");
 
         rodadaDoc.set({
             manilha: null,
             comeca: 0,
-            etapa: Etapa.palpite,
+            vez: 0,
+            etapa: Etapa.embaralhar,
             cartas: null,
         });
-        
+
         jogadoresParticipantes.forEach(jogador => {
-            rodadaDoc.collection("jogadores").doc(jogador.id).set({
+            rodadaDoc.collection("jogadores").doc(count.toString()).set({
+                jogadorId: jogador.id,
                 nome: jogador.nome,
                 cor: jogador.cor,
-                fez: null,
+                fez: 0,
                 cartas: null,
                 carta: null,
                 palpite: null
             });
-        });
+            count++;
+        }); 
     }
 
     buscarJogo(id) : Promise<string> {

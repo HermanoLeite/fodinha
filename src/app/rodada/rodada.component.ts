@@ -1,6 +1,6 @@
 import { RodadaService } from './rodada.service';
 import { config } from '../collection.config';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,7 +15,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class RodadaComponent implements OnInit {
   rodadas: Observable<any[]>;
   rodadaNome: string;
-
+  @Input() name: string;
+  
   constructor(private db: AngularFirestore, private rodadaService: RodadaService) { }
 
   saverodada() {

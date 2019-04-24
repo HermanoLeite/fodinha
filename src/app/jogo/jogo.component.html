@@ -1,32 +1,67 @@
 <section>
+    <div class="row">
+        <div class="col-md-4">
+          <table class="table table-hover">
+            <tr>
+              <th>Jogador</th>
+              <th>Cor</th>
+              <th>Vidas</th>
+            </tr>
+            <tr *ngFor="let jogador of jogadoresJogo | async; let i = index;" [attr.data-index]="i" [ngClass]="{'fora': !jogador.jogando || jogador.removido}">
+              <td>{{jogador.nome}}</td>
+              <td>{{jogador.cor}}</td>
+              <td>{{jogador.vida}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
   <div class="row" *ngIf="jogo">
     <p>Jogo: {{jogo.nome}}</p>
     <p>Etapa: Início</p>
     <p>Rodada: {{jogo.rodada}}</p>
     <p>Manilha: </p>
     <p>Maior Carta: </p>
-    <p>Cartas: </p>
   </div>
 
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-8">
       <table class="table table-hover">
         <tr>
+          <th>Ordem</th>
           <th>Jogador</th>
           <th>Cor</th>
           <th>Palpite</th>
-          <th>Carta</th>
           <th>Fez</th>
+          <th>Carta</th>
         </tr>
-        <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+        <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i" [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
+          <td>{{jogador.id}}</td>
           <td>{{jogador.nome}}</td>
           <td>{{jogador.cor}}</td>
-          <td></td>
-          <td></td>
-          <td>0</td>
+          <td>{{jogador.palpite}}</td>
+          <td>{{jogador.fez}}</td>
+          <td>{{jogador.carta}}</td>
         </tr>
       </table>
     </div>
   </div>
 </section>
-<app-jogada></app-jogada>
+<div *ngIf="jogadorJogando">
+  <div *ngIf="jogadorJogando.id == rodada.vez">
+    <button>{{rodada.etapa}}</button>
+  </div>
+</div>
+
+
+<style>
+.comeca {
+  color: red;
+}
+.vez {
+  font-weight: bold;
+}
+.fora {
+  text-decoration-line: line-through;
+}
+</style>
