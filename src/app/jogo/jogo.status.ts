@@ -1,13 +1,13 @@
 export enum Status {
-    iniciado = "iniciado",
-    jogando = "jogando",
-    finalizado = "finalizado",
+    iniciado = 0,
+    jogando = 1,
+    finalizado = 2,
 }
 
 export enum Etapa {
-    embaralhar = "embaralhar",
-    manilha = "manilha",
-    distribuir = "distribuir",
-    palpite = "palpite",
-    jogarCarta = "jogarCarta",
+    embaralhar = 0,
+    manilha = 1,
+    distribuir = 2,
+    palpite = 3,
+    jogarCarta = 4,
 }

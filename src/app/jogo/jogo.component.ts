@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { map, first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { config } from '../collection.config';
-
+import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Baralho } from '../cartas/baralho'
 
 @Component({
   selector: 'app-jogo',
@@ -19,6 +20,9 @@ export class JogoComponent implements OnInit {
   rodada: any;
   jogadorJogandoId: any;
   jogadorJogando: any;
+  status = Status;
+  etapa = Etapa;
+  baralho: Baralho;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
   }
@@ -59,6 +63,18 @@ export class JogoComponent implements OnInit {
         });
       }),
     );
+  }
+
+  embaralhar() {
+    this.baralho = new Baralho();
+    console.log(JSON.stringify(this.baralho))
+    this.baralho.embaralhar();
+    console.log(JSON.stringify(this.baralho))
+  }
+
+  tirarManilha() {
+    console.log('Manilha - ', JSON.stringify(this.baralho.tirarManilha()))
+    console.log(JSON.stringify(this.baralho))
   }
 
   ngOnInit() {

@@ -48,9 +48,21 @@
   </div>
 </section>
 <div *ngIf="jogadorJogando">
-  <div *ngIf="jogadorJogando.id == rodada.vez">
-    <button>{{rodada.etapa}}</button>
-  </div>
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.embaralhar" class="btn btn-success" (click)="embaralhar()">
+    Embaralhar
+  </button>
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.manilha" class="btn btn-success" (click)="tirarManilha()">
+    Tirar Manilha
+  </button>
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.distribuir" class="btn btn-success" (click)="distribuir()">
+    Distribuir
+  </button>
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.palpite" class="btn btn-success" (click)="palpite()">
+    Palpite
+  </button>
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.jogarCarta" class="btn btn-success" (click)="carta()">
+    Jogar carta
+  </button>
 </div>
 
 

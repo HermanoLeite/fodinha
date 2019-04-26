@@ -9,16 +9,16 @@ import { CookieService } from 'ngx-cookie-service';
 export class JogoService {
     jogos: AngularFirestoreCollection<Jogo>;
     private jogosDoc: AngularFirestoreDocument<Jogo>;
-  
+    
     constructor(private db: AngularFirestore, private cookieService: CookieService) { 
         this.jogos = db.collection(config.jogoDB);
     }
 
     async criarJogo(nomeJogo, jogadoresParticipantes) {
-        const jogo = { nome: nomeJogo, status: Status.iniciado, rodada: 1 }
+        const jogo = { nome: nomeJogo, status: Status.iniciado, rodada: 0 }
         const id = await this.addJogo(jogo)
         this.criarJogadores(jogadoresParticipantes, id)
-        this.criarRodada(jogadoresParticipantes, id);
+        this.criarRodada(jogadoresParticipantes, id, jogo.rodada.toString());
         return id;
     }
 
@@ -37,15 +37,25 @@ export class JogoService {
             });
         });
     }
+    
+    criarNovaRodada() {
+        // pegar o jogo
+        // pegar jogadores participantes no jogo
+        // pegar id do jogo
+        // pegar rodada
+        // chamar metodo abaixo
+    }
 
-    criarRodada(jogadoresParticipantes, id) {
+    criarRodada(jogadoresParticipantes, id, rodadaNro) {
         var count = 0;
-        var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc("1");
+        
+        const jogadorComeca = rodadaNro >= jogadoresParticipantes.count ? rodadaNro - jogadoresParticipantes.count : rodadaNro;
+        var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc(rodadaNro);
 
         rodadaDoc.set({
             manilha: null,
-            comeca: 0,
-            vez: 0,
+            comeca: jogadorComeca,
+            vez: jogadorComeca,
             etapa: Etapa.embaralhar,
             cartas: null,
         });
