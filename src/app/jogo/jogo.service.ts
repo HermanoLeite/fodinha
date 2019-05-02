@@ -18,7 +18,7 @@ export class JogoService {
         const jogo = { nome: nomeJogo, status: Status.iniciado, rodada: 0 }
         const id = await this.addJogo(jogo)
         this.criarJogadores(jogadoresParticipantes, id)
-        this.criarRodada(jogadoresParticipantes, id, jogo.rodada.toString());
+        this.criarRodada(jogadoresParticipantes, id, jogo.rodada);
         return id;
     }
 
@@ -50,7 +50,7 @@ export class JogoService {
         var count = 0;
         
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.count ? rodadaNro - jogadoresParticipantes.count : rodadaNro;
-        var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc(rodadaNro);
+        var rodadaDoc = this.jogos.doc(id).collection("rodadas").doc(rodadaNro.toString());
 
         rodadaDoc.set({
             manilha: null,
@@ -58,6 +58,7 @@ export class JogoService {
             vez: jogadorComeca,
             etapa: Etapa.embaralhar,
             cartas: null,
+            jogadoresCount: jogadoresParticipantes.length
         });
 
         jogadoresParticipantes.forEach(jogador => {

@@ -17,8 +17,22 @@ export class Carta {
     this.carta = carta;
     this.manilha = false;
   }
+  
+  static fromString(carta: string) {
+    const cartaObj = JSON.parse(carta);
+    return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe);
+  }
 
-  cobate(cartaAdversaria: Carta) {
+  setManilha(manilha: Carta) {
+    if(manilha.cartaValor === cartaValor.tres) {
+      this.manilha = this.cartaValor === cartaValor.quatro ? true : false;
+    }
+    else {
+      this.manilha = manilha.cartaValor === this.cartaValor-1 ? true : false;
+    }
+  }
+
+  combate(cartaAdversaria: Carta) {
     if (this.manilha) {
       if (this.cartaValor === cartaAdversaria.cartaValor) {
         return this.naipeValor > cartaAdversaria.naipeValor ? combate.ganhou : combate.perdeu;

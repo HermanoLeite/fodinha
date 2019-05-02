@@ -20,13 +20,13 @@
     <p>Jogo: {{jogo.nome}}</p>
     <p>Etapa: Início</p>
     <p>Rodada: {{jogo.rodada}}</p>
-    <p>Manilha: </p>
+    <p *ngIf="rodada && rodada.manilha">Manilha: {{rodada.manilha.carta}} de {{rodada.manilha.naipe}} </p>
     <p>Maior Carta: </p>
   </div>
 
   <div class="row">
-    <div class="col-md-8">
-      <table class="table table-hover">
+    <div class="col-md-6">
+      <table class="table table-hover"  *ngIf="rodada">
         <tr>
           <th>Ordem</th>
           <th>Jogador</th>
@@ -45,22 +45,32 @@
         </tr>
       </table>
     </div>
+
+    <div class="col-md-6" *ngIf="jogadorJogando">
+      <h3>Cartas</h3>
+      <div *ngFor="let cartaJogador of jogadorJogando.cartas">
+        <p>{{cartaJogador.carta}} de {{cartaJogador.naipe}}</p>
+      </div>
+    </div>
   </div>
 </section>
 <div *ngIf="jogadorJogando">
-  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.embaralhar" class="btn btn-success" (click)="embaralhar()">
-    Embaralhar
+  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.embaralhar" class="btn btn-success" (click)="comecar()">
+    Comecar
   </button>
-  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.manilha" class="btn btn-success" (click)="tirarManilha()">
-    Tirar Manilha
-  </button>
-  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.distribuir" class="btn btn-success" (click)="distribuir()">
-    Distribuir
-  </button>
-  <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.palpite" class="btn btn-success" (click)="palpite()">
+  <div *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.palpite">
     Palpite
-  </button>
+    <div class="btn btn-success" (click)="palpite(0)">
+      0
+    </div>
+    <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
+      {{i+1}}
+    </div>
+  </div>
   <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.jogarCarta" class="btn btn-success" (click)="carta()">
+  <div *ngFor="let cartaJogador of jogadorJogando.cartas">
+      <p>{{cartaJogador.carta}} de {{cartaJogador.naipe}}</p>
+    </div>
     Jogar carta
   </button>
 </div>

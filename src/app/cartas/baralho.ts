@@ -51,14 +51,23 @@ export class Baralho {
   }
 
   embaralhar() {
-    this.shuffle(this.cartas);
+    const primeiraVez = this.shuffle(this.cartas);
+    const segundaVez = this.shuffle(primeiraVez);
+    const terceiraVez = this.shuffle(segundaVez);
+    this.cartas = this.shuffle(terceiraVez);
   }
 
   tirarManilha() {
     return this.cartas.pop();
   }
 
-  tiraCarta() {}
+  tiraCartas(quantidade: number) {
+    var cartas = new Array<Carta>();
+    for(var i = 0; i < quantidade; i++) {
+      cartas.push(this.cartas.pop());
+    } 
+    return cartas;
+  }
 
   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
   private shuffle(array) {
