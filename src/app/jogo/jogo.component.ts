@@ -28,6 +28,54 @@ export class JogoComponent implements OnInit {
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
   }
 
+  comecar() {
+    this.embaralhar();
+    this.tirarManilha();
+    this.distribuir();
+  }
+
+  embaralhar() {
+    this.baralho = new Baralho();
+    this.baralho.embaralhar();
+  }
+
+  tirarManilha() {
+    var manilha = this.baralho.tirarManilha();
+    this.atualizarManilha(manilha);
+  }
+
+  distribuir() {
+    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var quantidadeCartas = this.jogo.rodada+1 > this.rodada.jogadoresCount ? this.jogo.rodada+1 % this.rodada.jogadoresCount : this.jogo.rodada+1;
+    for (var i = 0; i < this.rodada.jogadoresCount; i++) {
+      var cartaArray = this.baralho.tiraCartas(quantidadeCartas)
+      query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(i.toString()).update({cartas: cartaArray.map(carta => JSON.stringify(carta))});
+    }
+    this.atualizarRodada(this.etapa.palpite);
+  }
+
+  palpite(palpite: number) {
+    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(this.jogadorJogando.id.toString()).update({ palpite: palpite });
+    this.atualizarRodada();
+  }
+  
+  atualizarRodada(rodadaEtapa: number = null) {
+    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var rodadaVez = this.rodada.vez+1 === this.rodada.jogadoresCount ? 0 : this.rodada.vez+1;
+    if (rodadaEtapa) {
+      query.collection(config.rodadaDB).doc(this.rodada.id).update({ etapa: rodadaEtapa, vez: rodadaVez });
+    }
+    else {
+      query.collection(config.rodadaDB).doc(this.rodada.id).update({ vez: rodadaVez });
+    }
+  }
+
+  atualizarManilha(manilha) {
+    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    query.collection(config.rodadaDB).doc(this.rodada.id).update({manilha: JSON.stringify(manilha)});
+  }
+
   // TODO levar isso para o servico da rodada
   loadRodada(rodadaId) {
     var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
@@ -56,61 +104,30 @@ export class JogoComponent implements OnInit {
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          if (data.cartas) data.cartas = data.cartas.map(carta => {
-            let cartaObj = Carta.fromString(carta);
-            if(this.rodada.manilha) cartaObj.setManilha(this.rodada.manilha);
-            return cartaObj; 
-          });
+          const id = parseInt(a.payload.doc.id, 10);
+
+          if (data.cartas) {
+            data.cartas = data.cartas.map(carta => {
+              let cartaObj = Carta.fromString(carta);
+              if(this.rodada.manilha) cartaObj.setManilha(this.rodada.manilha);
+              return cartaObj; 
+            });
+          }
+
           if (data.jogadorId === this.jogadorJogandoId) {
             this.jogadorJogando = { id, ...data };
+
+            if (this.rodada.etapa === this.etapa.palpite) {
+              if (this.rodada.comeca+1 === this.jogadorJogando.id && this.jogadorJogando.palpite !== null) {
+                this.atualizarRodada(this.etapa.jogarCarta);
+              }
+            }
           }
           console.log("jogadores: " + id + " - " + JSON.stringify(data));
           return { id, ...data };
         });
       }),
     );
-  }
-
-  palpite(palpite: number) {
-    console.log("palpite: " + palpite);
-  }
-
-  comecar() {
-    this.embaralhar();
-    this.tirarManilha();
-    this.distribuir();
-  }
-
-  embaralhar() {
-    this.baralho = new Baralho();
-    this.baralho.embaralhar();
-  }
-
-  tirarManilha() {
-    var manilha = this.baralho.tirarManilha();
-    this.atualizarManilha(manilha);
-  }
-
-  distribuir() {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    var quantidadeCartas = this.jogo.rodada+1 > this.rodada.jogadoresCount ? this.jogo.rodada+1 % this.rodada.jogadoresCount : this.jogo.rodada+1;
-    for (var i = 0; i < this.rodada.jogadoresCount; i++) {
-      var cartaArray = this.baralho.tiraCartas(quantidadeCartas)
-      query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(i.toString()).update({cartas: cartaArray.map(carta => JSON.stringify(carta))});
-    }
-    this.atualizarRodada(this.etapa.palpite);
-  }
-
-  atualizarRodada(rodadaEtapa: number) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    var rodadaVez = this.rodada.vez+1 === this.jogadores.length ? 1 : this.rodada.vez+1;
-    query.collection(config.rodadaDB).doc(this.rodada.id).update({etapa: rodadaEtapa, vez: rodadaVez});
-  }
-
-  atualizarManilha(manilha) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    query.collection(config.rodadaDB).doc(this.rodada.id).update({manilha: JSON.stringify(manilha)});
   }
 
   ngOnInit() {
