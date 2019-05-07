@@ -57,7 +57,6 @@ export class JogoService {
             comeca: jogadorComeca,
             vez: jogadorComeca,
             etapa: Etapa.embaralhar,
-            cartas: null,
             jogadoresCount: jogadoresParticipantes.length
         });
 
@@ -68,7 +67,6 @@ export class JogoService {
                 cor: jogador.cor,
                 fez: 0,
                 cartas: null,
-                carta: null,
                 palpite: null
             });
             count++;

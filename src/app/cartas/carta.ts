@@ -19,6 +19,7 @@ export class Carta {
   }
   
   static fromString(carta: string) {
+    if (carta === null) return null;
     const cartaObj = JSON.parse(carta);
     return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe);
   }
@@ -33,6 +34,9 @@ export class Carta {
   }
 
   combate(cartaAdversaria: Carta) {
+    if (cartaAdversaria === null) {
+      return combate.ganhou;
+    }
     if (this.manilha) {
       if (this.cartaValor === cartaAdversaria.cartaValor) {
         return this.naipeValor > cartaAdversaria.naipeValor ? combate.ganhou : combate.perdeu;
