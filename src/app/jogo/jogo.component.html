@@ -10,7 +10,7 @@
             <tr *ngFor="let jogador of jogadoresJogo | async; let i = index;" [attr.data-index]="i" [ngClass]="{'fora': !jogador.jogando || jogador.removido}">
               <td>{{jogador.nome}}</td>
               <td>{{jogador.cor}}</td>
-              <td>{{jogador.vida}}</td>
+              <td>{{jogador.vidas}}</td>
             </tr>
           </table>
         </div>
@@ -80,7 +80,7 @@
     </div>
     <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;">
       <button *ngIf="jogadorJogando.id == rodada.vez && rodada.etapa == etapa.jogarCarta" class="btn btn-success" (click)="jogarCarta(i)">
-        {{cartaJogador.carta}} de {{cartaJogador.naipe}}
+        {{cartaJogador.carta}} de {{cartaJogador.naipe}} - {{cartaJogador.manilha}}
       </button>
     </div>
   </div>

@@ -26,10 +26,10 @@ export class Carta {
 
   setManilha(manilha: Carta) {
     if(manilha.cartaValor === cartaValor.tres) {
-      this.manilha = this.cartaValor === cartaValor.quatro ? true : false;
+      this.manilha = this.cartaValor === cartaValor.quatro;
     }
     else {
-      this.manilha = manilha.cartaValor === this.cartaValor-1 ? true : false;
+      this.manilha = manilha.cartaValor === this.cartaValor-1;
     }
   }
 

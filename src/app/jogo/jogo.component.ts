@@ -31,10 +31,11 @@ export class JogoComponent implements OnInit {
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
   }
 
-  jogarCarta(cartaJogadorIndex) {
+  async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
     
-    const rodadaQuery = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id")).collection(config.rodadaDB).doc(this.rodada.id);
+    const jogoQuery = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    const rodadaQuery = jogoQuery.collection(config.rodadaDB).doc(this.rodada.id);
     const jogadorQuery = rodadaQuery.collection("jogadores").doc(this.jogadorJogando.id.toString());
     const jogadaQuery = rodadaQuery.collection("jogada").doc(this.rodada.jogadaAtual);
     
@@ -50,27 +51,31 @@ export class JogoComponent implements OnInit {
     }
 
     jogadaQuery.collection("jogadas").add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
-    jogadorQuery.update({ cartas: this.jogadorJogando.cartas });
+    jogadorQuery.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
     
     if (this.proximoJogador() === this.jogada.comeca) {
-      if (this.jogada.maiorCartaJogador !== null) {
-        rodadaQuery.collection("jogadores").doc(this.jogada.maiorCartaJogador.toString()).ref.get().then(function(doc) {
-          const { fez } = doc.data();
-          console.log('fez: ' + fez);
-          rodadaQuery.collection("jogadores").doc(this.jogada.maiorCartaJogador.toString()).update({ fez: fez+1 })
-        }.bind(this))
-      }
+      await this.jogoService.atualizaQuemFezJogada(rodadaQuery, this.jogada.maiorCartaJogador);
+
       if (this.jogadorJogando.cartas.length === 0) {
-        // terminar rodada
-        // criar nova rodada
-        // comeca um a frente do jogador que estava comecando a rodada, tambem é a vez dele
-        // atualizar vida dos jogadores
+        var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
+        await this.jogoService.atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas);
+        var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
+        this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
       }
       else {
-        // criar nova jogada
+        if (this.jogada.maiorCartaJogador !== null) {
+          this.criarJogada(this.jogada.maiorCartaJogador);
+          this.atualizarRodada(null, this.jogada.maiorCartaJogador);
+        }
+        else {
+          this.criarJogada(this.jogada.comeca);
+          this.atualizarRodada(null, this.jogada.comeca);
+        }
       }
     }
-    this.atualizarRodada();
+    else {
+      this.atualizarRodada();
+    }
   }
 
   comecar() {
@@ -102,7 +107,7 @@ export class JogoComponent implements OnInit {
   palpite(palpite: number) {
     var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
     query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(this.jogadorJogando.id.toString()).update({ palpite: palpite });
-    if (this.proximoJogador() === this.rodada.comeca+1) {
+    if (this.proximoJogador() === this.proximoJogador(this.rodada.comeca)) {
       this.criarJogada(this.proximoJogador())
       this.atualizarRodada(this.etapa.jogarCarta);
     }
@@ -188,7 +193,7 @@ export class JogoComponent implements OnInit {
           if (data.cartas) {
             data.cartas = data.cartas.map(carta => {
               let cartaObj = Carta.fromString(carta);
-              if(this.rodada.manilha) cartaObj.setManilha(this.rodada.manilha);
+              cartaObj.setManilha(this.rodada.manilha);
               return cartaObj; 
             });
           }
@@ -206,13 +211,12 @@ export class JogoComponent implements OnInit {
   criarJogada(jogadorComeca) {
     const jogada = {
       comeca: jogadorComeca,
-      ganhou: null,
       maiorCarta: null,
     }
     var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
     query.collection(config.rodadaDB).doc(this.rodada.id).collection("jogada").add(jogada)
     .then(function(docRef) {
-      query.collection(config.rodadaDB).doc(this.rodada.id).update({jogadaAtual: docRef.id});
+      query.collection(config.rodadaDB).doc(this.rodada.id).update({ jogadaAtual: docRef.id, vez: jogadorComeca });
     }.bind(this))
     .catch(function(error) {
       console.error("Error adding document: ", error);
