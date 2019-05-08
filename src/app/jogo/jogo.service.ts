@@ -66,24 +66,22 @@ export class JogoService {
     }
 
     atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas) {
-        return new Promise(resolve => {
-            jogadoresVidasPerdidas.forEach(jogadorVidasPerdidas => {
+        return Promise.all(
+            jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
                 console.log("antes");
                 jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).ref.get().then(function(doc) {
                     const { vidas } = doc.data();
                     if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
                         console.log("jogador com vida");
-                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve());
+                        return new Promise(resolve => jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve()));
                     }
                     else {
                         console.log("jogador sem vida");
-                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve());
+                        return new Promise(resolve => jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve()));
                     }
                 });
             })
-            console.log("depois");
-            resolve();
-        });
+        );
     }
 
 
@@ -104,11 +102,11 @@ export class JogoService {
 
     criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         var count = 0;
-        if (jogadoresParticipantes.count < 2) {
+        if (jogadoresParticipantes.length < 2) {
             console.log("acabou o jogo!! Jogador vencedor: " + jogadoresParticipantes[0].nome);
         }
         
-        const jogadorComeca = rodadaNro >= jogadoresParticipantes.count ? rodadaNro % jogadoresParticipantes.count : rodadaNro;
+        const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
         var rodadaDoc = this.jogos.doc(jogoId).collection("rodadas").doc(rodadaNro.toString());
         
         this.jogos.doc(jogoId).update({rodada: rodadaNro});

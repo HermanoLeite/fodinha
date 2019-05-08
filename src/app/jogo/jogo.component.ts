@@ -115,7 +115,7 @@ export class JogoComponent implements OnInit {
   }
   
   proximoJogador(jogadorVez: number = null) {
-    const vez = jogadorVez === null ?  this.rodada.vez+1 : jogadorVez ;
+    const vez = jogadorVez === null ?  this.rodada.vez+1 : jogadorVez+1 ;
     return vez === this.rodada.jogadoresCount ? 0 : vez;
   }
 
