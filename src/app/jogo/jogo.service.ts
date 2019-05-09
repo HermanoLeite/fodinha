@@ -66,22 +66,24 @@ export class JogoService {
     }
 
     atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas) {
-        return Promise.all(
-            jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
-                console.log("antes");
+        var allPromises = jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
+            console.log("antes");
+            return new Promise(resolve => {
                 jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).ref.get().then(function(doc) {
                     const { vidas } = doc.data();
                     if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
                         console.log("jogador com vida");
-                        return new Promise(resolve => jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve()));
+                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve());
                     }
                     else {
                         console.log("jogador sem vida");
-                        return new Promise(resolve => jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve()));
+                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve());
                     }
                 });
-            })
-        );
+            });
+        });
+        
+        return Promise.all(allPromises);
     }
 
 
@@ -92,7 +94,7 @@ export class JogoService {
                     const { fez } = doc.data();
                     console.log('fez: ' + fez);
                     rodadaQuery.collection("jogadores").doc(maiorCartaJogador.toString()).update({ fez: fez+1 }).then(res => resolve());
-                })
+                });
             }
             else {
                 resolve();
@@ -109,8 +111,6 @@ export class JogoService {
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
         var rodadaDoc = this.jogos.doc(jogoId).collection("rodadas").doc(rodadaNro.toString());
         
-        this.jogos.doc(jogoId).update({rodada: rodadaNro});
-
         rodadaDoc.set({
             manilha: null,
             comeca: jogadorComeca,
@@ -118,7 +118,7 @@ export class JogoService {
             etapa: Etapa.embaralhar,
             jogadoresCount: jogadoresParticipantes.length
         });
-
+        
         jogadoresParticipantes.forEach(jogador => {
             rodadaDoc.collection("jogadores").doc(count.toString()).set({
                 jogadorId: jogador.id,
@@ -130,6 +130,8 @@ export class JogoService {
             });
             count++;
         }); 
+
+        this.jogos.doc(jogoId).update({rodada: rodadaNro});
     }
 
     buscarJogo(id) : Promise<string> {
