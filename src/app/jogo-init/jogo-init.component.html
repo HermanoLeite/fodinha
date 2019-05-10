@@ -1,0 +1,39 @@
+<section>
+  <button class="btn btn-primary btn-sm" *ngIf="!criandoJogo" (click)="criarJogo()">+</button>
+  <div class="col-md-6" *ngIf="criandoJogo">
+    <form #f="ngForm">
+      <div class="form-group">
+        <input [(ngModel)]="jogoNome" name="jogoNome" type="text" class="form-control" placeholder="Jogo Nome" required>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" (click)="criarJogo()">
+            Cancelar
+        </button>
+        <button class="btn btn-primary" [disabled]="!f.valid" (click)="salvarJogo()">
+          Criar
+        </button>        
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <br/>
+    <table class="table table-hover">
+      <tr>
+        <th>#</th>
+        <th>Jogo</th>
+        <th>Nro Participantes</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let jogo of jogos | async; let i = index;" [attr.data-index]="i">
+        <td>{{i + 1}}</td>
+        <td>{{jogo.nome}}</td>
+        <td>2</td>
+        <td>{{getStatus(jogo.status)}}</td>
+        <td>
+          <button class="btn btn-primary btn-sm">Entrar</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</section>

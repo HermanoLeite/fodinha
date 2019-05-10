@@ -22,6 +22,12 @@ export class JogoService {
         return id;
     }
 
+    async criarJogoInicio(nomeJogo) {
+        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0 }
+        const id = await this.addJogo(jogo)
+        return id;
+    }
+
     jogadorCriado () {
         return this.cookieService.get("userId");
     }

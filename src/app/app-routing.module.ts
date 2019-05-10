@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { JogadorComponent } from './jogador/jogador.component';
 import { JogoComponent } from './jogo/jogo.component';
+import { JogoInitComponent } from './jogo-init/jogo-init.component';
 
 const routes: Routes = [
-  { path: '', component: JogadorComponent },
+  { path: '', component: JogoInitComponent },
   { path: 'jogo/:id', component: JogoComponent },
   { path: 'jogador', component: JogadorComponent },
 ];
