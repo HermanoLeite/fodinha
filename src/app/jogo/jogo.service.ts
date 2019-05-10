@@ -15,7 +15,7 @@ export class JogoService {
     }
 
     async criarJogo(nomeJogo, jogadoresParticipantes) {
-        const jogo = { nome: nomeJogo, status: Status.iniciado, rodada: 0 }
+        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0 }
         const id = await this.addJogo(jogo)
         this.criarJogadores(jogadoresParticipantes, id)
         this.criarRodada(jogadoresParticipantes, id, jogo.rodada);
@@ -102,7 +102,7 @@ export class JogoService {
         })
     }
 
-    criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
+    async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         var count = 0;
         if (jogadoresParticipantes.length < 2) {
             console.log("acabou o jogo!! Jogador vencedor: " + jogadoresParticipantes[0].nome);
@@ -111,12 +111,14 @@ export class JogoService {
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
         var rodadaDoc = this.jogos.doc(jogoId).collection("rodadas").doc(rodadaNro.toString());
         
-        rodadaDoc.set({
+        await new Promise(resolve => {
+            rodadaDoc.set({
             manilha: null,
             comeca: jogadorComeca,
             vez: jogadorComeca,
             etapa: Etapa.embaralhar,
             jogadoresCount: jogadoresParticipantes.length
+        }).then(res => resolve());
         });
         
         jogadoresParticipantes.forEach(jogador => {

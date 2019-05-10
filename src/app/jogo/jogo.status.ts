@@ -1,5 +1,5 @@
 export enum Status {
-    iniciado = 0,
+    aguardandoJogadores = 0,
     jogando = 1,
     finalizado = 2,
 }
