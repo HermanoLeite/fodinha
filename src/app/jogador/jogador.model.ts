@@ -3,5 +3,6 @@ export interface Jogador {
     cor: string;
     comecar:boolean;
     removido:boolean;
-    jogoId: string;
+    jogando:boolean;
+    vidas: number;
 }

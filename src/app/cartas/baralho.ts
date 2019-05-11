@@ -49,7 +49,7 @@ export class Baralho {
     this.cartas.push(new Carta(cartaValor.tres, naipeValor.copas, 'tres', 'copas'));
     this.cartas.push(new Carta(cartaValor.tres, naipeValor.paus, 'tres', 'paus'));
   }
-
+  
   embaralhar() {
     const primeiraVez = this.shuffle(this.cartas);
     const segundaVez = this.shuffle(primeiraVez);

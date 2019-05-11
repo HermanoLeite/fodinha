@@ -7,7 +7,7 @@ import { JogoInitComponent } from './jogo-init/jogo-init.component';
 const routes: Routes = [
   { path: '', component: JogoInitComponent },
   { path: 'jogo/:id', component: JogoComponent },
-  { path: 'jogador', component: JogadorComponent },
+  { path: 'jogador/:id', component: JogadorComponent },
 ];
 
 @NgModule({

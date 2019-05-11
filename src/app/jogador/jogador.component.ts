@@ -2,9 +2,11 @@ import { JogadorService } from './jogador.service';
 import { config } from '../collection.config';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
-import {Router} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Jogador } from './jogador.model';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Jogo } from '../jogo/jogo.model';
+import { Status } from '../jogo/jogo.status';
 
 @Component({
   selector: 'app-jogador',
@@ -21,21 +23,21 @@ export class JogadorComponent implements OnInit {
     cor: '',
     comecar: false,
     removido: false,
-    jogoId: "",
+    jogando: false,
+    vidas: 5,
   };
   jogoId: string;
-  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private router: Router) { }
+  jogo: Jogo;
+  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private router: Router, private route: ActivatedRoute) { }
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
-    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
-    const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram();
+    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
+    const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
     
     if(todosJogadoresComecaram) {
-      const jogoId = await this.jogadorService.comecarJogo();
-      this.jogadorAtual.jogoId = jogoId;
-      this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
-      this.router.navigate(['jogo', jogoId]);
+      this.jogadorService.comecarJogo(this.jogoId);
+      this.router.navigate(['jogo', this.jogoId]);
     }
   }
 
@@ -46,54 +48,60 @@ export class JogadorComponent implements OnInit {
           cor: this.jogadorCor,
           comecar: false,
           removido: false,
-          jogoId: ""
+          jogando: true,
+          vidas: 5,
       };
-      this.jogadorDocId = await this.jogadorService.addjogador(this.jogadorAtual);
+      this.jogadorDocId = await this.jogadorService.addjogador(this.jogadorAtual, this.jogoId);
     }
   }
 
   deleteJogador({id}) {
-    this.jogadorService.deletejogador(id);
+    this.jogadorService.deletejogador(id, this.jogoId);
   }
 
   removerJogador(jogador) {
     jogador.removido = true;
-    this.jogadorService.updatejogador(jogador.id, jogador);
+    this.jogadorService.updatejogador(jogador.id, jogador, this.jogoId);
   }
 
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
-    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
+    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
   }
 
 
   ngOnInit() {
+    this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.jogadorService.setJogo(this.jogoId);
     this.jogadorDocId = this.jogadorService.jogadorCriado();
-    this.jogadores = this.db.collection(config.jogadorDB).snapshotChanges()
+    this.jogadores = this.db.collection(config.jogoDB).doc(this.jogoId).collection(config.jogadorDB).snapshotChanges()
     .pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data() as Jogador;
           const id = a.payload.doc.id;
           
-          if (data.jogoId !== "")
-            this.jogoId = data.jogoId;
-          
           if (id === this.jogadorDocId) {
             this.jogadorAtual = data;
           }
 
-          if(this.jogoId && this.jogadorAtual && this.jogadorAtual.comecar) { 
-            if (this.jogadorAtual.jogoId==="") {
-              this.jogadorAtual.jogoId = this.jogoId;
-              this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual);
-            }
-            this.router.navigate(['jogo', this.jogoId]);
-          }
           return { id, ...data };
         });
       }),
     );
+
+    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    query.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Jogo;
+        const id = a.payload.id;
+        
+        if (this.jogadorDocId && data.status === Status.jogando)
+          this.router.navigate(['jogo', this.jogoId]);
+
+        return { id, ...data };
+      })
+    ).subscribe(jogo => this.jogo = jogo);  
     
   }
 }

@@ -14,16 +14,13 @@ export class JogoService {
         this.jogos = db.collection(config.jogoDB);
     }
 
-    async criarJogo(nomeJogo, jogadoresParticipantes) {
-        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0 }
-        const id = await this.addJogo(jogo)
-        this.criarJogadores(jogadoresParticipantes, id)
-        this.criarRodada(jogadoresParticipantes, id, jogo.rodada);
-        return id;
+    async comecarJogo(jogadoresParticipantes, jogoId) {
+        this.db.firestore.collection(config.jogoDB).doc(jogoId).update({status: Status.jogando})
+        this.criarRodada(jogadoresParticipantes, jogoId, 0);
     }
 
     async criarJogoInicio(nomeJogo) {
-        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0 }
+        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0, quantidadeJogadores: 0 }
         const id = await this.addJogo(jogo)
         return id;
     }
@@ -34,7 +31,7 @@ export class JogoService {
 
     criarJogadores(jogadoresParticipantes, id) {
         jogadoresParticipantes.forEach(jogador => {
-            this.jogos.doc(id).collection("jogadores").doc(jogador.id).set({
+            this.jogos.doc(id).collection(config.jogadorDB).doc(jogador.id).set({
                 nome: jogador.nome,
                 cor: jogador.cor,
                 vidas: 5,
@@ -47,7 +44,7 @@ export class JogoService {
     jogadoresProximaRodada(jogoId) {
         var jogadoresProximaRodada:any[] = [];
         return new Promise(resolve => {
-            this.db.firestore.collection(config.jogoDB).doc(jogoId).collection("jogadores").get().then(function(querySnapshot) {
+            this.db.firestore.collection(config.jogoDB).doc(jogoId).collection(config.jogadorDB).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     const jogador = doc.data();
                     if (jogador.jogando) jogadoresProximaRodada.push({id: doc.id, nome: jogador.nome, cor: jogador.cor });
@@ -75,15 +72,15 @@ export class JogoService {
         var allPromises = jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
             console.log("antes");
             return new Promise(resolve => {
-                jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).ref.get().then(function(doc) {
+                jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).ref.get().then(function(doc) {
                     const { vidas } = doc.data();
                     if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
                         console.log("jogador com vida");
-                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve());
+                        jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve());
                     }
                     else {
                         console.log("jogador sem vida");
-                        jogoQuery.collection("jogadores").doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve());
+                        jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve());
                     }
                 });
             });
@@ -119,12 +116,12 @@ export class JogoService {
         
         await new Promise(resolve => {
             rodadaDoc.set({
-            manilha: null,
-            comeca: jogadorComeca,
-            vez: jogadorComeca,
-            etapa: Etapa.embaralhar,
-            jogadoresCount: jogadoresParticipantes.length
-        }).then(res => resolve());
+                manilha: null,
+                comeca: jogadorComeca,
+                vez: jogadorComeca,
+                etapa: Etapa.embaralhar,
+                jogadoresCount: jogadoresParticipantes.length
+            }).then(res => resolve());
         });
         
         jogadoresParticipantes.forEach(jogador => {
@@ -164,6 +161,14 @@ export class JogoService {
                 console.error("Error adding document: ", error);
                 resolve(null);
             });
+        });
+    }
+
+    acrescentaJogador(jogoId) {
+        var jogoQuery = this.db.firestore.collection(config.jogoDB).doc(jogoId);
+        jogoQuery.get().then(function(doc) {
+            const { quantidadeJogadores } = doc.data();
+            jogoQuery.update({ quantidadeJogadores: quantidadeJogadores+1 });
         });
     }
 

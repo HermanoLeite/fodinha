@@ -4,9 +4,8 @@
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <p class="navbar-brand">Fodinha</p>
-        <p class="navbar-brand" *ngIf="jogadorAtual">Jogador: {{jogadorAtual.nome}} - cor {{jogadorAtual.cor}} - {{jogadorAtual.vida}} vidas  ({{jogadorAtual.removido ? 'removido' : 'dentro'}})</p>
       </div>
-      <span class="navbar-brand float-right"><button type="button" class="btn btn-secondary btn-sm" (click)="resetarJogo()">Resetar</button></span>
+      <span class="navbar-brand float-right"><button type="button" class="btn btn-secondary btn-sm" (click)="sairDoJogo()">Sair</button></span>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"></div>
       <!-- /.navbar-collapse -->

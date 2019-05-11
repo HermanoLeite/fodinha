@@ -16,13 +16,9 @@ export class AppComponent {
     this.jogadorAtual = this.cookieService.get("userId");
   }
 
-  resetarJogo() {
-    this.cookieService.deleteAll();
-    this.router.navigate(['jogador/']);
-    this.db.firestore.collection(config.jogadorDB).get().then(val => {
-      val.forEach((doc) => {
-        this.db.firestore.collection(config.jogadorDB).doc(doc.id).delete().then(() => console.log("deletado!"));
-      })
-    })
-  }
+  sairDoJogo() {
+    this.cookieService.set("userId", "" );
+    this.cookieService.set("jogoId", "" );
+    this.router.navigate(['/']);
+    }
 }

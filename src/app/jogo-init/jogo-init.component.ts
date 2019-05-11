@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import { Jogo } from '../jogo/jogo.model';
 import { Status } from '../jogo/jogo.status';
 import { JogoService } from '../jogo/jogo.service';
+import { JogadorService } from '../jogador/jogador.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-jogo-init',
@@ -15,15 +17,22 @@ export class JogoInitComponent implements OnInit {
   jogos;
   criandoJogo: Boolean = false;
   jogoNome: String;
-  constructor(private db: AngularFirestore, private jogoService: JogoService) { }
+  constructor(private db: AngularFirestore, private jogoService: JogoService, private jogadorService: JogadorService, private router: Router) { }
 
   getStatus(status: Status) {
     if(status == Status.aguardandoJogadores) return "Agurdando Jogadores"
+    if(status == Status.jogando) return "Jogando"
+    if(status == Status.finalizado) return "Finalizado"
   }
+
 
   criarJogo() {
     this.criandoJogo = !this.criandoJogo;
     this.jogoNome = null;
+  }
+
+  entrarJogo(jogoId) {
+    this.router.navigate(['jogador', jogoId]);
   }
 
   salvarJogo() {

@@ -15,12 +15,17 @@ export class JogadorService {
         this.jogadores = db.collection(config.jogadorDB);
     }
 
-    
-    addjogador (jogador) : Promise<string> {
+    setJogo (jogoId) {
+        this.jogadores = this.db.collection(config.jogoDB).doc(jogoId).collection(config.jogadorDB);
+    }
+
+
+    addjogador (jogador, jogoId) : Promise<string> {
         return new Promise(resolve => {
             this.jogadores.add(jogador)
             .then(function(docRef) {
                 this.cookieService.set("userId", docRef.id );
+                this.jogoService.acrescentaJogador(jogoId);
                 resolve(docRef.id);
             }.bind(this))
             .catch(function(error) {
@@ -34,26 +39,25 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    updatejogador(id, update) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${config.jogadorDB}/${id}`);
+    updatejogador(id, update, jogoId) {
+        this.jogadorDoc = this.db.doc<Jogador>(`${config.jogoDB}/${jogoId}/${config.jogadorDB}/${id}`);
         this.jogadorDoc.update(update);
     }
 
-    deletejogador(id) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${config.jogadorDB}/${id}`);
+    deletejogador(id, jogoId) {
+        this.jogadorDoc = this.db.doc<Jogador>(`${config.jogoDB}/${jogoId}/${config.jogadorDB}/${id}`);
         this.jogadorDoc.delete();
     }
 
-    async comecarJogo() {
-        var nomeJogo = 'nome padrao';
-        const jogadores = await this.jogadoresParaOJogo();
-        return this.jogoService.criarJogo(nomeJogo, jogadores);
+    async comecarJogo(jogoId) {
+        var jogadores = await this.jogadoresParaOJogo(jogoId)
+        return this.jogoService.comecarJogo(jogadores, jogoId);
     }
 
-    jogadoresParaOJogo() {
+    jogadoresParaOJogo(jogoId) {
         var jogadoresNoJogo:any[] = [];
         return new Promise(resolve => {
-            this.db.firestore.collection(config.jogadorDB).get().then(function(querySnapshot) {
+            this.db.firestore.collection(config.jogoDB).doc(jogoId).collection(config.jogadorDB).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     const data = doc.data();
                     if(!data.removido && data.comecar) jogadoresNoJogo.push({id: doc.id, ...data })
@@ -63,10 +67,10 @@ export class JogadorService {
         });
     }
 
-    todosJogadoresComecaram() {
+    todosJogadoresComecaram(jogoId) {
         var count = 0;
         return new Promise(resolve => {
-            this.db.firestore.collection(config.jogadorDB).get().then(function(querySnapshot) {
+            this.db.firestore.collection(config.jogoDB).doc(jogoId).collection(config.jogadorDB).get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     const data = doc.data();
                     if(!data.removido && !data.comecar) resolve(false);

@@ -143,7 +143,7 @@ export class JogoComponent implements OnInit {
   // TODO levar isso para o servico da rodada
   loadRodada(rodadaId) {
     var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    this.jogadoresJogo = query.collection("jogadores").snapshotChanges().pipe(
+    this.jogadoresJogo = query.collection(config.jogadorDB).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();

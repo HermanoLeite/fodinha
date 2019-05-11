@@ -1,7 +1,7 @@
 export interface Jogo {
     id: string;
     nome: string;
-    status: string;
+    status: number;
     rodada: number;
     rodadas: any;
 }
