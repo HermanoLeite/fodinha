@@ -65,6 +65,7 @@ export class JogoComponent implements OnInit {
         if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
           alert("acabou o jogo!! Jogador vencedor: " + jogadoresProximaRodada[0].nome);
           this.jogoFinalizado = true;
+          jogoQuery.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
         }
         else {
           this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);

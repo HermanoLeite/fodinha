@@ -23,7 +23,7 @@ export class JogoInitComponent implements OnInit {
   }
 
   getStatus(status: Status) {
-    if(status == Status.aguardandoJogadores) return "Agurdando Jogadores"
+    if(status == Status.aguardandoJogadores) return "Aguardando Jogadores"
     if(status == Status.jogando) return "Jogando"
     if(status == Status.finalizado) return "Finalizado"
   }
