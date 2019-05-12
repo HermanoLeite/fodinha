@@ -105,11 +105,12 @@ export class JogoService {
         })
     }
 
+    seJogoFinalizado(jogadoresParticipantes) {
+        return jogadoresParticipantes.length < 2;
+    }
+
     async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         var count = 0;
-        if (jogadoresParticipantes.length < 2) {
-            console.log("acabou o jogo!! Jogador vencedor: " + jogadoresParticipantes[0].nome);
-        }
         
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
         var rodadaDoc = this.jogos.doc(jogoId).collection("rodadas").doc(rodadaNro.toString());

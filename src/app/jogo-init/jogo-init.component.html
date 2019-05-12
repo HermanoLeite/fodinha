@@ -24,6 +24,7 @@
         <th>Nro Participantes</th>
         <th>Status</th>
         <th></th>
+        <th></th>
       </tr>
       <tr *ngFor="let jogo of jogos | async; let i = index;" [attr.data-index]="i">
         <td>{{i + 1}}</td>
@@ -32,6 +33,9 @@
         <td>{{getStatus(jogo.status)}}</td>
         <td>
           <button class="btn btn-primary btn-sm" (click)="entrarJogo(jogo.id)">Entrar</button>
+        </td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="deletarJogo(jogo.id)">x</button>
         </td>
       </tr>
     </table>

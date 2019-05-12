@@ -14,10 +14,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./jogo-init.component.css']
 })
 export class JogoInitComponent implements OnInit {
+  jogoDB;
   jogos;
   criandoJogo: Boolean = false;
   jogoNome: String;
-  constructor(private db: AngularFirestore, private jogoService: JogoService, private jogadorService: JogadorService, private router: Router) { }
+  constructor(private db: AngularFirestore, private jogoService: JogoService, private jogadorService: JogadorService, private router: Router) { 
+    this.jogoDB = this.db.collection(config.jogoDB);
+  }
 
   getStatus(status: Status) {
     if(status == Status.aguardandoJogadores) return "Agurdando Jogadores"
@@ -33,6 +36,11 @@ export class JogoInitComponent implements OnInit {
 
   entrarJogo(jogoId) {
     this.router.navigate(['jogador', jogoId]);
+  }
+
+  deletarJogo(jogoId) {
+    // jogo -> jogadores, rodada -> jogadores -> jogada -> jogadas
+    this.jogoDB.doc(jogoId).delete();
   }
 
   salvarJogo() {

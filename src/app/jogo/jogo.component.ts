@@ -27,6 +27,7 @@ export class JogoComponent implements OnInit {
   jogada: any = null;
   jogadas: any = null;
   todosPalpitaram: boolean = false;
+  jogoFinalizado: boolean = false;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
   }
@@ -60,7 +61,14 @@ export class JogoComponent implements OnInit {
         var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
         await this.jogoService.atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas);
         var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
-        this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
+
+        if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
+          alert("acabou o jogo!! Jogador vencedor: " + jogadoresProximaRodada[0].nome);
+          this.jogoFinalizado = true;
+        }
+        else {
+          this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
+        }
       }
       else {
         if (this.jogada.maiorCartaJogador !== null) {
