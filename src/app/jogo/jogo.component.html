@@ -47,7 +47,7 @@
   </div>
 </section>
 
-<div *ngIf="jogadorJogando" class="row">
+<div *ngIf="jogadorJogando && !jogoFinalizado()" class="row">
   <div class="col-md-6">
     <table class="table table-hover" *ngIf="jogadas">
       <tr>
@@ -83,6 +83,10 @@
       </button>
     </div>
   </div>
+</div>
+
+<div *ngIf="jogoFinalizado()">
+  <h1>Jogador Ganhador: {{jogo.vencedor}}</h1>
 </div>
 
 

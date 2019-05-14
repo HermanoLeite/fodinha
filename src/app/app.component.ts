@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { config } from './collection.config';
 import {Router} from '@angular/router';
 
 @Component({

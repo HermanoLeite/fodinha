@@ -7,6 +7,7 @@ import { Status } from '../jogo/jogo.status';
 import { JogoService } from '../jogo/jogo.service';
 import { JogadorService } from '../jogador/jogador.service';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-jogo-init',
@@ -18,8 +19,10 @@ export class JogoInitComponent implements OnInit {
   jogos;
   criandoJogo: Boolean = false;
   jogoNome: String;
-  constructor(private db: AngularFirestore, private jogoService: JogoService, private jogadorService: JogadorService, private router: Router) { 
+  constructor(private db: AngularFirestore, private jogoService: JogoService, private jogadorService: JogadorService, private cookieService: CookieService,  private router: Router) { 
     this.jogoDB = this.db.collection(config.jogoDB);
+    this.cookieService.set("userId", "");
+    this.cookieService.set("jogoId", "");
   }
 
   getStatus(status: Status) {
@@ -34,8 +37,13 @@ export class JogoInitComponent implements OnInit {
     this.jogoNome = null;
   }
 
-  entrarJogo(jogoId) {
-    this.router.navigate(['jogador', jogoId]);
+  entrarJogo(jogo) {
+    if(jogo.status === Status.finalizado) {
+      this.router.navigate(['jogo', jogo.id]);
+    }
+    else {
+      this.router.navigate(['jogador', jogo.id]);
+    }
   }
 
   deletarJogo(jogoId) {

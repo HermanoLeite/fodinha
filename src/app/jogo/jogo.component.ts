@@ -25,7 +25,6 @@ export class JogoComponent implements OnInit {
   jogada: any = null;
   jogadas: any = null;
   todosPalpitaram: boolean = false;
-  jogoFinalizado: boolean = false;
   jogoDoc: AngularFirestoreDocument<any>;
   Etapa: Etapa;
 
@@ -63,8 +62,6 @@ export class JogoComponent implements OnInit {
         var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
 
         if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
-          alert("acabou o jogo!! Jogador vencedor: " + jogadoresProximaRodada[0].nome);
-          this.jogoFinalizado = true;
           this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
         }
         else {
@@ -85,6 +82,13 @@ export class JogoComponent implements OnInit {
     else {
       this.atualizarRodada();
     }
+  }
+
+  jogoFinalizado() : boolean {
+    if (this.jogo)
+      return this.jogo.status === Status.finalizado;
+    
+    return false;
   }
 
   etapaEmbaralhar(etapa) {
@@ -259,7 +263,7 @@ export class JogoComponent implements OnInit {
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-        this.loadRodada(data.rodada.toString());
+          this.loadRodada(data.rodada.toString());
         return { id, ...data };
       })
     ).subscribe(jogo => this.jogo = jogo);  

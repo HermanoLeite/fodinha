@@ -59,7 +59,7 @@ export class Baralho {
 
 
   quantidadeCartasTotal() : number {
-    return 41;
+    return 40;
   }
 
   tirarVira() {
