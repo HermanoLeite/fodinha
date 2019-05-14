@@ -9,13 +9,11 @@ export class Carta {
   private naipe: String;
   private naipeValor: naipeValor;
   private cartaValor: cartaValor;
-  manilha: boolean;
   constructor(cartaValor: cartaValor, naipeValor: naipeValor, carta: string, naipe: string) {
     this.naipeValor = naipeValor;
     this.cartaValor = cartaValor;
     this.naipe = naipe;
     this.carta = carta;
-    this.manilha = false;
   }
   
   static fromString(carta: string) {
@@ -24,30 +22,28 @@ export class Carta {
     return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe);
   }
 
-  setManilha(manilha: Carta) {
-    if(manilha.cartaValor === cartaValor.tres) {
-      this.manilha = this.cartaValor === cartaValor.quatro;
+  isManilha(vira: Carta) {
+    if(vira.cartaValor === cartaValor.tres) {
+      return this.cartaValor === cartaValor.quatro;
     }
     else {
-      this.manilha = manilha.cartaValor === this.cartaValor-1;
+      return vira.cartaValor === (this.cartaValor-1);
     }
   }
 
-  combate(cartaAdversaria: Carta) {
+  combate(cartaAdversaria: Carta, vira: Carta) {
     if (cartaAdversaria === null) {
       return combate.ganhou;
     }
-    if (this.manilha) {
+    
+    if (this.isManilha(vira)) {
       if (this.cartaValor === cartaAdversaria.cartaValor) {
         return this.naipeValor > cartaAdversaria.naipeValor ? combate.ganhou : combate.perdeu;
       }
       return combate.ganhou;
     }
 
-    if (cartaAdversaria.manilha) {
-      if (this.cartaValor === cartaAdversaria.cartaValor) {
-        return this.naipeValor > cartaAdversaria.naipeValor ? combate.ganhou : combate.perdeu;
-      }
+    if (cartaAdversaria.isManilha(vira)) {
       return combate.perdeu;
     }
 

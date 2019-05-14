@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { config } from '../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
-import { AngularFirestore } from '@angular/fire/firestore';
+import {  AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
 import { Baralho } from '../cartas/baralho'
 import { Carta, combate } from '../cartas/carta'
 
@@ -21,26 +21,26 @@ export class JogoComponent implements OnInit {
   rodada: any;
   jogadorJogandoId: any;
   jogadorJogando: any;
-  status = Status;
-  etapa = Etapa;
   baralho: Baralho;
   jogada: any = null;
   jogadas: any = null;
   todosPalpitaram: boolean = false;
   jogoFinalizado: boolean = false;
+  jogoDoc: AngularFirestoreDocument<any>;
+  Etapa: Etapa;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
+    this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
   }
 
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
     
-    const jogoQuery = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    const rodadaQuery = jogoQuery.collection(config.rodadaDB).doc(this.rodada.id);
+    const rodadaQuery = this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id);
     const jogadorQuery = rodadaQuery.collection("jogadores").doc(this.jogadorJogando.id.toString());
     const jogadaQuery = rodadaQuery.collection("jogada").doc(this.rodada.jogadaAtual);
     
-    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta));
+    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
     
     if (cartaCombate === combate.ganhou) {
       this.jogada.maiorCartaJogador = this.jogadorJogando.id;
@@ -59,13 +59,13 @@ export class JogoComponent implements OnInit {
 
       if (this.jogadorJogando.cartas.length === 0) {
         var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
-        await this.jogoService.atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas);
+        await this.jogoService.atualizaJogadorVida(this.jogoDoc, jogadoresVidasPerdidas);
         var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
 
         if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
           alert("acabou o jogo!! Jogador vencedor: " + jogadoresProximaRodada[0].nome);
           this.jogoFinalizado = true;
-          jogoQuery.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
+          this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
         }
         else {
           this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
@@ -87,6 +87,18 @@ export class JogoComponent implements OnInit {
     }
   }
 
+  etapaEmbaralhar(etapa) {
+    return etapa === Etapa.embaralhar;
+  }
+
+  etapaPalpite(etapa) {
+    return etapa === Etapa.palpite;
+  }
+
+  etapaJogarCarta(etapa) {
+    return etapa === Etapa.jogarCarta;
+  }
+  
   comecar() {
     this.embaralhar();
     this.tirarManilha();
@@ -99,26 +111,26 @@ export class JogoComponent implements OnInit {
   }
 
   tirarManilha() {
-    var manilha = this.baralho.tirarManilha();
+    var manilha = this.baralho.tirarVira();
     this.atualizarManilha(manilha);
   }
 
   distribuir() {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var query = this.jogoDoc;
     var quantidadeCartas = this.jogo.rodada+1 > this.rodada.jogadoresCount ? this.jogo.rodada+1 % this.rodada.jogadoresCount : this.jogo.rodada+1;
     for (var i = 0; i < this.rodada.jogadoresCount; i++) {
       var cartaArray = this.baralho.tiraCartas(quantidadeCartas)
       query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(i.toString()).update({cartas: cartaArray.map(carta => JSON.stringify(carta))});
     }
-    this.atualizarRodada(this.etapa.palpite);
+    this.atualizarRodada(Etapa.palpite);
   }
 
   palpite(palpite: number) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var query = this.jogoDoc;
     query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(this.jogadorJogando.id.toString()).update({ palpite: palpite });
     if (this.proximoJogador() === this.proximoJogador(this.rodada.comeca)) {
       this.criarJogada(this.proximoJogador())
-      this.atualizarRodada(this.etapa.jogarCarta);
+      this.atualizarRodada(Etapa.jogarCarta);
     }
     this.atualizarRodada();
   }
@@ -129,35 +141,36 @@ export class JogoComponent implements OnInit {
   }
 
   atualizarRodada(rodadaEtapa: number = null, jogadorVez: number = null) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var query = this.jogoDoc;
+    var rodadaQuery = query.collection(config.rodadaDB).doc(this.rodada.id);
     const rodadaVez = jogadorVez === null ? this.proximoJogador() : jogadorVez;
+
     if (rodadaEtapa) {
-      if (rodadaEtapa === this.etapa.jogarCarta) {
-        query.collection(config.rodadaDB).doc(this.rodada.id).update({ etapa: rodadaEtapa });
+      if (rodadaEtapa === Etapa.jogarCarta) {
+        rodadaQuery.update({ etapa: rodadaEtapa });
       }
       else {
-        query.collection(config.rodadaDB).doc(this.rodada.id).update({ etapa: rodadaEtapa, vez: rodadaVez });
+        rodadaQuery.update({ etapa: rodadaEtapa, vez: rodadaVez });
       }
     }
     else {
-      query.collection(config.rodadaDB).doc(this.rodada.id).update({ vez: rodadaVez });
+      rodadaQuery.update({ vez: rodadaVez });
     }
   }
 
   atualizarManilha(manilha) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var query = this.jogoDoc;
     query.collection(config.rodadaDB).doc(this.rodada.id).update({manilha: JSON.stringify(manilha)});
   }
 
   // TODO levar isso para o servico da rodada
   loadRodada(rodadaId) {
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    var query = this.jogoDoc;
     this.jogadoresJogo = query.collection(config.jogadorDB).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
-          console.log("jogo.jogadores: " + id + " - " + JSON.stringify(data));
           return { id, ...data };
         });
       }),
@@ -167,7 +180,6 @@ export class JogoComponent implements OnInit {
       map(a => {
         const data : any = a.payload.data();
         const id = a.payload.id;
-        console.log("rodada: " + JSON.stringify(data));
         if (data.manilha) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
           const jogadaQuery = query.collection(config.rodadaDB).doc(rodadaId).collection("jogada").doc(data.jogadaAtual)
@@ -183,7 +195,6 @@ export class JogoComponent implements OnInit {
               return actions.map(a => {
                 const data = a.payload.doc.data();
                 const id = parseInt(a.payload.doc.id, 10);
-                console.log("jogada: " + id + " - " + JSON.stringify(data));
                 return { id, ...data };
               });
             }),
@@ -202,7 +213,6 @@ export class JogoComponent implements OnInit {
           if (data.cartas) {
             data.cartas = data.cartas.map(carta => {
               let cartaObj = Carta.fromString(carta);
-              cartaObj.setManilha(this.rodada.manilha);
               return cartaObj; 
             });
           }
@@ -210,7 +220,6 @@ export class JogoComponent implements OnInit {
           if (data.jogadorId === this.jogadorJogandoId) {
             this.jogadorJogando = { id, ...data };
           }
-          console.log("jogadores: " + id + " - " + JSON.stringify(data));
           return { id, ...data };
         });
       }),
@@ -222,10 +231,9 @@ export class JogoComponent implements OnInit {
       comeca: jogadorComeca,
       maiorCarta: null,
     }
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    query.collection(config.rodadaDB).doc(this.rodada.id).collection("jogada").add(jogada)
+    this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id).collection("jogada").add(jogada)
     .then(function(docRef) {
-      query.collection(config.rodadaDB).doc(this.rodada.id).update({ jogadaAtual: docRef.id, vez: jogadorComeca });
+      this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id).update({ jogadaAtual: docRef.id, vez: jogadorComeca });
     }.bind(this))
     .catch(function(error) {
       console.error("Error adding document: ", error);
@@ -234,14 +242,11 @@ export class JogoComponent implements OnInit {
 
   ngOnInit() {
     this.jogadorJogandoId = this.jogoService.jogadorCriado();
-    console.log("meu id = " + this.jogadorJogandoId);
 
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    query.snapshotChanges().pipe(
+    this.jogoDoc.snapshotChanges().pipe(
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-        console.log("jogo: " + JSON.stringify(data));
         this.loadRodada(data.rodada.toString());
         return { id, ...data };
       })

@@ -57,7 +57,7 @@ export class Baralho {
     this.cartas = this.shuffle(terceiraVez);
   }
 
-  tirarManilha() {
+  tirarVira() {
     return this.cartas.pop();
   }
 

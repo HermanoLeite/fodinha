@@ -70,16 +70,13 @@ export class JogoService {
 
     atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas) {
         var allPromises = jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
-            console.log("antes");
             return new Promise(resolve => {
                 jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).ref.get().then(function(doc) {
                     const { vidas } = doc.data();
                     if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
-                        console.log("jogador com vida");
                         jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve());
                     }
                     else {
-                        console.log("jogador sem vida");
                         jogoQuery.collection(config.jogadorDB).doc(jogadorVidasPerdidas.id).update({ vidas: vidas-jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve());
                     }
                 });
@@ -95,7 +92,6 @@ export class JogoService {
             if (maiorCartaJogador !== null) {
                 rodadaQuery.collection("jogadores").doc(maiorCartaJogador.toString()).ref.get().then(function(doc) {
                     const { fez } = doc.data();
-                    console.log('fez: ' + fez);
                     rodadaQuery.collection("jogadores").doc(maiorCartaJogador.toString()).update({ fez: fez+1 }).then(res => resolve());
                 });
             }
