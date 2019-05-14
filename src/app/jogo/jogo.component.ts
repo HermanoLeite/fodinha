@@ -117,12 +117,25 @@ export class JogoComponent implements OnInit {
 
   distribuir() {
     var query = this.jogoDoc;
-    var quantidadeCartas = this.jogo.rodada+1 > this.rodada.jogadoresCount ? this.jogo.rodada+1 % this.rodada.jogadoresCount : this.jogo.rodada+1;
+    var quantidadeCartas = this.quantidadeDeCartas(this.baralho.quantidadeCartasTotal(), this.rodada.jogadoresCount, this.jogo.rodada);
+
     for (var i = 0; i < this.rodada.jogadoresCount; i++) {
       var cartaArray = this.baralho.tiraCartas(quantidadeCartas)
       query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(i.toString()).update({cartas: cartaArray.map(carta => JSON.stringify(carta))});
     }
     this.atualizarRodada(Etapa.palpite);
+  }
+
+  quantidadeDeCartas(qtdCartasTotal, jogadoresCount, rodada) : number {
+    var qtdCartasMax = qtdCartasTotal-1/jogadoresCount;
+    if (rodada < qtdCartasMax) {
+      return rodada+1;
+    }
+    var sobe = (rodada/qtdCartasMax)%2 === 0;
+    if (sobe) {
+      return (rodada%qtdCartasMax)+1
+    }
+    return (qtdCartasMax*(rodada/qtdCartasMax))-rodada;
   }
 
   palpite(palpite: number) {
@@ -163,7 +176,6 @@ export class JogoComponent implements OnInit {
     query.collection(config.rodadaDB).doc(this.rodada.id).update({manilha: JSON.stringify(manilha)});
   }
 
-  // TODO levar isso para o servico da rodada
   loadRodada(rodadaId) {
     var query = this.jogoDoc;
     this.jogadoresJogo = query.collection(config.jogadorDB).snapshotChanges().pipe(

@@ -57,6 +57,11 @@ export class Baralho {
     this.cartas = this.shuffle(terceiraVez);
   }
 
+
+  quantidadeCartasTotal() : number {
+    return 41;
+  }
+
   tirarVira() {
     return this.cartas.pop();
   }
