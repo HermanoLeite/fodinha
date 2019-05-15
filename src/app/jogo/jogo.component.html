@@ -86,7 +86,8 @@
 </div>
 
 <div *ngIf="jogoFinalizado()">
-  <h1>Jogador Ganhador: {{jogo.vencedor}}</h1>
+  <h1 *ngIf="jogo.vencedor">Jogador Ganhador: {{jogo.vencedor}}</h1>
+  <h1 *ngIf="!jogo.vencedor">O Jogo não teve um vencedor :(</h1>
 </div>
 
 

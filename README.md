@@ -35,12 +35,22 @@ A manilha é a carta um acima da vira. Se vira o 4, a manilha é o 5. Se vira o 
 
 A manilha é a carta mais forte do jogo nessa rodada. Para esta carta, o naipe importa. Sendo assim, a ordem dos naipes é: ouros, espadas, copas, paus. **Não existe empate entre manilhas**
 
+### Processo do Jogo
+O jogo começa quando todos os jogadores se cadastram em um jogo e clicam em **começar**. O jogador que estiver em vermelho será aquele que embaralha, e o que está em negrito será aquele que deve tomar uma ação.
+1. A primeira etapa então é a de **"pegar as cartas", embaralhar, distribuir as cartas e tirar a manilha**, que serão todas realizadas em sequência apenas clicando no botão **começar**.
+2. A próxima etapa é a de **palpite**, onde cada jogador (com o conhecimento das cartas e da manilha) tenta advinhar quantas cartas vai fazer nessa rodada.
+3. Depois que todos os jogadores fazem sem palpite, passa para a etapa de **jogar a carta**, onde cada jogador joga uma carta por vez.
+    1. Inicialmente o primeiro a jogar a carta é a mesma pessoa que começou os palpites, que é a pessoa uma posição a frente daquele que embaralhou.
+    2. Após todos jogarem as cartas, é visto qual carta ganhou. Se empatar, o mesmo jogador que começou a jogada continuará começando. Se alguma carta for ganhadora, o jogador que a jogou comecará a jogada.
+4. Ao final da rodada, quando todos os jogadores jogaram todas suas cartas. São atualizadas as vidas dos jogadores (diferença entre o palpite e quantidade de jogadas feitas).
+5. Se mais de um jogador ainda tiver vida reinicia o processo novamente. Senão, temos um **vencedor** :)
+
 ## Como rodar o projeto
 Necessário fazer uma conta no firebase, já que o projeto roda todo lá (não sei se dá para rodar localmente). Talvez [esse](https://medium.com/factory-mind/angular-cloud-firestore-step-by-step-bootstrap-tutorial-ecb96db8d071) tutorial ajude.
 
-O projeto está em angular.
+O projeto está em angular utilizando bootstrap para estilo.
 
-Então, estando com o projeto, basta rodar:
+Então, estando com o projeto e tendo configurado as chaves do firebase, basta rodar:
 ```bash
 npm install
 ``` 
@@ -49,6 +59,13 @@ e depois
 ng serve
 ```
 Se tudo estiver o correto, o projeto deveria rodar.
+
+## Modelo de dados
+
+O modelo de dados foi pensado conforme o jogo foi construído, e tenho minhas dúvidas se está da melhor forma.
+Está da seguinte forma:
+
+![modelo de dados](/src/docs/modeloDeDados.png)
 
 ## tasks
 O Backlog das atividades estão no [trello](https://trello.com/b/31NPr2F0/fodinha)
