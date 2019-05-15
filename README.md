@@ -18,7 +18,7 @@ Para começar, crie ou entre em um jogo, coloque seu nome e cor, e clique em **c
 
 ### Quantidade de cartas
 A cada rodada a quantidade de cartas que cada jogador recebe vai aumentando. 
-Rodada 1, 1 carta para cada jogador. Rodada 2, 2 cartas. Rodada 3, 3 cartas... Caso chegue o baralho chegue ao fim, então as cartas vão decrescendo até chegar a 1, depois crescendo novamente.
+Rodada 1, 1 carta para cada jogador. Rodada 2, 2 cartas. Rodada 3, 3 cartas... Caso o baralho chegue ao fim, então as cartas vão decrescendo até chegar a 1, depois crescendo novamente.
 
 ### Palpite
 O objetivo do jogador é advinhar quantas cartas ele vai *fazer na rodada. Caso ele erre seu palpite (ex: Fez o palpite que iria fazer 1 jogada mas fez 2), então perde a diferença entre a quantidade do palpite e quantidade que fez.
