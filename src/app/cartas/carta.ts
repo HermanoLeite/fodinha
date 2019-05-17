@@ -7,19 +7,21 @@ import { Injectable } from '@angular/core';
 export class Carta {
   private carta: String;
   private naipe: String;
+  private img: String;
   private naipeValor: naipeValor;
   private cartaValor: cartaValor;
-  constructor(cartaValor: cartaValor, naipeValor: naipeValor, carta: string, naipe: string) {
+  constructor(cartaValor: cartaValor, naipeValor: naipeValor, carta: string, naipe: string, img: string = null) {
     this.naipeValor = naipeValor;
     this.cartaValor = cartaValor;
     this.naipe = naipe;
     this.carta = carta;
+    this.img = img;
   }
   
   static fromString(carta: string) {
     if (carta === null) return null;
     const cartaObj = JSON.parse(carta);
-    return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe);
+    return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe, cartaObj.img);
   }
 
   isManilha(vira: Carta) {

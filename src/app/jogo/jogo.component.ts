@@ -8,6 +8,7 @@ import { Jogo } from './jogo.model';
 import {  AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
 import { Baralho } from '../cartas/baralho'
 import { Carta, combate } from '../cartas/carta'
+import { Jogada } from '../jogada/jogada.model'
 
 @Component({
   selector: 'app-jogo',
@@ -62,11 +63,11 @@ export class JogoComponent implements OnInit {
         var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
 
         if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
-          if(jogadoresProximaRodada) {
-            this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
+          if(this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
+            this.jogoDoc.update({status: Status.finalizado});
           }
           else {
-            this.jogoDoc.update({status: Status.finalizado});
+            this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
           }
         }
         else {
@@ -109,6 +110,7 @@ export class JogoComponent implements OnInit {
   }
   
   comecar() {
+    this.jogada = null;
     this.embaralhar();
     this.tirarManilha();
     this.distribuir();
@@ -219,7 +221,8 @@ export class JogoComponent implements OnInit {
           const jogadaQuery = this.rodadaDoc.collection("jogada").doc(data.jogadaAtual)
           
           jogadaQuery.snapshotChanges().pipe(map(a => {
-            const data = a.payload.data() as Jogo;
+            const data= a.payload.data() as Jogada;
+            if (data.maiorCarta) data.maiorCartaObj = Carta.fromString(data.maiorCarta);
             const id = a.payload.id;
             return { id, ...data };
           })).subscribe(jogada => this.jogada = jogada);

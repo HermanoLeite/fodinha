@@ -105,6 +105,10 @@ export class JogoService {
         return jogadoresParticipantes.length < 2;
     }
 
+    seJogoEmpatado(jogadoresParticipantes) {
+        return jogadoresParticipantes.length < 1;
+    }
+
     async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         var count = 0;
         

@@ -14,35 +14,64 @@
             </tr>
           </table>
         </div>
+        <div class="col-md-6">
+            <table class="table table-hover"  *ngIf="rodada">
+              <tr>
+                <th>Ordem</th>
+                <th>Jogador</th>
+                <th>Cor</th>
+                <th>Palpite</th>
+                <th>Fez</th>
+              </tr>
+              <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i" [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
+                <td>{{jogador.id}}</td>
+                <td>{{jogador.nome}}</td>
+                <td>{{jogador.cor}}</td>
+                <td>{{jogador.palpite}}</td>
+                <td>{{jogador.fez}}</td>
+              </tr>
+            </table>
+          </div>
       </div>
 
   <div class="row" *ngIf="jogo">
     <div class="col-md-6">
       <p>Jogo: {{jogo.nome}}</p>
       <p>Rodada: {{jogo.rodada + 1}}</p>
-      <p *ngIf="rodada && rodada.manilha">Vira: {{rodada.manilha.carta}} de {{rodada.manilha.naipe}} </p>
-      <p>Maior Carta: </p>
+      <div class="col-cs-6"> 
+        <div class="col-xs-2" *ngIf="rodada && rodada.manilha"> 
+          <p>Vira:</p>
+          <p class="carta">{{rodada.manilha.img}}</p>
+        </div>
+        <div class="col-xs-2" *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" > 
+          <p>Maior:</p>
+          <p class="carta">{{jogada.maiorCartaObj.img}}</p>
+        </div>
+      </div>
     </div>
 
-    <div class="col-md-6">
-      <table class="table table-hover"  *ngIf="rodada">
-        <tr>
-          <th>Ordem</th>
-          <th>Jogador</th>
-          <th>Cor</th>
-          <th>Palpite</th>
-          <th>Fez</th>
-          <th>Carta</th>
-        </tr>
-        <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i" [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
-          <td>{{jogador.id}}</td>
-          <td>{{jogador.nome}}</td>
-          <td>{{jogador.cor}}</td>
-          <td>{{jogador.palpite}}</td>
-          <td>{{jogador.fez}}</td>
-          <td>{{jogador.carta}}</td>
-        </tr>
-      </table>
+    <div class=col-md-6 *ngIf="jogadorJogando">
+      <h3>Cartas</h3>
+      <div class="row">
+        <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;">
+          <div *ngIf="!(jogadorJogando.id == rodada.vez && etapaJogarCarta(rodada.etapa))" class="carta col-xs-2">{{cartaJogador.img}}</div>
+          <button *ngIf="jogadorJogando.id == rodada.vez && etapaJogarCarta(rodada.etapa)" class="carta col-xs-2" (click)="jogarCarta(i)">
+            {{cartaJogador.img}}
+          </button>
+        </div>
+      </div>
+      <button *ngIf="jogadorJogando.id == rodada.vez && etapaEmbaralhar(rodada.etapa)" class="btn btn-success" (click)="comecar()">
+        Comecar
+      </button>
+      <div *ngIf="jogadorJogando.id == rodada.vez && etapaPalpite(rodada.etapa)">
+        Palpite
+        <div class="btn btn-success" (click)="palpite(0)">
+          0
+        </div>
+        <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
+          {{i+1}}
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -59,29 +88,6 @@
         <td>{{jogadaItem.carta}} {{jogadaItem.naipe}}</td>
       </tr>
     </table>
-  </div>
-  <div class=col-md-6>
-    <h3>Cartas</h3>
-    <div *ngFor="let cartaJogador of jogadorJogando.cartas">
-      <p >{{cartaJogador.carta}} de {{cartaJogador.naipe}}</p>
-    </div>
-    <button *ngIf="jogadorJogando.id == rodada.vez && etapaEmbaralhar(rodada.etapa)" class="btn btn-success" (click)="comecar()">
-      Comecar
-    </button>
-    <div *ngIf="jogadorJogando.id == rodada.vez && etapaPalpite(rodada.etapa)">
-      Palpite
-      <div class="btn btn-success" (click)="palpite(0)">
-        0
-      </div>
-      <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
-        {{i+1}}
-      </div>
-    </div>
-    <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;">
-      <button *ngIf="jogadorJogando.id == rodada.vez && etapaJogarCarta(rodada.etapa)" class="btn btn-success" (click)="jogarCarta(i)">
-        {{cartaJogador.carta}} de {{cartaJogador.naipe}}
-      </button>
-    </div>
   </div>
 </div>
 
@@ -100,5 +106,10 @@
 }
 .fora {
   text-decoration-line: line-through;
+}
+.carta {
+  font-size:100px; 
+  margin:0; 
+  line-height: 1;
 }
 </style>
