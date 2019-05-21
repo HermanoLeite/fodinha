@@ -36,58 +36,75 @@ export class JogoComponent implements OnInit {
 
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
+    this.realizarJogada(carta);
+
+    if (this.proximoJogador() !== this.jogada.comeca) {
+      this.atualizarRodada();
+      return;
+    }
     
-    const jogadorQuery = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
-    const jogadaQuery = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
+    await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, this.jogada.maiorCartaJogador);
+
+    if (this.jogadorJogando.cartas.length === 0) {
+      this.encerrarJogada();
+      return;
+    }
+
+    this.comecarNovaJogada(this.jogada.maiorCartaJogador, this.jogada.comeca)
+  }
+
+  comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
+    if (maiorCartaJogador !== null) {
+      this.criarJogada(maiorCartaJogador);
+      this.atualizarRodada(null, maiorCartaJogador);
+    }
+    else {
+      this.criarJogada(jogadorComecouJogada);
+      this.atualizarRodada(null, jogadorComecouJogada);
+    }
+  }
+
+  async encerrarJogada() {
+    var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
+    await this.jogoService.atualizaJogadorVida(this.jogoDoc, jogadoresVidasPerdidas);
+    var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
+
+    if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
+      this.encerrarJogo(jogadoresProximaRodada);
+    }
+    else {
+      this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
+    }
+  }
+
+  async encerrarJogo(jogadoresProximaRodada) {
+    if(this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
+      this.jogoDoc.update({status: Status.finalizado});
+    }
+    else {
+      this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
+    }
+  }
+
+  realizarJogada(carta: Carta) {
+    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
+    const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
+    const jogadasCollection = jogadaDoc.collection("jogadas");
     
     const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
     
     if (cartaCombate === combate.ganhou) {
       this.jogada.maiorCartaJogador = this.jogadorJogando.id;
-      jogadaQuery.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: this.jogada.maiorCartaJogador })
+      jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: this.jogada.maiorCartaJogador });
     }
+
     if (cartaCombate === combate.empate) {
       this.jogada.maiorCartaJogador = null;
-      jogadaQuery.update({ maiorCarta: null, maiorCartaJogador: this.jogada.maiorCartaJogador })
+      jogadaDoc.update({ maiorCarta: null, maiorCartaJogador: this.jogada.maiorCartaJogador });
     }
 
-    jogadaQuery.collection("jogadas").add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
-    jogadorQuery.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
-    
-    if (this.proximoJogador() === this.jogada.comeca) {
-      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, this.jogada.maiorCartaJogador);
-
-      if (this.jogadorJogando.cartas.length === 0) {
-        var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
-        await this.jogoService.atualizaJogadorVida(this.jogoDoc, jogadoresVidasPerdidas);
-        var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
-
-        if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
-          if(this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
-            this.jogoDoc.update({status: Status.finalizado});
-          }
-          else {
-            this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
-          }
-        }
-        else {
-          this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
-        }
-      }
-      else {
-        if (this.jogada.maiorCartaJogador !== null) {
-          this.criarJogada(this.jogada.maiorCartaJogador);
-          this.atualizarRodada(null, this.jogada.maiorCartaJogador);
-        }
-        else {
-          this.criarJogada(this.jogada.comeca);
-          this.atualizarRodada(null, this.jogada.comeca);
-        }
-      }
-    }
-    else {
-      this.atualizarRodada();
-    }
+    jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
+    jogadorDoc.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
   }
 
   jogoFinalizado() : boolean {
@@ -141,20 +158,22 @@ export class JogoComponent implements OnInit {
     this.atualizarRodada(Etapa.palpite);
   }
 
-  quantidadeDeCartas(qtdCartasTotal, jogadoresCount, rodada) : number {
+  quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number) : number {
     var qtdCartasMax = qtdCartasTotal-1/jogadoresCount;
     if (rodada < qtdCartasMax) {
       return rodada+1;
     }
-    var sobe = (rodada/qtdCartasMax)%2 === 0;
+    var sobe = (rodada/qtdCartasMax) % 2 === 0;
     if (sobe) {
-      return (rodada%qtdCartasMax)+1
+      return (rodada % qtdCartasMax) + 1
     }
     return (qtdCartasMax*(rodada/qtdCartasMax))-rodada;
   }
 
   palpite(palpite: number) {
-    this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString()).update({ palpite: palpite });
+    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
+    jogadorDoc.update({ palpite: palpite });
+    
     if (this.proximoJogador() === this.proximoJogador(this.rodada.comeca)) {
       this.criarJogada(this.proximoJogador())
       this.atualizarRodada(Etapa.jogarCarta);
@@ -163,13 +182,16 @@ export class JogoComponent implements OnInit {
   }
 
   criarJogada(jogadorComeca) {
+    const rodadaDoc = this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id);
+    const jogadaCollection = rodadaDoc.collection("jogada");
+
     const jogada = {
       comeca: jogadorComeca,
       maiorCarta: null,
     }
-    this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id).collection("jogada").add(jogada)
-    .then(function(docRef) {
-      this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id).update({ jogadaAtual: docRef.id, vez: jogadorComeca });
+
+    jogadaCollection.add(jogada).then(function(docRef) {
+      rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca });
     }.bind(this))
     .catch(function(error) {
       console.error("Error adding document: ", error);
@@ -200,8 +222,7 @@ export class JogoComponent implements OnInit {
   }
 
   loadRodada(rodadaId) {
-    var query = this.jogoDoc;
-    this.jogadoresJogo = query.collection(config.jogadorDB).snapshotChanges().pipe(
+    this.jogadoresJogo = this.jogoDoc.collection(config.jogadorDB).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
@@ -211,17 +232,17 @@ export class JogoComponent implements OnInit {
       }),
     );
 
-    this.rodadaDoc = query.collection(config.rodadaDB).doc(rodadaId);
+    this.rodadaDoc = this.jogoDoc.collection(config.rodadaDB).doc(rodadaId);
     this.rodadaDoc.snapshotChanges().pipe(
       map(a => {
         const data : any = a.payload.data();
         const id = a.payload.id;
         if (data.manilha) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
-          const jogadaQuery = this.rodadaDoc.collection("jogada").doc(data.jogadaAtual)
+          const jogadaQuery = this.rodadaDoc.collection("jogada").doc(data.jogadaAtual);
           
           jogadaQuery.snapshotChanges().pipe(map(a => {
-            const data= a.payload.data() as Jogada;
+            const data = a.payload.data() as Jogada;
             if (data.maiorCarta) data.maiorCartaObj = Carta.fromString(data.maiorCarta);
             const id = a.payload.id;
             return { id, ...data };
@@ -241,7 +262,7 @@ export class JogoComponent implements OnInit {
       })
     ).subscribe(rodada => this.rodada = rodada)
 
-    this.jogadores = query.collection(config.rodadaDB).doc(rodadaId).collection("jogadores").snapshotChanges().pipe(
+    this.jogadores = this.jogoDoc.collection(config.rodadaDB).doc(rodadaId).collection("jogadores").snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();

@@ -32,10 +32,10 @@ export class Baralho {
     this.cartas.push(new Carta(cartaValor.J, naipeValor.espadas, 'J', 'espadas', '🂫'));
     this.cartas.push(new Carta(cartaValor.J, naipeValor.copas, 'J', 'copas', '🂻'));
     this.cartas.push(new Carta(cartaValor.J, naipeValor.paus, 'J', 'paus', '🃛'));
-    this.cartas.push(new Carta(cartaValor.K, naipeValor.ouros, 'K', 'ouros', '🃌'));
-    this.cartas.push(new Carta(cartaValor.K, naipeValor.espadas, 'K', 'espadas', '🂬'));
-    this.cartas.push(new Carta(cartaValor.K, naipeValor.copas, 'K', 'copas', '🂼'));
-    this.cartas.push(new Carta(cartaValor.K, naipeValor.paus, 'K', 'paus', '🃜'));
+    this.cartas.push(new Carta(cartaValor.K, naipeValor.ouros, 'K', 'ouros', '🃎'));
+    this.cartas.push(new Carta(cartaValor.K, naipeValor.espadas, 'K', 'espadas', '🂮'));
+    this.cartas.push(new Carta(cartaValor.K, naipeValor.copas, 'K', 'copas', '🂾'));
+    this.cartas.push(new Carta(cartaValor.K, naipeValor.paus, 'K', 'paus', '🃞'));
     this.cartas.push(new Carta(cartaValor.A, naipeValor.ouros, 'A', 'ouros', '🃁'));
     this.cartas.push(new Carta(cartaValor.A, naipeValor.espadas, 'A', 'espadas', '🂡'));
     this.cartas.push(new Carta(cartaValor.A, naipeValor.copas, 'A', 'copas', '🂱'));
