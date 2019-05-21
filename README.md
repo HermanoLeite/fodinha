@@ -66,3 +66,8 @@ O modelo de dados foi pensado conforme o jogo foi construído, e tenho minhas d�
 Está da seguinte forma:
 
 ![modelo de dados](/src/docs/modeloDeDados.png)
+
+## Projeto Rodando
+https://fodinha-9daef.firebaseapp.com
+
+
