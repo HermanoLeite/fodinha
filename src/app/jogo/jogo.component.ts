@@ -29,9 +29,11 @@ export class JogoComponent implements OnInit {
   jogoDoc: AngularFirestoreDocument<any>;
   rodadaDoc: AngularFirestoreDocument<any>;
   Etapa: Etapa;
+  visaoCarta: boolean = true;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
+    this.visaoCarta = this.jogoService.getVisaoCarta();
   }
 
   async jogarCarta(cartaJogadorIndex) {
@@ -105,6 +107,11 @@ export class JogoComponent implements OnInit {
 
     jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
     jogadorDoc.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
+  }
+
+  toggleVisaoCarta() {
+    this.visaoCarta = !this.visaoCarta;
+    this.jogoService.setVisaoCarta(this.visaoCarta);
   }
 
   jogoFinalizado() : boolean {

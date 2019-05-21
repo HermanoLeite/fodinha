@@ -86,7 +86,6 @@ export class JogoService {
         return Promise.all(allPromises);
     }
 
-
     atualizaQuemFezJogada(rodadaQuery, maiorCartaJogador) {
         return new Promise(resolve => {
             if (maiorCartaJogador !== null) {
@@ -107,6 +106,19 @@ export class JogoService {
 
     seJogoEmpatado(jogadoresParticipantes) {
         return jogadoresParticipantes.length < 1;
+    }
+
+    getVisaoCarta() : boolean {
+        var visaoCarta = this.cookieService.get("visaoCarta");
+        if (visaoCarta === undefined || visaoCarta === null) {
+            visaoCarta = "true";
+            this.setVisaoCarta(visaoCarta);
+        }  
+        return visaoCarta === "true";
+    }
+
+    setVisaoCarta(visaoCarta) {
+        this.cookieService.set("visaoCarta", visaoCarta );
     }
 
     async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
