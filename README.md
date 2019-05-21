@@ -66,6 +66,3 @@ O modelo de dados foi pensado conforme o jogo foi construído, e tenho minhas d�
 Está da seguinte forma:
 
 ![modelo de dados](/src/docs/modeloDeDados.png)
-
-## tasks
-O Backlog das atividades estão no [trello](https://trello.com/b/31NPr2F0/fodinha)
