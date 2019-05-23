@@ -110,7 +110,7 @@ export class JogoService {
 
     getVisaoCarta() : boolean {
         var visaoCarta = this.cookieService.get("visaoCarta");
-        if (visaoCarta === undefined || visaoCarta === null) {
+        if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
             visaoCarta = "true";
             this.setVisaoCarta(visaoCarta)
         }  
