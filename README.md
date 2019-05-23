@@ -10,7 +10,7 @@ Sinta-se a vontade para contribuir com o projeto ;)
 ## O jogo
 
 ### Overview
-Fodinha é um jogo individual que pode ser jogado com 2 a 8 jogadores (até possível jogar com mais, mas fica meio palha)
+Fodinha é um jogo que pode ser jogado com 2 a 8 jogadores (até possível jogar com mais, mas fica meio palha)
 Ganha o último jogador que permanecer no jogo com vida.
 Cada jogador começa o jogo com 5 vidas, e vai as perdendo conforme vai errando o palpite nas rodadas.
 
