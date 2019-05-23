@@ -23,6 +23,7 @@ import { FormsModule } from "@angular/forms";
 import { CookieService } from 'ngx-cookie-service';
 import { JogadaComponent } from './jogada/jogada.component';
 import { JogoInitComponent } from './jogo-init/jogo-init.component';
+import { CartaComponent } from './cartas/carta.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { JogoInitComponent } from './jogo-init/jogo-init.component';
     JogadorComponent,
     RodadaComponent,
     JogadaComponent,
+    CartaComponent,
     JogoInitComponent
   ],
   imports: [

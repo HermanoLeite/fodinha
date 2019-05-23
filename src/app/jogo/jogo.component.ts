@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { config } from '../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
-import {  AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
 import { Baralho } from '../cartas/baralho'
 import { Carta, combate } from '../cartas/carta'
 import { Jogada } from '../jogada/jogada.model'

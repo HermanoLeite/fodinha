@@ -112,7 +112,7 @@ export class JogoService {
         var visaoCarta = this.cookieService.get("visaoCarta");
         if (visaoCarta === undefined || visaoCarta === null) {
             visaoCarta = "true";
-            this.setVisaoCarta(visaoCarta);
+            this.setVisaoCarta(visaoCarta)
         }  
         return visaoCarta === "true";
     }
