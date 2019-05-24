@@ -13,7 +13,7 @@
           <td>{{i + 1}}</td>
           <td>{{jogador.nome}}</td>
           <td>{{jogador.cor}}</td>
-          <td>{{jogador.comecar}}</td>
+          <td>{{jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
           <td *ngIf="jogadorDocId">
             <button (click)="removerJogador(jogador)" *ngIf="!jogador.removido">remover</button>
             <p (click)="removerJogador(jogador)" *ngIf="jogador.removido">removido</p>
@@ -39,15 +39,13 @@
         </div>
       </form>
     </div>
-    <div class="row" *ngIf="jogadorDocId && jogadorAtual">
-      <div class="col-md-6">
-        <button *ngIf="!jogadorAtual.removido" class="btn btn-success" (click)="comecarJogo()">
-          Começar
-        </button>
-        <button *ngIf="jogadorAtual.removido" class="btn btn-success" (click)="retornarAoJogo()">
-          Retornar
-        </button>
-      </div>
+    <div class="col-md-6" *ngIf="jogadorDocId && jogadorAtual">
+      <button *ngIf="!jogadorAtual.removido" class="btn btn-success" (click)="comecarJogo()">
+        Começar
+      </button>
+      <button *ngIf="jogadorAtual.removido" class="btn btn-success" (click)="retornarAoJogo()">
+        Retornar
+      </button>
     </div>
   </div>
   
