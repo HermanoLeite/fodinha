@@ -30,6 +30,7 @@ export class JogoComponent implements OnInit {
   rodadaDoc: AngularFirestoreDocument<any>;
   Etapa: Etapa;
   visaoCarta: boolean = true;
+  jogando: boolean = false;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
@@ -37,22 +38,27 @@ export class JogoComponent implements OnInit {
   }
 
   async jogarCarta(cartaJogadorIndex) {
+    if (this.jogando) {
+      return;
+    }
+    this.jogando = true;
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
     this.realizarJogada(carta);
 
-    if (this.proximoJogador() !== this.jogada.comeca) {
+    if (this.proximoJogador() === this.jogada.comeca) {
+      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, this.jogada.maiorCartaJogador);
+      
+      if (this.jogadorJogando.cartas.length !== 0) {
+        this.comecarNovaJogada(this.jogada.maiorCartaJogador, this.jogada.comeca)
+      }
+      else {
+        this.encerrarJogada();
+      }
+    }
+    else {
       this.atualizarRodada();
-      return;
     }
-    
-    await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, this.jogada.maiorCartaJogador);
-
-    if (this.jogadorJogando.cartas.length === 0) {
-      this.encerrarJogada();
-      return;
-    }
-
-    this.comecarNovaJogada(this.jogada.maiorCartaJogador, this.jogada.comeca)
+    this.jogando = false;
   }
 
   comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
@@ -102,7 +108,7 @@ export class JogoComponent implements OnInit {
 
     if (cartaCombate === combate.empate) {
       this.jogada.maiorCartaJogador = null;
-      jogadaDoc.update({ maiorCarta: null, maiorCartaJogador: this.jogada.maiorCartaJogador });
+      jogadaDoc.update({ maiorCartaJogador: this.jogada.maiorCartaJogador });
     }
 
     jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });

@@ -4,8 +4,8 @@ import { JogoService } from '../jogo/jogo.service';
 @Component({
   selector: 'carta',
   template: `<div [ngClass]="{'cartaVermelha': cartaVermelha(naipe)}">
-              <p *ngIf="showCartaImg()" class="carta">{{img}}</p>
-              <p *ngIf="!showCartaImg()">{{carta}} de {{naipe}}</p>
+              <span *ngIf="showCartaImg()" class="carta">{{img}}</span>
+              <span *ngIf="!showCartaImg()">{{carta}} de {{naipe}}</span>
             <div>`,
   styleUrls: ['./carta.component.css']
 })
