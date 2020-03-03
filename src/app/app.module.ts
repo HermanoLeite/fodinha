@@ -45,7 +45,12 @@ import { CartaComponent } from './cartas/carta.component';
     AngularFireStorageModule,
     BrowserAnimationsModule,
   ],
-  providers: [JogoService, JogadorService, RodadaService, CookieService ],
+  providers: [
+    JogoService, 
+    JogadorService, 
+    RodadaService, 
+    CookieService 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

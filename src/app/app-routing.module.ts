@@ -6,12 +6,13 @@ import { JogoInitComponent } from './jogo-init/jogo-init.component';
 
 const routes: Routes = [
   { path: '', component: JogoInitComponent },
-  { path: 'jogo/:id', component: JogoComponent },
   { path: 'jogador/:id', component: JogadorComponent },
+  { path: 'jogo/:id', component: JogoComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+
+export class AppRoutingModule {}

@@ -19,5 +19,5 @@ export class AppComponent {
     this.cookieService.set("userId", "" );
     this.cookieService.set("jogoId", "" );
     this.router.navigate(['/']);
-    }
+  }
 }
