@@ -20,11 +20,12 @@ import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
 import { JogadorService } from './containers/jogador/jogador.service';
 import { JogoService } from './containers/jogo/jogo.service';
-
 import { JogadaComponent } from './components/jogada/jogada.component';
 import { RodadaComponent } from './components/rodada/rodada.component';
 import { CartaComponent } from './components/cartas/carta.component';
 import { RodadaService } from './components/rodada/rodada.service';
+import { CriarJogoComponent } from './components/criar-jogo/criar-jogo.component';
+import { ListarJogosComponent } from './components/listar-jogos/listar-jogos.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,9 @@ import { RodadaService } from './components/rodada/rodada.service';
     RodadaComponent,
     JogadaComponent,
     CartaComponent,
-    JogoInitComponent
+    JogoInitComponent,
+    CriarJogoComponent,
+    ListarJogosComponent
   ],
   imports: [
     BrowserModule,
