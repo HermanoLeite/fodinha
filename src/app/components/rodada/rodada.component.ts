@@ -1,5 +1,5 @@
 import { RodadaService } from './rodada.service';
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,8 +9,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-rodada',
-  templateUrl: './rodada.component.html',
-  styleUrls: ['./rodada.component.css']
+  templateUrl: './rodada.component.html'
 })
 export class RodadaComponent implements OnInit {
   rodadas: Observable<any[]>;

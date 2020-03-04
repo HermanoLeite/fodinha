@@ -1,4 +1,4 @@
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { Jogo } from './jogo.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';

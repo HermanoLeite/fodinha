@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { map } from 'rxjs/operators';
 import { Jogo } from '../jogo/jogo.model';
 import { Status } from '../jogo/jogo.status';
