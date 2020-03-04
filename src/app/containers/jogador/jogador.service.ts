@@ -1,5 +1,5 @@
 import { CookieService } from 'ngx-cookie-service';
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { Jogador } from './jogador.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';

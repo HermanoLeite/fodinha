@@ -2,13 +2,13 @@ import { JogoService } from './jogo.service';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
-import { Baralho } from '../cartas/baralho'
-import { Carta, combate } from '../cartas/carta'
-import { Jogada } from '../jogada/jogada.model'
+import { AngularFirestore, AngularFirestoreDocument  } from '@angular/fire/firestore';
+import { Baralho } from '../../components/cartas/baralho'
+import { Carta, combate } from '../../components/cartas/carta'
+import { Jogada } from '../../components/jogada/jogada.model'
 
 @Component({
   selector: 'app-jogo',

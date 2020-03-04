@@ -1,5 +1,5 @@
 import { JogadorService } from './jogador.service';
-import { config } from '../collection.config';
+import { config } from '../../collection.config';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,8 +10,7 @@ import { Status } from '../jogo/jogo.status';
 
 @Component({
   selector: 'app-jogador',
-  templateUrl: './jogador.component.html',
-  styleUrls: ['./jogador.component.css']
+  templateUrl: './jogador.component.html'
 })
 export class JogadorComponent implements OnInit {
   jogadores;

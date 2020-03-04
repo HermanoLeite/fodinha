@@ -1,7 +1,7 @@
-import { config } from '../collection.config';
-import { Rodada } from './rodada.model';
-import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { Injectable } from '@angular/core';
+import { config } from '../../collection.config';
+import { Rodada } from './rodada.model';
 
 @Injectable()
 export class RodadaService {
