@@ -24,8 +24,8 @@ import { JogadaComponent } from './components/jogada/jogada.component';
 import { RodadaComponent } from './components/rodada/rodada.component';
 import { CartaComponent } from './components/cartas/carta.component';
 import { RodadaService } from './components/rodada/rodada.service';
-import { CriarJogoComponent } from './components/criar-jogo/criar-jogo.component';
-import { ListarJogosComponent } from './components/listar-jogos/listar-jogos.component';
+import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
+import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
 
 @NgModule({
   declarations: [

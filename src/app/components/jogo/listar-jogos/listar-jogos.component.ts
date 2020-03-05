@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { config } from '../../collection.config';
+import { config } from '../../../collection.config';
 import { Status } from 'src/app/containers/jogo/jogo.status';
 import { Router } from '@angular/router';
-import { JogoService } from 'src/app/containers/jogo/jogo.service';
 import { Jogo } from 'src/app/containers/jogo/jogo.model';
 import { map } from 'rxjs/operators';
 
