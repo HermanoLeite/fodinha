@@ -1,0 +1,19 @@
+<table class="table table-hover">
+  <tr>
+    <th>#</th>
+    <th>Jogador</th>
+    <th>Cor</th>
+    <th>Começar</th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+    <td>{{i + 1}}</td>
+    <td>{{jogador.nome}}</td>
+    <td>{{jogador.cor}}</td>
+    <td>{{jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
+    <td *ngIf="jogadorDocId">
+      <button (click)="removerJogador(jogador)" *ngIf="!jogador.removido">remover</button>
+      <p (click)="removerJogador(jogador)" *ngIf="jogador.removido">removido</p>
+    </td>
+  </tr>
+</table>

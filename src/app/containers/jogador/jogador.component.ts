@@ -1,17 +1,21 @@
-import { JogadorService } from './jogador.service';
-import { config } from '../../collection.config';
-import { Component, OnInit } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Jogador } from './jogador.model';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+
+import { map } from 'rxjs/operators';
+
+import { config } from '../../collection.config';
+
+import { Jogador } from './jogador.model';
+import { JogadorService } from '../../service/jogador.service';
 import { Jogo } from '../jogo/jogo.model';
 import { Status } from '../jogo/jogo.status';
 
 @Component({
-  selector: 'app-jogador',
+  selector: 'jogador',
   templateUrl: './jogador.component.html'
 })
+
 export class JogadorComponent implements OnInit {
   jogadores;
   jogadorNome: string;
@@ -27,10 +31,13 @@ export class JogadorComponent implements OnInit {
   };
   jogoId: string;
   jogo: Jogo;
-  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private router: Router, private route: ActivatedRoute) { }
-
+  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private router: Router, private route: ActivatedRoute) { 
+  }
+  
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
+    console.log('começar jogo');
+    console.log(JSON.stringify(this.jogadorAtual));
     this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
     const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
     
@@ -58,39 +65,39 @@ export class JogadorComponent implements OnInit {
     this.jogadorService.deletejogador(id, this.jogoId);
   }
 
-  removerJogador(jogador) {
-    jogador.removido = true;
-    this.jogadorService.updatejogador(jogador.id, jogador, this.jogoId);
-  }
-
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
     this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
   }
 
+  buscaIdDoPath() : string  {
+    return this.route.snapshot.paramMap.get("id");
+  }
 
   ngOnInit() {
-    this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.jogoId = this.buscaIdDoPath();
     this.jogadorService.setJogo(this.jogoId);
     this.jogadorDocId = this.jogadorService.jogadorCriado();
-    this.jogadores = this.db.collection(config.jogoDB).doc(this.jogoId).collection(config.jogadorDB).snapshotChanges()
-    .pipe(
+
+    var jogoDB = this.db.collection(config.jogoDB).doc(this.jogoId);
+    var jogadorDB = jogoDB.collection(config.jogadorDB);
+    console.log('on init do jogador component');
+    jogadorDB.snapshotChanges().pipe(
       map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data() as Jogador;
-          const id = a.payload.doc.id;
-          
+        return actions.map(({ payload }) => {
+          const data = payload.doc.data() as Jogador;
+          const id = payload.doc.id;
+          console.log('jogadorDocId => ', this.jogadorDocId);
+          console.log('id => ', id);
+          console.log('jogadorAtual => ', JSON.stringify(this.jogadorAtual  ));
           if (id === this.jogadorDocId) {
             this.jogadorAtual = data;
           }
-
-          return { id, ...data };
         });
       }),
-    );
+    ).subscribe();
 
-    var query = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    query.snapshotChanges().pipe(
+    jogoDB.snapshotChanges().pipe(
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;

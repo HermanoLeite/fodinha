@@ -1,10 +1,10 @@
 import { CookieService } from 'ngx-cookie-service';
-import { config } from '../../collection.config';
-import { Jogador } from './jogador.model';
+import { config } from '../collection.config';
+import { Jogador } from '../containers/jogador/jogador.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
-import { JogoService } from '../jogo/jogo.service';
+import { JogoService } from '../containers/jogo/jogo.service';
 
 @Injectable()
 export class JogadorService {
@@ -35,7 +35,7 @@ export class JogadorService {
         });
     }
 
-    jogadorCriado () {
+    jogadorCriado () : string{
         return this.cookieService.get("userId");
     }
 

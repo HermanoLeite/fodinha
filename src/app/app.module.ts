@@ -18,7 +18,7 @@ import { JogadorComponent } from './containers/jogador/jogador.component';
 import { JogoComponent } from './containers/jogo/jogo.component';
 import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
-import { JogadorService } from './containers/jogador/jogador.service';
+import { JogadorService } from './service/jogador.service';
 import { JogoService } from './containers/jogo/jogo.service';
 import { JogadaComponent } from './components/jogada/jogada.component';
 import { RodadaComponent } from './components/rodada/rodada.component';
@@ -26,6 +26,7 @@ import { CartaComponent } from './components/cartas/carta.component';
 import { RodadaService } from './components/rodada/rodada.service';
 import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
+import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogo
     CartaComponent,
     JogoInitComponent,
     CriarJogoComponent,
-    ListarJogosComponent
+    ListarJogosComponent,
+    ListarJogadoresComponent
   ],
   imports: [
     BrowserModule,
