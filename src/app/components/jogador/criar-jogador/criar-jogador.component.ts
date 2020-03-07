@@ -21,6 +21,7 @@ export class CriarJogadorComponent implements OnInit  {
   jogadorCor : string;
   jogadorDocId : string = "";
   jogoId : string;
+  jogo : Jogo;
   constructor( 
     private db: AngularFirestore, 
     private jogadorService: JogadorService, 
@@ -30,7 +31,6 @@ export class CriarJogadorComponent implements OnInit  {
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
-    console.log("começar jogador => ", JSON.stringify(this.jogadorAtual))
     this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
     const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
     
@@ -42,12 +42,10 @@ export class CriarJogadorComponent implements OnInit  {
 
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
-    console.log("jogadorAtual => ", JSON.stringify(this.jogoId))
     this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
   }
 
   async criarJogador() {
-    console.log("jogoId =>", this.jogoId)
     if (this.jogadorNome !== null) {
       this.jogadorAtual = {
           nome: this.jogadorNome,
@@ -72,6 +70,7 @@ export class CriarJogadorComponent implements OnInit  {
 
     var jogoDB = this.db.collection(config.jogoDB).doc(this.jogoId);
     var jogadorDB = jogoDB.collection(config.jogadorDB);
+    
     jogadorDB.snapshotChanges().pipe(
       map(actions => {
         return actions.map(({ payload }) => {
@@ -83,5 +82,17 @@ export class CriarJogadorComponent implements OnInit  {
         });
       }),
     ).subscribe();
+    
+    jogoDB.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Jogo;
+        const id = a.payload.id;
+        
+        if (this.jogadorDocId && data.status === Status.jogando)
+          this.router.navigate(['jogo', this.jogoId]);
+
+        return { id, ...data };
+      })
+    ).subscribe(jogo => this.jogo = jogo);  
   }
 }
