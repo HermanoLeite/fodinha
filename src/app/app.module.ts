@@ -1,29 +1,33 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { environment } from '../environments/environment';
-import { JogoComponent } from './jogo/jogo.component';
-import { JogoService } from './jogo/jogo.service';
-import { JogadorComponent } from './jogador/jogador.component';
-import { JogadorService } from './jogador/jogador.service';
-import { RodadaComponent } from './rodada/rodada.component';
-import { RodadaService } from './rodada/rodada.service';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
 
+import { AppRoutingModule } from './app-routing.module';
+
 import { CookieService } from 'ngx-cookie-service';
-import { JogadaComponent } from './jogada/jogada.component';
-import { JogoInitComponent } from './jogo-init/jogo-init.component';
-import { CartaComponent } from './cartas/carta.component';
+
+import { environment } from '../environments/environment';
+
+import { AppComponent } from './containers/index/app.component';
+import { JogadorComponent } from './containers/jogador/jogador.component';
+import { JogoComponent } from './containers/jogo/jogo.component';
+import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
+
+import { JogadorService } from './service/jogador.service';
+import { JogoService } from './containers/jogo/jogo.service';
+import { JogadaComponent } from './components/jogada/jogada.component';
+import { RodadaComponent } from './components/rodada/rodada.component';
+import { CartaComponent } from './components/cartas/carta.component';
+import { RodadaService } from './components/rodada/rodada.service';
+import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
+import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
+import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
+import { CriarJogadorComponent } from './components/jogador/criar-jogador/criar-jogador.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +37,11 @@ import { CartaComponent } from './cartas/carta.component';
     RodadaComponent,
     JogadaComponent,
     CartaComponent,
-    JogoInitComponent
+    JogoInitComponent,
+    CriarJogoComponent,
+    ListarJogosComponent,
+    ListarJogadoresComponent,
+    CriarJogadorComponent
   ],
   imports: [
     BrowserModule,
