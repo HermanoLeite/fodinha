@@ -23,7 +23,6 @@ export class RodadaComponent implements OnInit {
       let rodada = {
           nome: this.rodadaNome
       };
-      console.log(rodada);
       this.rodadaService.addrodada(rodada);
       this.rodadaNome = "";
     }
@@ -34,7 +33,6 @@ export class RodadaComponent implements OnInit {
     .pipe(map(actions => {
       return actions.map(a => {
         const data = a.payload.doc.data() as Rodada;
-        console.log("atualizacao!! - " + JSON.stringify(data));
         const id = a.payload.doc.id;
         return { id, ...data };
       });

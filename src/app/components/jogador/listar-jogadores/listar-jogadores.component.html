@@ -12,8 +12,8 @@
     <td>{{jogador.cor}}</td>
     <td>{{jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
     <td *ngIf="jogadorDocId">
-      <button (click)="removerJogador(jogador)" *ngIf="!jogador.removido">remover</button>
-      <p (click)="removerJogador(jogador)" *ngIf="jogador.removido">removido</p>
+      <button (click)="removerJogador(jogador, jogoId)" *ngIf="!jogador.removido">remover</button>
+      <p *ngIf="jogador.removido">removido</p>
     </td>
   </tr>
 </table>

@@ -27,6 +27,7 @@ import { RodadaService } from './components/rodada/rodada.service';
 import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
+import { CriarJogadorComponent } from './components/jogador/criar-jogador/criar-jogador.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/
     JogoInitComponent,
     CriarJogoComponent,
     ListarJogosComponent,
-    ListarJogadoresComponent
+    ListarJogadoresComponent,
+    CriarJogadorComponent
   ],
   imports: [
     BrowserModule,

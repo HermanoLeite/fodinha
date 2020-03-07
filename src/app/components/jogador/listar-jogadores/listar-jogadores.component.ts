@@ -33,7 +33,6 @@ export class ListarJogadoresComponent implements OnInit {
       map(actions => {
         return actions.map(({ payload }) => {
           const data = payload.doc.data() as Jogador;
-          console.log(JSON.stringify(data));
           const id = payload.doc.id;
 
           return { id, ...data };

@@ -3,31 +3,9 @@
     <div class="col-md-6">
       <listar-jogadores></listar-jogadores>
     </div>
-    <div *ngIf="!jogadorDocId" class="col-md-6">
-      <form #f="ngForm">
-        <div class="form-group">
-          <input [(ngModel)]="jogadorNome" name="jogadorNome" type="text" class="form-control" placeholder="Criar jogador" required>
-          <input [(ngModel)]="jogadorCor" name="jogadorCor" type="text" class="form-control" placeholder="Cor" required>
-        </div>
-
-        <p *ngIf="loading">
-          <i class="fa fa-spinner fa-spin"></i>
-        </p>
-
-        <div class="form-group">
-          <button class="btn btn-primary" [disabled]="!f.valid" (click)="saveJogador()">
-            Entrar
-          </button>
-        </div>
-      </form>
-    </div>
-    <div *ngIf="jogadorDocId && jogadorAtual">
-      <button *ngIf="!jogadorAtual.removido" class="btn btn-success" (click)="comecarJogo()">
-        Começar
-      </button>
-      <button *ngIf="jogadorAtual.removido" class="btn btn-success" (click)="retornarAoJogo()">
-        Retornar
-      </button>
+    <div class="col-md-6">
+      <criar-jogador>
+      </criar-jogador>
     </div>
   </div>
 </section>
