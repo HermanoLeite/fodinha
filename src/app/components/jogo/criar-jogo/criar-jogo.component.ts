@@ -4,8 +4,7 @@ import { JogoService } from '../../../service/jogo.service';
 
 @Component({
   selector: 'criar-jogo',
-  templateUrl: './criar-jogo.component.html',
-  styleUrls: ['./criar-jogo.component.css']
+  templateUrl: './criar-jogo.component.html'
 })
 export class CriarJogoComponent {
   criandoJogo: Boolean = false; 

@@ -1,39 +1,14 @@
 <section>
   <div class="row justify-content-end">
-    <label class="switch col-xs-2 col-xs-offset-10">
-      <input type="checkbox" [checked]="visaoCarta" (click)="toggleVisaoCarta()">
-      <span class="slider round"></span>
-    </label>
+    <visao-carta></visao-carta>
   </div>
   <div class="row">
     <div class="col-md-3">
-      <table class="table table-hover">
-        <tr>
-          <th>Vidas</th>
-          <th>Jogador</th>
-        </tr>
-        <tr *ngFor="let jogador of jogadoresJogo | async; let i = index;" [attr.data-index]="i" [ngClass]="{'fora': !jogador.jogando || jogador.removido}">
-          <td>{{jogador.vidas}}</td>
-          <td>{{jogador.nome}}</td>
-        </tr>
-      </table>
+      <placar-jogo [jogadoresJogo]="jogadoresJogo"></placar-jogo>
     </div>
     <div class="col-md-6">
-        <table class="table table-hover"  *ngIf="rodada">
-          <tr>
-            <th>Ordem</th>
-            <th>Jogador</th>
-            <th>Palpite</th>
-            <th>Fez</th>
-          </tr>
-          <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i" [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
-            <td>{{jogador.id}}</td>
-            <td>{{jogador.nome}}</td>
-            <td>{{jogador.palpite}}</td>
-            <td>{{jogador.fez}}</td>
-          </tr> 
-        </table>
-      </div>
+      <placar-rodada [jogadores]="jogadores" [rodada]="rodada"></placar-rodada>
+    </div>
   </div>
 
   <div class="row" *ngIf="jogo">
@@ -99,16 +74,3 @@
   <h1 *ngIf="jogo.vencedor">Jogador Ganhador: {{jogo.vencedor}}</h1>
   <h1 *ngIf="!jogo.vencedor">O Jogo não teve um vencedor :(</h1>
 </div>
-
-
-<style>
-.comeca {
-  color: red;
-}
-.vez {
-  font-weight: bold;
-}
-.fora {
-  text-decoration-line: line-through;
-}
-</style>

@@ -13,7 +13,6 @@ import { Jogada } from '../../components/jogada/jogada.model'
 @Component({
   selector: 'app-jogo',
   templateUrl: './jogo.component.html',
-  styleUrls: ['./jogo.component.css']
 })
 export class JogoComponent implements OnInit {
   jogo:any;
@@ -29,12 +28,42 @@ export class JogoComponent implements OnInit {
   jogoDoc: AngularFirestoreDocument<any>;
   rodadaDoc: AngularFirestoreDocument<any>;
   Etapa: Etapa;
-  visaoCarta: boolean = true;
   jogando: boolean = false;
 
   constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
-    this.visaoCarta = this.jogoService.getVisaoCarta();
+  }
+
+  comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
+    if (maiorCartaJogador !== null) {
+      this.criarJogada(maiorCartaJogador);
+      this.atualizarRodada(null, maiorCartaJogador);
+    }
+    else {
+      this.criarJogada(jogadorComecouJogada);
+      this.atualizarRodada(null, jogadorComecouJogada);
+    }
+  }
+
+  realizarJogada(carta: Carta) {
+    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
+    const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
+    const jogadasCollection = jogadaDoc.collection("jogadas");
+    
+    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
+    
+    if (cartaCombate === combate.ganhou) {
+      this.jogada.maiorCartaJogador = this.jogadorJogando.id;
+      jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: this.jogada.maiorCartaJogador });
+    }
+
+    if (cartaCombate === combate.empate) {
+      this.jogada.maiorCartaJogador = null;
+      jogadaDoc.update({ maiorCartaJogador: this.jogada.maiorCartaJogador });
+    }
+
+    jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
+    jogadorDoc.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
   }
 
   async jogarCarta(cartaJogadorIndex) {
@@ -61,17 +90,6 @@ export class JogoComponent implements OnInit {
     this.jogando = false;
   }
 
-  comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
-    if (maiorCartaJogador !== null) {
-      this.criarJogada(maiorCartaJogador);
-      this.atualizarRodada(null, maiorCartaJogador);
-    }
-    else {
-      this.criarJogada(jogadorComecouJogada);
-      this.atualizarRodada(null, jogadorComecouJogada);
-    }
-  }
-
   async encerrarJogada() {
     var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
     await this.jogoService.atualizaJogadorVida(this.jogoDoc, jogadoresVidasPerdidas);
@@ -92,32 +110,6 @@ export class JogoComponent implements OnInit {
     else {
       this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
     }
-  }
-
-  realizarJogada(carta: Carta) {
-    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
-    const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
-    const jogadasCollection = jogadaDoc.collection("jogadas");
-    
-    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
-    
-    if (cartaCombate === combate.ganhou) {
-      this.jogada.maiorCartaJogador = this.jogadorJogando.id;
-      jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: this.jogada.maiorCartaJogador });
-    }
-
-    if (cartaCombate === combate.empate) {
-      this.jogada.maiorCartaJogador = null;
-      jogadaDoc.update({ maiorCartaJogador: this.jogada.maiorCartaJogador });
-    }
-
-    jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
-    jogadorDoc.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
-  }
-
-  toggleVisaoCarta() {
-    this.visaoCarta = !this.visaoCarta;
-    this.jogoService.setVisaoCarta(this.visaoCarta);
   }
 
   jogoFinalizado() : boolean {
@@ -183,7 +175,7 @@ export class JogoComponent implements OnInit {
     return (qtdCartasMax*(rodada/qtdCartasMax))-rodada;
   }
 
-  palpite(palpite: number) {
+  palpite(palpite: number) : void {
     const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
     jogadorDoc.update({ palpite: palpite });
     
@@ -194,7 +186,7 @@ export class JogoComponent implements OnInit {
     this.atualizarRodada();
   }
 
-  criarJogada(jogadorComeca) {
+  criarJogada(jogadorComeca) : void {
     const rodadaDoc = this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id);
     const jogadaCollection = rodadaDoc.collection("jogada");
 
@@ -211,12 +203,12 @@ export class JogoComponent implements OnInit {
     });
   }
   
-  proximoJogador(jogadorVez: number = null) {
+  proximoJogador(jogadorVez: number = null) : number {
     const vez = jogadorVez === null ?  this.rodada.vez+1 : jogadorVez+1 ;
     return vez === this.rodada.jogadoresCount ? 0 : vez;
   }
 
-  atualizarRodada(rodadaEtapa: number = null, jogadorVez: number = null) {
+  atualizarRodada(rodadaEtapa: number = null, jogadorVez: number = null) : void {
     var query = this.jogoDoc;
     var rodadaQuery = query.collection(config.rodadaDB).doc(this.rodada.id);
     const rodadaVez = jogadorVez === null ? this.proximoJogador() : jogadorVez;
@@ -234,7 +226,7 @@ export class JogoComponent implements OnInit {
     }
   }
 
-  loadRodada(rodadaId) {
+  loadRodada(rodadaId) : void {
     this.jogadoresJogo = this.jogoDoc.collection(config.jogadorDB).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {

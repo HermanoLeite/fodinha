@@ -8,8 +8,7 @@ import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'listar-jogos',
-  templateUrl: './listar-jogos.component.html',
-  styleUrls: ['./listar-jogos.component.css']
+  templateUrl: './listar-jogos.component.html'
 })
 export class ListarJogosComponent implements OnInit {
   jogoDB;
