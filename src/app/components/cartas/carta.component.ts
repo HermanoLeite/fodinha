@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { JogoService } from '../../containers/jogo/jogo.service';
+import { JogoService } from '../../service/jogo.service';
 
 @Component({
   selector: 'carta',

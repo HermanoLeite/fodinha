@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Jogador } from 'src/app/containers/jogador/jogador.model';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { JogadorService } from 'src/app/service/jogador.service';
+import { JogadorService } from '../../../service/jogador.service';
 
 import { config } from '../../../collection.config';
 

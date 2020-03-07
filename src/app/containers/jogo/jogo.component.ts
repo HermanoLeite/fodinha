@@ -1,4 +1,4 @@
-import { JogoService } from './jogo.service';
+import { JogoService } from '../../service/jogo.service';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { JogoService } from 'src/app/containers/jogo/jogo.service';
+import { JogoService } from '../../../service/jogo.service';
 
 @Component({
   selector: 'criar-jogo',

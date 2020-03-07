@@ -19,7 +19,7 @@ import { JogoComponent } from './containers/jogo/jogo.component';
 import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
 import { JogadorService } from './service/jogador.service';
-import { JogoService } from './containers/jogo/jogo.service';
+import { JogoService } from './service/jogo.service';
 import { JogadaComponent } from './components/jogada/jogada.component';
 import { RodadaComponent } from './components/rodada/rodada.component';
 import { CartaComponent } from './components/cartas/carta.component';

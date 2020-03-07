@@ -4,7 +4,7 @@ import { Jogador } from '../containers/jogador/jogador.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
-import { JogoService } from '../containers/jogo/jogo.service';
+import { JogoService } from './jogo.service';
 
 @Injectable()
 export class JogadorService {
