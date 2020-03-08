@@ -21,9 +21,7 @@ import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 import { JogadorService } from './service/jogador.service';
 import { JogoService } from './service/jogo.service';
 import { JogadaComponent } from './components/jogada/jogada.component';
-import { RodadaComponent } from './components/rodada/rodada.component';
 import { CartaComponent } from './components/cartas/carta.component';
-import { RodadaService } from './components/rodada/rodada.service';
 import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
@@ -31,13 +29,16 @@ import { CriarJogadorComponent } from './components/jogador/criar-jogador/criar-
 import { VisaoCartaComponent } from './components/cartas/visao-carta/visao-carta.component';
 import { PlacarJogoComponent } from './components/jogo/placar/placar-jogo/placar-jogo.component';
 import { PlacarRodadaComponent } from './components/jogo/placar/placar-rodada/placar-rodada.component';
+import { JogadasComponent } from './components/jogo/jogadas/jogadas.component';
+import { GanhadorComponent } from './components/jogo/ganhador/ganhador.component';
+import { BotaoComecarComponent } from './components/jogo/botao-comecar/botao-comecar.component';
+import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-palpite.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     JogoComponent,
     JogadorComponent,
-    RodadaComponent,
     JogadaComponent,
     CartaComponent,
     JogoInitComponent,
@@ -47,7 +48,11 @@ import { PlacarRodadaComponent } from './components/jogo/placar/placar-rodada/pl
     CriarJogadorComponent,
     VisaoCartaComponent,
     PlacarJogoComponent,
-    PlacarRodadaComponent
+    PlacarRodadaComponent,
+    JogadasComponent,
+    GanhadorComponent,
+    BotaoComecarComponent,
+    BotaoPalpiteComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +64,7 @@ import { PlacarRodadaComponent } from './components/jogo/placar/placar-rodada/pl
     AngularFireStorageModule,
     BrowserAnimationsModule,
   ],
-  providers: [JogoService, JogadorService, RodadaService, CookieService ],
+  providers: [JogoService, JogadorService, CookieService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,9 @@
+<div *ngIf="etapaPalpite(rodada.etapa)">
+  Palpite
+  <div class="btn btn-success" (click)="palpite(0)">
+    0
+  </div>
+  <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
+    {{i+1}}
+  </div>
+</div>

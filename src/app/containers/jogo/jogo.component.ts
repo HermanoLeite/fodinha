@@ -1,7 +1,7 @@
 import { JogoService } from '../../service/jogo.service';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { config } from '../../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
@@ -30,7 +30,7 @@ export class JogoComponent implements OnInit {
   Etapa: Etapa;
   jogando: boolean = false;
 
-  constructor(private db: AngularFirestore, private jogoService: JogoService, private router: Router, private route: ActivatedRoute) { 
+  constructor(private db: AngularFirestore, private jogoService: JogoService, private route: ActivatedRoute) { 
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
   }
 
@@ -118,61 +118,13 @@ export class JogoComponent implements OnInit {
     
     return false;
   }
-
-  etapaEmbaralhar(etapa) {
-    return etapa === Etapa.embaralhar;
-  }
-
+  
   etapaPalpite(etapa) {
     return etapa === Etapa.palpite;
   }
 
   etapaJogarCarta(etapa) {
     return etapa === Etapa.jogarCarta;
-  }
-  
-  comecar() {
-    this.jogada = null;
-    this.embaralhar();
-    this.tirarManilha();
-    this.distribuir();
-  }
-
-  embaralhar() {
-    this.baralho = new Baralho();
-    this.baralho.embaralhar();
-  }
-
-  tirarManilha() {
-    var manilha = this.baralho.tirarVira();
-    this.atualizarManilha(manilha);
-  }
-
-  atualizarManilha(manilha) {
-    this.rodadaDoc.update({manilha: JSON.stringify(manilha)});
-  }
-  
-  distribuir() {
-    var query = this.jogoDoc;
-    var quantidadeCartas = this.quantidadeDeCartas(this.baralho.quantidadeCartasTotal(), this.rodada.jogadoresCount, this.jogo.rodada);
-
-    for (var i = 0; i < this.rodada.jogadoresCount; i++) {
-      var cartaArray = this.baralho.tiraCartas(quantidadeCartas)
-      query.collection(config.rodadaDB).doc(this.jogo.rodada.toString()).collection("jogadores").doc(i.toString()).update({cartas: cartaArray.map(carta => JSON.stringify(carta))});
-    }
-    this.atualizarRodada(Etapa.palpite);
-  }
-
-  quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number) : number {
-    var qtdCartasMax = qtdCartasTotal-1/jogadoresCount;
-    if (rodada < qtdCartasMax) {
-      return rodada+1;
-    }
-    var sobe = (rodada/qtdCartasMax) % 2 === 0;
-    if (sobe) {
-      return (rodada % qtdCartasMax) + 1
-    }
-    return (qtdCartasMax*(rodada/qtdCartasMax))-rodada;
   }
 
   palpite(palpite: number) : void {
