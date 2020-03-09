@@ -36,11 +36,11 @@ export class JogoComponent implements OnInit {
 
   comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
     if (maiorCartaJogador !== null) {
-      this.criarJogada(maiorCartaJogador);
+      this.criarJogada(maiorCartaJogador, this.rodadaDoc);
       this.atualizarRodada(null, maiorCartaJogador);
     }
     else {
-      this.criarJogada(jogadorComecouJogada);
+      this.criarJogada(jogadorComecouJogada, this.rodadaDoc);
       this.atualizarRodada(null, jogadorComecouJogada);
     }
   }
@@ -119,27 +119,11 @@ export class JogoComponent implements OnInit {
     return false;
   }
   
-  etapaPalpite(etapa) {
-    return etapa === Etapa.palpite;
-  }
-
   etapaJogarCarta(etapa) {
     return etapa === Etapa.jogarCarta;
   }
 
-  palpite(palpite: number) : void {
-    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
-    jogadorDoc.update({ palpite: palpite });
-    
-    if (this.proximoJogador() === this.proximoJogador(this.rodada.comeca)) {
-      this.criarJogada(this.proximoJogador())
-      this.atualizarRodada(Etapa.jogarCarta);
-    }
-    this.atualizarRodada();
-  }
-
-  criarJogada(jogadorComeca) : void {
-    const rodadaDoc = this.jogoDoc.collection(config.rodadaDB).doc(this.rodada.id);
+  criarJogada(jogadorComeca, rodadaDoc) : void {
     const jogadaCollection = rodadaDoc.collection("jogada");
 
     const jogada = {
@@ -147,12 +131,9 @@ export class JogoComponent implements OnInit {
       maiorCarta: null,
     }
 
-    jogadaCollection.add(jogada).then(function(docRef) {
-      rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca });
-    }.bind(this))
-    .catch(function(error) {
-      console.error("Error adding document: ", error);
-    });
+    jogadaCollection.add(jogada)
+      .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
+      .catch((error) => console.error("Error adding document: ", error));
   }
   
   proximoJogador(jogadorVez: number = null) : number {

@@ -11,6 +11,7 @@ export class BotaoPalpiteComponent {
   @Input() rodadaDoc: AngularFirestoreDocument;
   @Input() jogador: any;
   @Input() rodada: any;
+  @Input() criarJogada: Function;
   constructor() { 
     console.log("-------------- construindo botao palpite");
   }
@@ -26,7 +27,7 @@ export class BotaoPalpiteComponent {
     const proximoJogador = this.proximoJogador();
 
     if (this.rodada.comeca === this.rodada.vez) {
-      this.criarJogada(proximoJogador)
+      this.criarJogada(proximoJogador, this.rodadaDoc)
       this.rodadaDoc.update({ etapa: Etapa.jogarCarta, vez: proximoJogador });
     }
     else {
@@ -37,21 +38,5 @@ export class BotaoPalpiteComponent {
   proximoJogador() : number {
     const vez = this.rodada.vez + 1;
     return vez === this.rodada.jogadoresCount ? 0 : vez;
-  }
-
-  criarJogada(jogadorComeca) : void {
-    const jogadaCollection = this.rodadaDoc.collection("jogada");
-
-    const jogada = {
-      comeca: jogadorComeca,
-      maiorCarta: null,
-    }
-
-    jogadaCollection.add(jogada).then(function(docRef) {
-      this.rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca });
-    }.bind(this))
-    .catch(function(error) {
-      console.error("Error adding document: ", error);
-    });
   }
 }
