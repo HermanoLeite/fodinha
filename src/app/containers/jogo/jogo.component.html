@@ -35,8 +35,13 @@
           [quantidadeDeJogadores]="rodada.jogadoresCount" 
           [rodada]="jogo.rodada"
           [etapa]="rodada.etapa"></botao-comecar>
-
-        <div *ngIf="etapaPalpite(rodada.etapa)">
+        
+        <botao-palpite
+          [etapa]="rodada.etapa"
+          [rodadaDoc]="rodadaDoc"
+          [jogador]="jogadorJogando"
+          [rodada]="rodada"></botao-palpite>
+        <!-- <div *ngIf="etapaPalpite(rodada.etapa)">
           Palpite
           <div class="btn btn-success" (click)="palpite(0)">
             0
@@ -44,7 +49,7 @@
           <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
             {{i+1}}
           </div>
-        </div>
+        </div> -->
       </div>
       <h4>Suas cartas</h4>
       <div class="row">
