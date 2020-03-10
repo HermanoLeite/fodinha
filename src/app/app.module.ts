@@ -33,6 +33,7 @@ import { JogadasComponent } from './components/jogo/jogadas/jogadas.component';
 import { GanhadorComponent } from './components/jogo/ganhador/ganhador.component';
 import { BotaoComecarComponent } from './components/jogo/botao-comecar/botao-comecar.component';
 import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-palpite.component';
+import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-pal
     JogadasComponent,
     GanhadorComponent,
     BotaoComecarComponent,
-    BotaoPalpiteComponent
+    BotaoPalpiteComponent,
+    MaoJogadorComponent
   ],
   imports: [
     BrowserModule,

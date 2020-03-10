@@ -33,85 +33,7 @@ export class JogoComponent implements OnInit {
   constructor(private db: AngularFirestore, private jogoService: JogoService, private route: ActivatedRoute) { 
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
   }
-
-  comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
-    if (maiorCartaJogador !== null) {
-      this.criarJogada(maiorCartaJogador, this.rodadaDoc);
-      this.atualizarRodada(null, maiorCartaJogador);
-    }
-    else {
-      this.criarJogada(jogadorComecouJogada, this.rodadaDoc);
-      this.atualizarRodada(null, jogadorComecouJogada);
-    }
-  }
-
-  realizarJogada(carta: Carta) {
-    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogadorJogando.id.toString());
-    const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
-    const jogadasCollection = jogadaDoc.collection("jogadas");
-    
-    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
-    
-    if (cartaCombate === combate.ganhou) {
-      this.jogada.maiorCartaJogador = this.jogadorJogando.id;
-      jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: this.jogada.maiorCartaJogador });
-    }
-
-    if (cartaCombate === combate.empate) {
-      this.jogada.maiorCartaJogador = null;
-      jogadaDoc.update({ maiorCartaJogador: this.jogada.maiorCartaJogador });
-    }
-
-    jogadasCollection.add( { jogador: this.jogadorJogando.nome, ...carta, jogadorId: this.jogadorJogando.id });
-    jogadorDoc.update({ cartas: this.jogadorJogando.cartas.map(carta => JSON.stringify(carta)) });
-  }
-
-  async jogarCarta(cartaJogadorIndex) {
-    if (this.jogando) {
-      return;
-    }
-    this.jogando = true;
-    var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
-    this.realizarJogada(carta);
-
-    if (this.proximoJogador() === this.jogada.comeca) {
-      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, this.jogada.maiorCartaJogador);
-      
-      if (this.jogadorJogando.cartas.length !== 0) {
-        this.comecarNovaJogada(this.jogada.maiorCartaJogador, this.jogada.comeca)
-      }
-      else {
-        this.encerrarJogada();
-      }
-    }
-    else {
-      this.atualizarRodada();
-    }
-    this.jogando = false;
-  }
-
-  async encerrarJogada() {
-    var jogadoresVidasPerdidas = await this.jogoService.jogadoresVidasPerdidas(this.jogo.id, this.rodada.id);
-    await this.jogoService.atualizaJogadorVida(this.jogoDoc, jogadoresVidasPerdidas);
-    var jogadoresProximaRodada = await this.jogoService.jogadoresProximaRodada(this.jogo.id);
-
-    if (this.jogoService.seJogoFinalizado(jogadoresProximaRodada)) {
-      this.encerrarJogo(jogadoresProximaRodada);
-    }
-    else {
-      this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
-    }
-  }
-
-  async encerrarJogo(jogadoresProximaRodada) {
-    if(this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
-      this.jogoDoc.update({status: Status.finalizado});
-    }
-    else {
-      this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
-    }
-  }
-
+  
   jogoFinalizado() : boolean {
     if (this.jogo)
       return this.jogo.status === Status.finalizado;
@@ -134,29 +56,6 @@ export class JogoComponent implements OnInit {
     jogadaCollection.add(jogada)
       .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
       .catch((error) => console.error("Error adding document: ", error));
-  }
-  
-  proximoJogador(jogadorVez: number = null) : number {
-    const vez = jogadorVez === null ?  this.rodada.vez+1 : jogadorVez+1 ;
-    return vez === this.rodada.jogadoresCount ? 0 : vez;
-  }
-
-  atualizarRodada(rodadaEtapa: number = null, jogadorVez: number = null) : void {
-    var query = this.jogoDoc;
-    var rodadaQuery = query.collection(config.rodadaDB).doc(this.rodada.id);
-    const rodadaVez = jogadorVez === null ? this.proximoJogador() : jogadorVez;
-
-    if (rodadaEtapa) {
-      if (rodadaEtapa === Etapa.jogarCarta) {
-        rodadaQuery.update({ etapa: rodadaEtapa });
-      }
-      else {
-        rodadaQuery.update({ etapa: rodadaEtapa, vez: rodadaVez });
-      }
-    }
-    else {
-      rodadaQuery.update({ vez: rodadaVez });
-    }
   }
 
   loadRodada(rodadaId) : void {
