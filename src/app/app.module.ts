@@ -3,9 +3,10 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
+
+import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -60,9 +61,9 @@ import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.c
     BrowserModule,
     FormsModule,
     AppRoutingModule,
+    AngularFireAuthModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AngularFireAuthModule,
     AngularFireStorageModule,
     BrowserAnimationsModule,
   ],

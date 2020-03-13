@@ -1,19 +1,18 @@
 import { Component, Input } from '@angular/core';
 import { JogoService } from '../../service/jogo.service';
+import { Carta } from './carta';
 
 @Component({
   selector: 'carta',
-  template: `<div [ngClass]="{'cartaVermelha': cartaVermelha(naipe)}">
-              <span *ngIf="showCartaImg()" class="carta">{{img}}</span>
-              <span *ngIf="!showCartaImg()">{{carta}} de {{naipe}}</span>
+  template: `<div [ngClass]="{'cartaVermelha': cartaVermelha(carta.naipe)}">
+              <span *ngIf="showCartaImg()" class="carta">{{carta.img}}</span>
+              <span *ngIf="!showCartaImg()">{{carta.carta}} de {{carta.naipe}}</span>
             <div>`,
   styleUrls: ['./carta.component.css']
 })
 
 export class CartaComponent {
-  @Input() carta: string;
-  @Input() naipe: string;
-  @Input() img: string;
+  @Input() carta: Carta;
 
   constructor(private jogoService: JogoService) { }
   

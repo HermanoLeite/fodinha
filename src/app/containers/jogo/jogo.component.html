@@ -13,16 +13,14 @@
 
   <div class="row" *ngIf="jogo">
     <div class="col-xs-6">
-      <p>Jogo: {{jogo.nome}}</p>
-      <p>Rodada: {{jogo.rodada + 1}}</p>
       <div class="row">
         <div *ngIf="rodada && rodada.manilha" class="col-xs-6 col-md-3"> 
           <p>Vira:</p>
-          <carta [img]="rodada.manilha.img" [carta]="rodada.manilha.carta" [naipe]="rodada.manilha.naipe"></carta>
+          <carta [carta]="rodada.manilha"></carta>
         </div>
         <div *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" class="col-xs-6 col-md-3"> 
           <p>Maior:</p>
-          <carta [img]="jogada.maiorCartaObj.img" [carta]="jogada.maiorCartaObj.carta" [naipe]="jogada.maiorCartaObj.naipe"></carta>
+          <carta [carta]="jogada.maiorCartaObj"></carta>
         </div>
       </div>
     </div>
@@ -55,15 +53,6 @@
           [jogada]="jogada"
           [jogo]="jogo"
           [criarJogada]="criarJogada"></mao-jogador>
-        <!-- <h4>Suas cartas</h4>
-        <div *ngFor="let cartaJogador of jogadorJogando.cartas; let i = index;" class="col-xs-6 col-md-3">
-          <div *ngIf="!(jogadorJogando.id == rodada.vez && etapaJogarCarta(rodada.etapa))">
-            <carta [img]="cartaJogador.img" [carta]="cartaJogador.carta" [naipe]="cartaJogador.naipe"></carta>
-          </div>
-          <button *ngIf="jogadorJogando.id == rodada.vez && etapaJogarCarta(rodada.etapa)" (click)="jogarCarta(i)">
-            <carta [img]="cartaJogador.img" [carta]="cartaJogador.carta" [naipe]="cartaJogador.naipe"></carta>
-          </button>
-        </div> -->
       </div>
     </div>
   </div>

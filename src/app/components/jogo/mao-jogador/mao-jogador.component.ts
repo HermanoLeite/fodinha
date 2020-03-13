@@ -41,7 +41,6 @@ export class MaoJogadorComponent {
     this.jogando = true;
     var carta = this.cartas.splice(cartaJogadorIndex, 1).pop();
     var vencedor = this.realizarJogada(carta);
-
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
     if (proximoJogador === this.jogada.comeca) {
       await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, vencedor);
