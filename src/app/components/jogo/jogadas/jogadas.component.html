@@ -1,0 +1,10 @@
+<table class="table table-hover" *ngIf="jogadas">
+  <tr>
+    <th>Jogador</th>
+    <th>Carta</th>
+  </tr>
+  <tr *ngFor="let jogadaItem of jogadas">
+    <td>{{jogadaItem.jogador}}</td>
+    <td>{{jogadaItem.carta}} {{jogadaItem.naipe}}</td>
+  </tr>
+</table>

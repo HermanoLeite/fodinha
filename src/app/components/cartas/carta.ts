@@ -17,7 +17,7 @@ export class Carta {
     this.carta = carta;
     this.img = img;
   }
-  
+
   static fromString(carta: string) {
     if (carta === null) return null;
     const cartaObj = JSON.parse(carta);
@@ -25,11 +25,11 @@ export class Carta {
   }
 
   isManilha(vira: Carta) {
-    if(vira.cartaValor === cartaValor.tres) {
+    if (vira.cartaValor === cartaValor.tres) {
       return this.cartaValor === cartaValor.quatro;
     }
     else {
-      return vira.cartaValor === (this.cartaValor-1);
+      return vira.cartaValor === (this.cartaValor - 1);
     }
   }
 
@@ -37,7 +37,7 @@ export class Carta {
     if (cartaAdversaria === null) {
       return combate.ganhou;
     }
-    
+
     if (this.isManilha(vira)) {
       if (this.cartaValor === cartaAdversaria.cartaValor) {
         return this.naipeValor > cartaAdversaria.naipeValor ? combate.ganhou : combate.perdeu;

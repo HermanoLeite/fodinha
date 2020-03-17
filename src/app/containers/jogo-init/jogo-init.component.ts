@@ -6,7 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './jogo-init.component.html',
 })
 export class JogoInitComponent {
-  constructor(private cookieService: CookieService) { 
+  constructor(private cookieService: CookieService) {
     this.cookieService.set("userId", "");
     this.cookieService.set("jogoId", "");
   }

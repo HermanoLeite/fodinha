@@ -1,8 +1,8 @@
-import { config } from '../../collection.config';
-import { Jogo } from './jogo.model';
+import { config } from '../collection.config';
+import { Jogo } from '../containers/jogo/jogo.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Status, Etapa } from './jogo.status';
+import { Status, Etapa } from '../containers/jogo/jogo.status';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()

@@ -1,0 +1,9 @@
+<h4>Suas cartas</h4>
+<div *ngFor="let cartaJogador of cartas; let i = index;" class="col-xs-6 col-md-3">
+  <div *ngIf="!(jogador.id == rodada.vez && etapaJogarCarta())">
+    <carta [carta]="cartaJogador"></carta>
+  </div>
+  <button *ngIf="jogador.id == rodada.vez && etapaJogarCarta()" (click)="jogarCarta(i)">
+    <carta [carta]="cartaJogador"></carta>
+  </button>
+</div>

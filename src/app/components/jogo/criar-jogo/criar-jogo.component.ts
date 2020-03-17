@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { JogoService } from 'src/app/containers/jogo/jogo.service';
+import { JogoService } from '../../../service/jogo.service';
 
 @Component({
   selector: 'criar-jogo',
-  templateUrl: './criar-jogo.component.html',
-  styleUrls: ['./criar-jogo.component.css']
+  templateUrl: './criar-jogo.component.html'
 })
 export class CriarJogoComponent {
   criandoJogo: Boolean = false; 

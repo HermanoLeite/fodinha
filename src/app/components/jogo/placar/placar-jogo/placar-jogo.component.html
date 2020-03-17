@@ -1,0 +1,10 @@
+<table class="table table-hover">
+  <tr>
+    <th>Vidas</th>
+    <th>Jogador</th>
+  </tr>
+  <tr *ngFor="let jogador of jogadoresJogo | async; let i = index;" [attr.data-index]="i" [ngClass]="{'fora': !jogador.jogando || jogador.removido}">
+    <td>{{jogador.vidas}}</td>
+    <td>{{jogador.nome}}</td>
+  </tr>
+</table>

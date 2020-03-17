@@ -8,8 +8,7 @@ import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'listar-jogos',
-  templateUrl: './listar-jogos.component.html',
-  styleUrls: ['./listar-jogos.component.css']
+  templateUrl: './listar-jogos.component.html'
 })
 export class ListarJogosComponent implements OnInit {
   jogoDB;
@@ -17,20 +16,19 @@ export class ListarJogosComponent implements OnInit {
   criandoJogo: Boolean = false;
   jogoNome: String;
   constructor(
-    private db: AngularFirestore, 
-    private router: Router) 
-  { 
+    private db: AngularFirestore,
+    private router: Router) {
     this.jogoDB = this.db.collection(config.jogoDB);
   }
 
   getStatus(status: Status) {
-    if(status == Status.aguardandoJogadores) return "Aguardando Jogadores"
-    if(status == Status.jogando) return "Jogando"
-    if(status == Status.finalizado) return "Finalizado"
+    if (status == Status.aguardandoJogadores) return "Aguardando Jogadores"
+    if (status == Status.jogando) return "Jogando"
+    if (status == Status.finalizado) return "Finalizado"
   }
 
   entrarJogo(jogo) {
-    if(jogo.status === Status.finalizado) {
+    if (jogo.status === Status.finalizado) {
       this.router.navigate(['jogo', jogo.id]);
     }
     else {
@@ -45,15 +43,15 @@ export class ListarJogosComponent implements OnInit {
 
   ngOnInit() {
     this.jogos = this.db.collection(config.jogoDB).snapshotChanges()
-    .pipe(
-      map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data() as Jogo;
-          const id = a.payload.doc.id;
-          
-          return { id, ...data };
-        });
-      }),
-    );
+      .pipe(
+        map(actions => {
+          return actions.map(a => {
+            const data = a.payload.doc.data() as Jogo;
+            const id = a.payload.doc.id;
+
+            return { id, ...data };
+          });
+        }),
+      );
   }
 }
