@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { config } from '../../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
-import { AngularFirestore, AngularFirestoreDocument  } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Baralho } from '../../components/cartas/baralho'
 import { Carta, combate } from '../../components/cartas/carta'
 import { Jogada } from '../../components/jogada/jogada.model'
@@ -15,7 +15,7 @@ import { Jogada } from '../../components/jogada/jogada.model'
   templateUrl: './jogo.component.html',
 })
 export class JogoComponent implements OnInit {
-  jogo:any;
+  jogo: any;
   jogadores: any;
   jogadoresJogo: any;
   rodada: any;
@@ -30,22 +30,22 @@ export class JogoComponent implements OnInit {
   Etapa: Etapa;
   jogando: boolean = false;
 
-  constructor(private db: AngularFirestore, private jogoService: JogoService, private route: ActivatedRoute) { 
+  constructor(private db: AngularFirestore, private jogoService: JogoService, private route: ActivatedRoute) {
     this.jogoDoc = this.db.collection(config.jogoDB).doc(this.route.snapshot.paramMap.get("id"));
   }
-  
-  jogoFinalizado() : boolean {
+
+  jogoFinalizado(): boolean {
     if (this.jogo)
       return this.jogo.status === Status.finalizado;
-    
+
     return false;
   }
-  
+
   etapaJogarCarta(etapa) {
     return etapa === Etapa.jogarCarta;
   }
 
-  criarJogada(jogadorComeca, rodadaDoc) : void {
+  criarJogada(jogadorComeca, rodadaDoc): void {
     const jogadaCollection = rodadaDoc.collection("jogada");
 
     const jogada = {
@@ -58,7 +58,7 @@ export class JogoComponent implements OnInit {
       .catch((error) => console.error("Error adding document: ", error));
   }
 
-  loadRodada(rodadaId) : void {
+  loadRodada(rodadaId): void {
     this.jogadoresJogo = this.jogoDoc.collection(config.jogadorDB).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
@@ -72,12 +72,12 @@ export class JogoComponent implements OnInit {
     this.rodadaDoc = this.jogoDoc.collection(config.rodadaDB).doc(rodadaId);
     this.rodadaDoc.snapshotChanges().pipe(
       map(a => {
-        const data : any = a.payload.data();
+        const data: any = a.payload.data();
         const id = a.payload.id;
         if (data.manilha) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
           const jogadaQuery = this.rodadaDoc.collection("jogada").doc(data.jogadaAtual);
-          
+
           jogadaQuery.snapshotChanges().pipe(map(a => {
             const data = a.payload.data() as Jogada;
             if (data.maiorCarta) data.maiorCartaObj = Carta.fromString(data.maiorCarta);
@@ -94,7 +94,7 @@ export class JogoComponent implements OnInit {
               });
             }),
           ).subscribe(jogadas => this.jogadas = jogadas);
-        } 
+        }
         return { id, ...data };
       })
     ).subscribe(rodada => this.rodada = rodada)
@@ -108,7 +108,7 @@ export class JogoComponent implements OnInit {
           if (data.cartas) {
             data.cartas = data.cartas.map(carta => {
               let cartaObj = Carta.fromString(carta);
-              return cartaObj; 
+              return cartaObj;
             });
           }
 
@@ -128,9 +128,9 @@ export class JogoComponent implements OnInit {
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-          this.loadRodada(data.rodada.toString());
+        this.loadRodada(data.rodada.toString());
         return { id, ...data };
       })
-    ).subscribe(jogo => this.jogo = jogo);  
+    ).subscribe(jogo => this.jogo = jogo);
   }
 }

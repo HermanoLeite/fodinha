@@ -24,13 +24,13 @@ export class MaoJogadorComponent {
   constructor(private jogoService: JogoService) {
     console.log('--------- construindo cartas mão');
   }
-  
-  etapaJogarCarta () {
+
+  etapaJogarCarta() {
     return this.etapa === Etapa.jogarCarta;
   }
-  
-  proximoJogador(rodadaVez: number, jogadoresCount: number) : number {
-    const vez = rodadaVez+1;
+
+  proximoJogador(rodadaVez: number, jogadoresCount: number): number {
+    const vez = rodadaVez + 1;
     return vez === jogadoresCount ? 0 : vez;
   }
 
@@ -44,7 +44,7 @@ export class MaoJogadorComponent {
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
     if (proximoJogador === this.jogada.comeca) {
       await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, vencedor);
-      
+
       if (this.jogador.cartas.length !== 0) {
         this.comecarNovaJogada(vencedor, this.jogada.comeca)
       }
@@ -57,7 +57,7 @@ export class MaoJogadorComponent {
     }
     this.jogando = false;
   }
-  
+
   comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada) {
     if (maiorCartaJogador !== null) {
       this.criarJogada(maiorCartaJogador, this.rodadaDoc);
@@ -73,10 +73,10 @@ export class MaoJogadorComponent {
     const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogador.id.toString());
     const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
     const jogadasCollection = jogadaDoc.collection("jogadas");
-    
+
     const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.manilha);
-    
-    jogadasCollection.add( { jogador: this.jogador.nome, ...carta, jogadorId: this.jogador.id });
+
+    jogadasCollection.add({ jogador: this.jogador.nome, ...carta, jogadorId: this.jogador.id });
     jogadorDoc.update({ cartas: this.jogador.cartas.map(carta => JSON.stringify(carta)) });
 
     if (cartaCombate === combate.ganhou) {
@@ -101,16 +101,16 @@ export class MaoJogadorComponent {
       this.encerrarJogo(jogadoresProximaRodada);
     }
     else {
-      this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada+1);
+      this.jogoService.criarRodada(jogadoresProximaRodada, this.jogo.id, this.jogo.rodada + 1);
     }
   }
 
   async encerrarJogo(jogadoresProximaRodada) {
-    if(this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
-      this.jogoDoc.update({status: Status.finalizado});
+    if (this.jogoService.seJogoEmpatado(jogadoresProximaRodada)) {
+      this.jogoDoc.update({ status: Status.finalizado });
     }
     else {
-      this.jogoDoc.update({status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome});
+      this.jogoDoc.update({ status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome });
     }
   }
 }

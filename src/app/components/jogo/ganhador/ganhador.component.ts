@@ -5,6 +5,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './ganhador.component.html',
 })
 export class GanhadorComponent {
-  @Input() vencedor : string;
+  @Input() vencedor: string;
   constructor() { }
 }

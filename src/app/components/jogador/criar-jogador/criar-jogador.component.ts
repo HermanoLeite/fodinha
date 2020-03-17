@@ -14,27 +14,27 @@ import { Status } from 'src/app/containers/jogo/jogo.status';
   selector: 'criar-jogador',
   templateUrl: './criar-jogador.component.html'
 })
-export class CriarJogadorComponent implements OnInit  {
-  jogadorAtual : Jogador;
+export class CriarJogadorComponent implements OnInit {
+  jogadorAtual: Jogador;
 
-  jogadorNome : string;
-  jogadorCor : string;
-  jogadorDocId : string = "";
-  jogoId : string;
-  jogo : Jogo;
-  constructor( 
-    private db: AngularFirestore, 
-    private jogadorService: JogadorService, 
-    private route: ActivatedRoute, 
-    private router: Router) { 
+  jogadorNome: string;
+  jogadorCor: string;
+  jogadorDocId: string = "";
+  jogoId: string;
+  jogo: Jogo;
+  constructor(
+    private db: AngularFirestore,
+    private jogadorService: JogadorService,
+    private route: ActivatedRoute,
+    private router: Router) {
   }
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
     this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
     const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
-    
-    if(todosJogadoresComecaram) {
+
+    if (todosJogadoresComecaram) {
       this.jogadorService.comecarJogo(this.jogoId);
       this.router.navigate(['jogo', this.jogoId]);
     }
@@ -48,18 +48,18 @@ export class CriarJogadorComponent implements OnInit  {
   async criarJogador() {
     if (this.jogadorNome !== null) {
       this.jogadorAtual = {
-          nome: this.jogadorNome,
-          cor: this.jogadorCor,
-          comecar: false,
-          removido: false,
-          jogando: true,
-          vidas: 5,
+        nome: this.jogadorNome,
+        cor: this.jogadorCor,
+        comecar: false,
+        removido: false,
+        jogando: true,
+        vidas: 5,
       };
       this.jogadorDocId = await this.jogadorService.addjogador(this.jogadorAtual, this.jogoId);
     }
   }
 
-  buscaIdDoPath() : string  {
+  buscaIdDoPath(): string {
     return this.route.snapshot.paramMap.get("id");
   }
 
@@ -70,7 +70,7 @@ export class CriarJogadorComponent implements OnInit  {
 
     var jogoDB = this.db.collection(config.jogoDB).doc(this.jogoId);
     var jogadorDB = jogoDB.collection(config.jogadorDB);
-    
+
     jogadorDB.snapshotChanges().pipe(
       map(actions => {
         return actions.map(({ payload }) => {
@@ -82,17 +82,17 @@ export class CriarJogadorComponent implements OnInit  {
         });
       }),
     ).subscribe();
-    
+
     jogoDB.snapshotChanges().pipe(
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-        
+
         if (this.jogadorDocId && data.status === Status.jogando)
           this.router.navigate(['jogo', this.jogoId]);
 
         return { id, ...data };
       })
-    ).subscribe(jogo => this.jogo = jogo);  
+    ).subscribe(jogo => this.jogo = jogo);
   }
 }

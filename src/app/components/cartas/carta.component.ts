@@ -15,12 +15,12 @@ export class CartaComponent {
   @Input() carta: Carta;
 
   constructor(private jogoService: JogoService) { }
-  
-  showCartaImg() : boolean {
+
+  showCartaImg(): boolean {
     return this.jogoService.getVisaoCarta();
   }
 
-  cartaVermelha(naipe: string) : boolean {
+  cartaVermelha(naipe: string): boolean {
     if (naipe === "ouros" || naipe === "copas") return true;
     return false;
   }

@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { JogoService } from 'src/app/service/jogo.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { JogoService } from 'src/app/service/jogo.service';
 export class VisaoCartaComponent {
   visaoCarta: boolean = true;
 
-  constructor(private jogoService: JogoService) { 
+  constructor(private jogoService: JogoService) {
     this.visaoCarta = this.jogoService.getVisaoCarta();
   }
 

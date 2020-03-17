@@ -4,6 +4,7 @@
     "codelyzer"
   ],
   "rules": {
+    "eofline": true,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
