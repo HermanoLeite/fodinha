@@ -1,4 +1,4 @@
-import { Carta } from '../cartas/carta'
+import { Carta } from './carta'
 
 export interface Jogada {
     comeca: string;

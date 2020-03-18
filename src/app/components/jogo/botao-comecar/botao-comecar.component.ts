@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Baralho } from '../../cartas/baralho';
+import { Baralho } from '../../../models/baralho';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
@@ -8,7 +8,7 @@ import { AngularFirestoreDocument } from '@angular/fire/firestore';
   templateUrl: './botao-comecar.component.html',
 })
 export class BotaoComecarComponent {
-  baralho : Baralho;
+  baralho: Baralho;
 
   @Input() jogadorVez: number;
   @Input() etapa: Etapa;
@@ -16,10 +16,10 @@ export class BotaoComecarComponent {
   @Input() quantidadeDeJogadores: number;
   @Input() rodada: number;
 
-  constructor() { 
+  constructor() {
     console.log("------- construindo botao começar");
   }
-  
+
   etapaEmbaralhar() {
     return this.etapa === Etapa.embaralhar;
   }
@@ -42,7 +42,7 @@ export class BotaoComecarComponent {
 
   distribuir() {
     var quantidadeCartas = this.quantidadeDeCartas(this.baralho.quantidadeCartasTotal(), this.quantidadeDeJogadores, this.rodada);
-    
+
     for (var i = 0; i < this.quantidadeDeJogadores; i++) {
       const cartaArray = this.baralho.tiraCartas(quantidadeCartas);
       const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
@@ -53,29 +53,29 @@ export class BotaoComecarComponent {
     this.atualizarRodada();
   }
 
-  quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number) : number {
-    var qtdCartasMax = qtdCartasTotal-1/jogadoresCount;
+  quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
+    var qtdCartasMax = qtdCartasTotal - 1 / jogadoresCount;
     if (rodada < qtdCartasMax) {
-      return rodada+1;
+      return rodada + 1;
     }
-    var sobe = (rodada/qtdCartasMax) % 2 === 0;
+    var sobe = (rodada / qtdCartasMax) % 2 === 0;
     if (sobe) {
       return (rodada % qtdCartasMax) + 1
     }
-    return (qtdCartasMax*(rodada/qtdCartasMax))-rodada;
+    return (qtdCartasMax * (rodada / qtdCartasMax)) - rodada;
   }
 
   atualizarManilha(manilha) {
-    this.rodadaDoc.update({manilha: JSON.stringify(manilha)});
+    this.rodadaDoc.update({ manilha: JSON.stringify(manilha) });
   }
 
   entregarCarta(jogador, cartaArrayJSON) {
     this.rodadaDoc.collection("jogadores")
-                  .doc(jogador)
-                  .update({cartas: cartaArrayJSON});
+      .doc(jogador)
+      .update({ cartas: cartaArrayJSON });
   }
 
-  atualizarRodada() : void {
+  atualizarRodada(): void {
     var proximoJogador = this.jogadorVez + 1;
     if (proximoJogador === this.quantidadeDeJogadores) {
       proximoJogador = 0;
