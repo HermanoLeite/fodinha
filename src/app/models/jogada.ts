@@ -1,6 +1,6 @@
 import { Carta } from './carta'
 
-export interface Jogada {
+export class Jogada {
     comeca: string;
     maiorCarta: string;
     maiorCartaObj: Carta;

@@ -7,23 +7,23 @@ import { AngularFirestoreDocument } from '@angular/fire/firestore';
   templateUrl: './botao-palpite.component.html',
 })
 export class BotaoPalpiteComponent {
-  @Input() etapa : Etapa;
+  @Input() etapa: Etapa;
   @Input() rodadaDoc: AngularFirestoreDocument;
   @Input() jogador: any;
   @Input() rodada: any;
   @Input() criarJogada: Function;
-  constructor() { 
+  constructor() {
     console.log("-------------- construindo botao palpite");
   }
-  
+
   etapaPalpite() {
     return this.etapa === Etapa.palpite;
   }
-  
-  palpite(palpite: number) : void {
+
+  palpite(palpite: number): void {
     const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogador.id.toString());
     jogadorDoc.update({ palpite: palpite });
-    
+
     const proximoJogador = this.proximoJogador();
 
     if (this.rodada.comeca === this.rodada.vez) {
@@ -35,7 +35,7 @@ export class BotaoPalpiteComponent {
     }
   }
 
-  proximoJogador() : number {
+  proximoJogador(): number {
     const vez = this.rodada.vez + 1;
     return vez === this.rodada.jogadoresCount ? 0 : vez;
   }
