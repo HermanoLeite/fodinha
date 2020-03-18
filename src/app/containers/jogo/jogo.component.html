@@ -14,11 +14,11 @@
   <div class="row" *ngIf="jogo">
     <div class="col-xs-6">
       <div class="row">
-        <div *ngIf="rodada && rodada.manilha" class="col-xs-6 col-md-3"> 
+        <div *ngIf="rodada && rodada.manilha" class="col-xs-6 col-md-3">
           <p>Vira:</p>
           <carta [carta]="rodada.manilha"></carta>
         </div>
-        <div *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" class="col-xs-6 col-md-3"> 
+        <div *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" class="col-xs-6 col-md-3">
           <p>Maior:</p>
           <carta [carta]="jogada.maiorCartaObj"></carta>
         </div>
@@ -27,32 +27,16 @@
 
     <div class=col-xs-6 *ngIf="jogadorJogando">
       <div *ngIf="jogadorJogando.id == rodada.vez">
-        <botao-comecar
-          [rodadaDoc]="rodadaDoc"
-          [jogadorVez]="rodada.vez"
-          [quantidadeDeJogadores]="rodada.jogadoresCount" 
-          [rodada]="jogo.rodada"
-          [etapa]="rodada.etapa"></botao-comecar>
-        
-        <botao-palpite
-          [etapa]="rodada.etapa"
-          [rodadaDoc]="rodadaDoc"
-          [jogador]="jogadorJogando"
-          [rodada]="rodada"
+        <botao-comecar [rodadaDoc]="rodadaDoc" [jogadorVez]="rodada.vez" [quantidadeDeJogadores]="rodada.jogadoresCount"
+          [rodada]="jogo.rodada" [etapa]="rodada.etapa"></botao-comecar>
+
+        <botao-palpite [etapa]="rodada.etapa" [rodadaDoc]="rodadaDoc" [jogador]="jogadorJogando" [rodada]="rodada"
           [criarJogada]="criarJogada"></botao-palpite>
       </div>
       <div class="row">
-        <mao-jogador
-          [cartas]="jogadorJogando.cartas"
-          [rodada]="rodada"
-          [jogador]="jogadorJogando"
-          [etapa]="rodada.etapa"
-          [manilha]="rodada.manilha"
-          [rodadaDoc]="rodadaDoc"
-          [jogoDoc]="jogoDoc"
-          [jogada]="jogada"
-          [jogo]="jogo"
-          [criarJogada]="criarJogada"></mao-jogador>
+        <mao-jogador [rodada]="rodada" [jogador]="jogadorJogando" [rodadaDoc]="rodadaDoc" [jogoDoc]="jogoDoc"
+          [jogada]="jogada" [jogo]="jogo" [criarJogada]="criarJogada">
+        </mao-jogador>
       </div>
     </div>
   </div>

@@ -6,9 +6,8 @@ import { config } from '../../collection.config';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Baralho } from '../../components/cartas/baralho'
-import { Carta, combate } from '../../components/cartas/carta'
-import { Jogada } from '../../components/jogada/jogada.model'
+import { Carta, combate } from '../../models/carta'
+import { Jogada } from '../../models/jogada'
 
 @Component({
   selector: 'app-jogo',
@@ -21,7 +20,6 @@ export class JogoComponent implements OnInit {
   rodada: any;
   jogadorJogandoId: any;
   jogadorJogando: any;
-  baralho: Baralho;
   jogada: any = null;
   jogadas: any = null;
   todosPalpitaram: boolean = false;

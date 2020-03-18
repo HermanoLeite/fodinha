@@ -1,9 +1,5 @@
-import { Injectable } from '@angular/core';
 import { Carta, cartaValor, naipeValor } from './carta'
 
-@Injectable({
-  providedIn: 'root'
-})
 export class Baralho {
   public cartas = new Array<Carta>();
 

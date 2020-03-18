@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Carta, combate } from '../../cartas/carta';
+import { Carta, combate } from '../../../models/carta';
 import { Etapa, Status } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { JogoService } from 'src/app/service/jogo.service';
@@ -10,13 +10,10 @@ import { JogoService } from 'src/app/service/jogo.service';
 })
 export class MaoJogadorComponent {
 
-  @Input() cartas: Array<Carta>;
   @Input() rodada: any;
   @Input() jogador: any;
   @Input() jogada: any;
   @Input() jogo: any;
-  @Input() etapa: Etapa;
-  @Input() manilha: Carta;
   @Input() rodadaDoc: AngularFirestoreDocument;
   @Input() jogoDoc: AngularFirestoreDocument;
   @Input() criarJogada: Function;
@@ -26,7 +23,7 @@ export class MaoJogadorComponent {
   }
 
   etapaJogarCarta() {
-    return this.etapa === Etapa.jogarCarta;
+    return this.rodada.etapa === Etapa.jogarCarta;
   }
 
   proximoJogador(rodadaVez: number, jogadoresCount: number): number {
@@ -39,7 +36,7 @@ export class MaoJogadorComponent {
       return;
     }
     this.jogando = true;
-    var carta = this.cartas.splice(cartaJogadorIndex, 1).pop();
+    var carta = this.jogador.cartas.splice(cartaJogadorIndex, 1).pop();
     var vencedor = this.realizarJogada(carta);
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
     if (proximoJogador === this.jogada.comeca) {
@@ -74,7 +71,7 @@ export class MaoJogadorComponent {
     const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
     const jogadasCollection = jogadaDoc.collection("jogadas");
 
-    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.manilha);
+    const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
 
     jogadasCollection.add({ jogador: this.jogador.nome, ...carta, jogadorId: this.jogador.id });
     jogadorDoc.update({ cartas: this.jogador.cartas.map(carta => JSON.stringify(carta)) });
