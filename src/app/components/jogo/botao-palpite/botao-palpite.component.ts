@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
+import { BotaoPalpiteController } from './botao-palpite.controller';
+
 @Component({
   selector: 'botao-palpite',
   templateUrl: './botao-palpite.component.html',
@@ -21,22 +23,9 @@ export class BotaoPalpiteComponent {
   }
 
   palpite(palpite: number): void {
-    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogador.id.toString());
-    jogadorDoc.update({ palpite: palpite });
+    let botaoController =
+      new BotaoPalpiteController(this.rodadaDoc, this.rodada, this.criarJogada, this.jogador);
 
-    const proximoJogador = this.proximoJogador();
-
-    if (this.rodada.comeca === this.rodada.vez) {
-      this.criarJogada(proximoJogador, this.rodadaDoc)
-      this.rodadaDoc.update({ etapa: Etapa.jogarCarta, vez: proximoJogador });
-    }
-    else {
-      this.rodadaDoc.update({ vez: proximoJogador });
-    }
-  }
-
-  proximoJogador(): number {
-    const vez = this.rodada.vez + 1;
-    return vez === this.rodada.jogadoresCount ? 0 : vez;
+    botaoController.palpite(palpite);
   }
 }
