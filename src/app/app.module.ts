@@ -27,7 +27,7 @@ import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.comp
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
 import { CriarJogadorComponent } from './components/jogador/criar-jogador/criar-jogador.component';
-import { VisaoCartaComponent } from './components/cartas/visao-carta/visao-carta.component';
+import { ToggleVisaoCartaComponent } from './components/cartas/toggle-visao-carta/toggle-visao-carta.component';
 import { PlacarJogoComponent } from './components/jogo/placar/placar-jogo/placar-jogo.component';
 import { PlacarRodadaComponent } from './components/jogo/placar/placar-rodada/placar-rodada.component';
 import { JogadasComponent } from './components/jogo/jogadas/jogadas.component';
@@ -47,7 +47,7 @@ import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.c
     ListarJogosComponent,
     ListarJogadoresComponent,
     CriarJogadorComponent,
-    VisaoCartaComponent,
+    ToggleVisaoCartaComponent,
     PlacarJogoComponent,
     PlacarRodadaComponent,
     JogadasComponent,

@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { CartaService } from 'src/app/service/carta.service';
 
 @Component({
-  selector: 'visao-carta',
+  selector: 'toggle-visao-carta',
   template: `<label class="switch col-xs-2 col-xs-offset-10">
                 <input type="checkbox" [checked]="visaoCarta" (click)="toggleVisaoCarta()">
                 <span class="slider round"></span>
               </label>`,
-  styleUrls: ['./visao-carta.component.css']
+  styleUrls: ['./toggle-visao-carta.component.css']
 })
-export class VisaoCartaComponent {
+export class ToggleVisaoCartaComponent {
   visaoCarta: boolean = true;
 
   constructor(private cartaService: CartaService) {
