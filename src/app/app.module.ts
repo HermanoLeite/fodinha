@@ -19,9 +19,10 @@ import { JogadorComponent } from './containers/jogador/jogador.component';
 import { JogoComponent } from './containers/jogo/jogo.component';
 import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
+import { CartaService } from './service/carta.service';
 import { JogadorService } from './service/jogador.service';
 import { JogoService } from './service/jogo.service';
-import { CartaComponent } from './components/cartas/carta.component';
+import { CartaComponent } from './components/cartas/carta/carta.component';
 import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
@@ -65,7 +66,7 @@ import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.c
     AngularFireStorageModule,
     BrowserAnimationsModule,
   ],
-  providers: [JogoService, JogadorService, CookieService],
+  providers: [JogoService, JogadorService, CartaService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

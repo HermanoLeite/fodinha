@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JogoService } from 'src/app/service/jogo.service';
+import { CartaService } from 'src/app/service/carta.service';
 
 @Component({
   selector: 'visao-carta',
@@ -12,12 +12,11 @@ import { JogoService } from 'src/app/service/jogo.service';
 export class VisaoCartaComponent {
   visaoCarta: boolean = true;
 
-  constructor(private jogoService: JogoService) {
-    this.visaoCarta = this.jogoService.getVisaoCarta();
+  constructor(private cartaService: CartaService) {
+    this.visaoCarta = this.cartaService.getVisaoCarta();
   }
 
-  toggleVisaoCarta() {
-    this.visaoCarta = !this.visaoCarta;
-    this.jogoService.setVisaoCarta(this.visaoCarta);
+  async toggleVisaoCarta() {
+    this.visaoCarta = await this.cartaService.setVisaoCarta(!this.visaoCarta);
   }
 }

@@ -7,20 +7,24 @@ import { JogoService } from '../../../service/jogo.service';
   templateUrl: './criar-jogo.component.html'
 })
 export class CriarJogoComponent {
-  criandoJogo: Boolean = false; 
+  criandoJogo: Boolean = false;
   jogoNome: String;
-  constructor(private db: AngularFirestore, private jogoService: JogoService) {}
+  constructor(private db: AngularFirestore, private jogoService: JogoService) { }
 
-  criarJogo() {
-    this.criandoJogo = !this.criandoJogo;
+  iniciar() {
+    this.criandoJogo = true;
     this.jogoNome = null;
   }
 
-  salvarJogo() {
+  fechar() {
+    this.criandoJogo = false;
+    this.jogoNome = null;
+  }
+
+  salvar() {
     if (this.jogoNome !== null) {
       this.jogoService.criarJogoInicio(this.jogoNome);
     }
-    this.criandoJogo = !this.criandoJogo;
-    this.jogoNome = null;
+    this.fechar();
   }
 }
