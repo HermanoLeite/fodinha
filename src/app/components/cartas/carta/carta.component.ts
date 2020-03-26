@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { JogoService } from '../../service/jogo.service';
-import { Carta } from '../../models/carta';
+import { CartaService } from '../../../service/carta.service';
+import { Carta } from '../../../models/carta';
 
 @Component({
   selector: 'carta',
@@ -14,10 +14,10 @@ import { Carta } from '../../models/carta';
 export class CartaComponent {
   @Input() carta: Carta;
 
-  constructor(private jogoService: JogoService) { }
+  constructor(private cartaService: CartaService) { }
 
   showCartaImg(): boolean {
-    return this.jogoService.getVisaoCarta();
+    return this.cartaService.getVisaoCarta();
   }
 
   cartaVermelha(naipe: string): boolean {

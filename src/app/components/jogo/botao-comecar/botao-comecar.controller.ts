@@ -61,7 +61,7 @@ export class BotaoComecarController {
     }
 
     entregarCarta(jogador, cartaArrayJSON) {
-        this.rodadaDoc.collection("jogadores")
+        this.rodadaDoc.collection("Jogadores")
             .doc(jogador)
             .update({ cartas: cartaArrayJSON });
     }

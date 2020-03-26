@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JogadorService } from 'src/app/service/jogador.service';
 import { ActivatedRoute } from '@angular/router';
-import { config } from '../../../collection.config';
+import { collections } from '../../../context';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Jogador } from 'src/app/containers/jogador/jogador.model';
 import { map } from 'rxjs/operators';
@@ -13,9 +13,9 @@ import { map } from 'rxjs/operators';
 export class ListarJogadoresComponent implements OnInit {
   jogadores;
   jogoId: string;
-  jogadorDocId : string;
-  
-  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private route: ActivatedRoute) { 
+  jogadorDocId: string;
+
+  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private route: ActivatedRoute) {
     this.jogoId = route.snapshot.paramMap.get("id");
     this.jogadorDocId = jogadorService.jogadorCriado();
   }
@@ -25,9 +25,9 @@ export class ListarJogadoresComponent implements OnInit {
     this.jogadorService.updatejogador(jogador.id, jogador, this.jogoId);
   }
 
-  ngOnInit() {  
-    var jogoDB = this.db.collection(config.jogoDB).doc(this.jogoId);
-    var jogadorDB = jogoDB.collection(config.jogadorDB);
+  ngOnInit() {
+    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
+    var jogadorDB = jogoDB.collection(collections.jogador);
 
     this.jogadores = jogadorDB.snapshotChanges().pipe(
       map(actions => {
