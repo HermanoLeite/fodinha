@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { config } from '../../../collection.config';
+import { collections } from '../../../context';
 import { Status } from 'src/app/containers/jogo/jogo.status';
 import { Router } from '@angular/router';
 import { Jogo } from 'src/app/containers/jogo/jogo.model';
@@ -18,7 +18,7 @@ export class ListarJogosComponent implements OnInit {
   constructor(
     private db: AngularFirestore,
     private router: Router) {
-    this.jogoDB = this.db.collection(config.jogoDB);
+    this.jogoDB = this.db.collection(collections.jogo);
   }
 
   getStatus(status: Status) {
@@ -42,7 +42,7 @@ export class ListarJogosComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jogos = this.db.collection(config.jogoDB).snapshotChanges()
+    this.jogos = this.db.collection(collections.jogo).snapshotChanges()
       .pipe(
         map(actions => {
           return actions.map(a => {

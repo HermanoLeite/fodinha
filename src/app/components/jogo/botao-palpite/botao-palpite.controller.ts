@@ -14,7 +14,7 @@ export class BotaoPalpiteController {
     private jogador: any;
 
     palpite(palpite: number): void {
-        const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogador.id.toString());
+        const jogadorDoc = this.rodadaDoc.collection("Jogadores").doc(this.jogador.id.toString());
         jogadorDoc.update({ palpite: palpite });
 
         const proximoJogador = this.proximoJogador();

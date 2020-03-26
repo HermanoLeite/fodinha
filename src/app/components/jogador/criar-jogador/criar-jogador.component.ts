@@ -4,7 +4,7 @@ import { Jogador } from 'src/app/containers/jogador/jogador.model';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { JogadorService } from '../../../service/jogador.service';
 
-import { config } from '../../../collection.config';
+import { collections } from '../../../context';
 
 import { map } from 'rxjs/operators';
 import { Jogo } from 'src/app/containers/jogo/jogo.model';
@@ -68,8 +68,8 @@ export class CriarJogadorComponent implements OnInit {
     this.jogadorService.setJogo(this.jogoId);
     this.jogadorDocId = this.jogadorService.jogadorCriado();
 
-    var jogoDB = this.db.collection(config.jogoDB).doc(this.jogoId);
-    var jogadorDB = jogoDB.collection(config.jogadorDB);
+    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
+    var jogadorDB = jogoDB.collection(collections.jogador);
 
     jogadorDB.snapshotChanges().pipe(
       map(actions => {

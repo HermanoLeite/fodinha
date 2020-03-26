@@ -67,9 +67,9 @@ export class MaoJogadorComponent {
   }
 
   realizarJogada(carta: Carta) {
-    const jogadorDoc = this.rodadaDoc.collection("jogadores").doc(this.jogador.id.toString());
-    const jogadaDoc = this.rodadaDoc.collection("jogada").doc(this.rodada.jogadaAtual);
-    const jogadasCollection = jogadaDoc.collection("jogadas");
+    const jogadorDoc = this.rodadaDoc.collection("Jogadores").doc(this.jogador.id.toString());
+    const jogadaDoc = this.rodadaDoc.collection("Jogada").doc(this.rodada.jogadaAtual);
+    const jogadasCollection = jogadaDoc.collection("Jogadas");
 
     const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
 
