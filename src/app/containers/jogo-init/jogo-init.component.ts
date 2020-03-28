@@ -8,6 +8,5 @@ import { CookieService } from 'ngx-cookie-service';
 export class JogoInitComponent {
   constructor(private cookieService: CookieService) {
     this.cookieService.set("userId", "");
-    this.cookieService.set("jogoId", "");
   }
 }

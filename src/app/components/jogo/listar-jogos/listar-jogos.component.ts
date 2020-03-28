@@ -1,30 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { collections } from '../../../context';
 import { Status } from 'src/app/containers/jogo/jogo.status';
 import { Router } from '@angular/router';
-import { Jogo } from 'src/app/containers/jogo/jogo.model';
-import { map } from 'rxjs/operators';
+import { JogoService } from 'src/app/service/jogo.service';
 
 @Component({
   selector: 'listar-jogos',
   templateUrl: './listar-jogos.component.html'
 })
 export class ListarJogosComponent implements OnInit {
-  jogoDB;
   jogos;
-  criandoJogo: Boolean = false;
-  jogoNome: String;
   constructor(
-    private db: AngularFirestore,
-    private router: Router) {
-    this.jogoDB = this.db.collection(collections.jogo);
+    private router: Router,
+    private jogoService: JogoService) {
   }
 
   getStatus(status: Status) {
-    if (status == Status.aguardandoJogadores) return "Aguardando Jogadores"
-    if (status == Status.jogando) return "Jogando"
-    if (status == Status.finalizado) return "Finalizado"
+    switch (status) {
+      case Status.aguardandoJogadores: return "Aguardando Jogadores"
+      case Status.jogando: return "Jogando"
+      case Status.finalizado: return "Finalizado"
+    }
   }
 
   entrarJogo(jogo) {
@@ -37,21 +32,10 @@ export class ListarJogosComponent implements OnInit {
   }
 
   deletarJogo(jogoId) {
-    // jogo -> jogadores, rodada -> jogadores -> jogada -> jogadas
-    this.jogoDB.doc(jogoId).delete();
+    this.jogoService.deletarJogo(jogoId)
   }
 
   ngOnInit() {
-    this.jogos = this.db.collection(collections.jogo).snapshotChanges()
-      .pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data() as Jogo;
-            const id = a.payload.doc.id;
-
-            return { id, ...data };
-          });
-        }),
-      );
+    this.jogos = this.jogoService.listarJogos()
   }
 }

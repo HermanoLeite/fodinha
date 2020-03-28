@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Jogador } from 'src/app/containers/jogador/jogador.model';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -7,7 +7,7 @@ import { JogadorService } from '../../../service/jogador.service';
 import { collections } from '../../../context';
 
 import { map } from 'rxjs/operators';
-import { Jogo } from 'src/app/containers/jogo/jogo.model';
+import { Jogo } from 'src/app/models/jogo';
 import { Status } from 'src/app/containers/jogo/jogo.status';
 
 @Component({

@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { collections } from '../../context';
 import { Status, Etapa } from './jogo.status';
-import { Jogo } from './jogo.model';
+import { Jogo } from '../../models/jogo';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Carta } from '../../models/carta'
 import { Jogada } from '../../models/jogada'
