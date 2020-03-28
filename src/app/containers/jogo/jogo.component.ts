@@ -6,7 +6,7 @@ import { collections } from '../../context';
 import { Status, Etapa } from './jogo.status';
 import { Jogo } from './jogo.model';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Carta, combate } from '../../models/carta'
+import { Carta } from '../../models/carta'
 import { Jogada } from '../../models/jogada'
 
 @Component({
@@ -44,7 +44,7 @@ export class JogoComponent implements OnInit {
   }
 
   criarJogada(jogadorComeca, rodadaDoc): void {
-    const jogadaCollection = rodadaDoc.collection("Jogada");
+    const jogadaCollection = rodadaDoc.collection(collections.jogada);
 
     const jogada = {
       comeca: jogadorComeca,
@@ -74,7 +74,7 @@ export class JogoComponent implements OnInit {
         const id = a.payload.id;
         if (data.manilha) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
-          const jogadaQuery = this.rodadaDoc.collection("Jogada").doc(data.jogadaAtual);
+          const jogadaQuery = this.rodadaDoc.collection(collections.jogada).doc(data.jogadaAtual);
 
           jogadaQuery.snapshotChanges().pipe(map(a => {
             const data = a.payload.data() as Jogada;
@@ -83,7 +83,7 @@ export class JogoComponent implements OnInit {
             return { id, ...data };
           })).subscribe(jogada => this.jogada = jogada);
 
-          jogadaQuery.collection("Jogadas").snapshotChanges().pipe(
+          jogadaQuery.collection(collections.jogadas).snapshotChanges().pipe(
             map(actions => {
               return actions.map(a => {
                 const data = a.payload.doc.data();
@@ -97,7 +97,7 @@ export class JogoComponent implements OnInit {
       })
     ).subscribe(rodada => this.rodada = rodada)
 
-    this.jogadores = this.jogoDoc.collection(collections.rodadas).doc(rodadaId).collection("Jogadores").snapshotChanges().pipe(
+    this.jogadores = this.jogoDoc.collection(collections.rodadas).doc(rodadaId).collection(collections.jogadores).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();

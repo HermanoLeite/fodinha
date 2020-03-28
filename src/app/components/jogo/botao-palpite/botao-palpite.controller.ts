@@ -1,5 +1,6 @@
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
+import { collections } from 'src/app/context'
 
 export class BotaoPalpiteController {
     constructor(rodadaDoc, rodada, criarJogada, jogador) {
@@ -14,7 +15,7 @@ export class BotaoPalpiteController {
     private jogador: any;
 
     palpite(palpite: number): void {
-        const jogadorDoc = this.rodadaDoc.collection("Jogadores").doc(this.jogador.id.toString());
+        const jogadorDoc = this.rodadaDoc.collection(collections.jogadores).doc(this.jogador.id.toString());
         jogadorDoc.update({ palpite: palpite });
 
         const proximoJogador = this.proximoJogador();

@@ -57,7 +57,7 @@ export class JogoService {
     jogadoresVidasPerdidas(jogoId, rodadaId) {
         var jogadoresVidasPerdidas: Array<any> = [];
         return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection("Rodadas").doc(rodadaId).collection("Jogadores").get().then(function (querySnapshot) {
+            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.rodadas).doc(rodadaId).collection(collections.jogadores).get().then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
                     const jogador = doc.data();
                     const vidasPerdidas = Math.abs(jogador.fez - jogador.palpite);
@@ -89,9 +89,9 @@ export class JogoService {
     atualizaQuemFezJogada(rodadaQuery, maiorCartaJogador) {
         return new Promise(resolve => {
             if (maiorCartaJogador !== null) {
-                rodadaQuery.collection("Jogadores").doc(maiorCartaJogador.toString()).ref.get().then(function (doc) {
+                rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).ref.get().then(function (doc) {
                     const { fez } = doc.data();
-                    rodadaQuery.collection("Jogadores").doc(maiorCartaJogador.toString()).update({ fez: fez + 1 }).then(res => resolve());
+                    rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).update({ fez: fez + 1 }).then(res => resolve());
                 });
             }
             else {
@@ -112,7 +112,7 @@ export class JogoService {
         var count = 0;
 
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
-        var rodadaDoc = this.jogos.doc(jogoId).collection("Rodadas").doc(rodadaNro.toString());
+        var rodadaDoc = this.jogos.doc(jogoId).collection(collections.rodadas).doc(rodadaNro.toString());
 
         await new Promise(resolve => {
             rodadaDoc.set({
@@ -125,7 +125,7 @@ export class JogoService {
         });
 
         jogadoresParticipantes.forEach(jogador => {
-            rodadaDoc.collection("Jogadores").doc(count.toString()).set({
+            rodadaDoc.collection(collections.jogadores).doc(count.toString()).set({
                 jogadorId: jogador.id,
                 nome: jogador.nome,
                 cor: jogador.cor,

@@ -1,5 +1,6 @@
 import { Baralho } from 'src/app/models/baralho';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
+import { collections } from 'src/app/context'
 
 export class BotaoComecarController {
     public rodadaDoc;
@@ -61,7 +62,7 @@ export class BotaoComecarController {
     }
 
     entregarCarta(jogador, cartaArrayJSON) {
-        this.rodadaDoc.collection("Jogadores")
+        this.rodadaDoc.collection(collections.jogadores)
             .doc(jogador)
             .update({ cartas: cartaArrayJSON });
     }
