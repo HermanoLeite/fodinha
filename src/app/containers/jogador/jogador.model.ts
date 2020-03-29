@@ -1,8 +1,7 @@
 export interface Jogador {
     nome: string;
-    cor: string;
-    comecar:boolean;
-    removido:boolean;
-    jogando:boolean;
+    comecar: boolean;
+    removido: boolean;
+    jogando: boolean;
     vidas: number;
 }

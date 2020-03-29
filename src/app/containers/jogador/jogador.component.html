@@ -3,9 +3,16 @@
     <div class="col-md-6">
       <listar-jogadores></listar-jogadores>
     </div>
+    {{jogadorDocId}}
     <div class="col-md-6">
-      <criar-jogador>
-      </criar-jogador>
+      <div *ngIf="!jogadorDocId">
+        <criar-jogador [jogadorDocId]="jogadorDocId" [jogoId]="jogoId">
+        </criar-jogador>
+      </div>
+      <div *ngIf="jogadorDocId">
+        <botao-comecar-jogo [jogadorDocId]="jogadorDocId" [jogoId]="jogoId" [jogadorAtual]="jogadorAtual">
+        </botao-comecar-jogo>
+      </div>
     </div>
   </div>
 </section>

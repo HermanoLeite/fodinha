@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Status } from 'src/app/containers/jogo/jogo.status';
 import { Router } from '@angular/router';
 import { JogoService } from 'src/app/service/jogo.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'listar-jogos',
   templateUrl: './listar-jogos.component.html'
 })
 export class ListarJogosComponent implements OnInit {
-  jogos;
+  private jogos: Observable<any>;
   constructor(
     private router: Router,
     private jogoService: JogoService) {
@@ -27,6 +28,7 @@ export class ListarJogosComponent implements OnInit {
       this.router.navigate(['jogo', jogo.id]);
     }
     else {
+      console.log("navigate jogo id => ", jogo.id)
       this.router.navigate(['jogador', jogo.id]);
     }
   }
@@ -36,6 +38,6 @@ export class ListarJogosComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jogos = this.jogoService.listarJogos()
+    this.jogos = this.jogoService.jogosStream()
   }
 }

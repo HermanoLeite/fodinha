@@ -6,13 +6,14 @@ import { Status, Etapa } from '../containers/jogo/jogo.status';
 import { CookieService } from 'ngx-cookie-service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class JogoService {
     jogos: AngularFirestoreCollection<Jogo>;
     private jogosDoc: AngularFirestoreDocument<Jogo>;
 
-    constructor(private db: AngularFirestore, private cookieService: CookieService) {
+    constructor(private db: AngularFirestore, private cookieService: CookieService, private route: ActivatedRoute) {
         this.jogos = db.collection(collections.jogo)
     }
 
@@ -31,7 +32,11 @@ export class JogoService {
         return jogoDoc
     }
 
-    listarJogos(): Observable<any> {
+    buscarJogoId(): string {
+        return this.route.snapshot.paramMap.get("id");
+    }
+
+    jogosStream(): Observable<any> {
         return this.db.collection(collections.jogo).snapshotChanges()
             .pipe(
                 map(actions => {
@@ -53,7 +58,6 @@ export class JogoService {
         jogadoresParticipantes.forEach(jogador => {
             this.jogos.doc(id).collection(collections.jogador).doc(jogador.id).set({
                 nome: jogador.nome,
-                cor: jogador.cor,
                 vidas: 5,
                 removido: false,
                 jogando: true
@@ -67,7 +71,7 @@ export class JogoService {
             this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
                     const jogador = doc.data();
-                    if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome, cor: jogador.cor });
+                    if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome });
                 });
                 resolve(jogadoresProximaRodada);
             });
@@ -148,7 +152,6 @@ export class JogoService {
             rodadaDoc.collection(collections.jogadores).doc(count.toString()).set({
                 jogadorId: jogador.id,
                 nome: jogador.nome,
-                cor: jogador.cor,
                 fez: 0,
                 cartas: null,
                 palpite: null

@@ -1,0 +1,11 @@
+<div *ngIf="jogadorAtual">
+  <button *ngIf="!jogadorAtual.removido && !jogadorAtual.comecar" class="btn btn-success" (click)="comecarJogo()">
+    Começar
+  </button>
+  <button *ngIf="!jogadorAtual.removido && jogadorAtual.comecar" class="btn btn-success" (click)="comecarJogo()">
+    Desistir
+  </button>
+  <button *ngIf="jogadorAtual.removido" class="btn btn-success" (click)="retornarAoJogo()">
+    Retornar
+  </button>
+</div>

@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JogadorService {
@@ -15,14 +17,31 @@ export class JogadorService {
         this.jogadores = db.collection(collections.jogador);
     }
 
+
+    buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
+        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorDocId).snapshotChanges()
+            .pipe(map(({ payload }) => payload.data() as Jogador));
+    }
+
     setJogo(jogoId) {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }
 
+    criarJogador(jogadorNome, jogoId): Promise<string> {
+        var jogador = {
+            nome: jogadorNome,
+            comecar: false,
+            removido: false,
+            jogando: true,
+            vidas: 5,
+        };
+        return this._addjogador(jogador, jogoId);
+    }
 
-    addjogador(jogador, jogoId): Promise<string> {
+    private _addjogador(jogador, jogoId): Promise<string> {
+        var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
         return new Promise(resolve => {
-            this.jogadores.add(jogador)
+            jogadorCollections.add(jogador)
                 .then(function (docRef) {
                     this.cookieService.set("userId", docRef.id);
                     this.jogoService.acrescentaJogador(jogoId);
@@ -67,10 +86,11 @@ export class JogadorService {
         });
     }
 
-    todosJogadoresComecaram(jogoId) {
+    async todosJogadoresComecaram(jogoId) {
         var count = 0;
+        var querySnapshotPromise = this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get()
         return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
+            querySnapshotPromise.then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
                     const data = doc.data();
                     if (!data.removido && !data.comecar) resolve(false);
