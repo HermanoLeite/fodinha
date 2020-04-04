@@ -4,8 +4,14 @@
       <listar-jogadores></listar-jogadores>
     </div>
     <div class="col-md-6">
-      <criar-jogador>
-      </criar-jogador>
+      <div *ngIf="!jogadorAtual">
+        <criar-jogador (criarJogador)="criarJogador($event)">
+        </criar-jogador>
+      </div>
+      <div *ngIf="jogadorAtual">
+        <botao-comecar-jogo [jogadorDocId]="jogadorDocId" [jogoId]="jogoId" [jogadorAtual]="jogadorAtual">
+        </botao-comecar-jogo>
+      </div>
     </div>
   </div>
 </section>

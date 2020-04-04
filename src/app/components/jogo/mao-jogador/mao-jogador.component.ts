@@ -3,6 +3,7 @@ import { Carta, combate } from '../../../models/carta';
 import { Etapa, Status } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { JogoService } from 'src/app/service/jogo.service';
+import { collections } from 'src/app/context'
 
 @Component({
   selector: 'mao-jogador',
@@ -67,9 +68,9 @@ export class MaoJogadorComponent {
   }
 
   realizarJogada(carta: Carta) {
-    const jogadorDoc = this.rodadaDoc.collection("Jogadores").doc(this.jogador.id.toString());
-    const jogadaDoc = this.rodadaDoc.collection("Jogada").doc(this.rodada.jogadaAtual);
-    const jogadasCollection = jogadaDoc.collection("Jogadas");
+    const jogadorDoc = this.rodadaDoc.collection(collections.jogadores).doc(this.jogador.id.toString());
+    const jogadaDoc = this.rodadaDoc.collection(collections.jogada).doc(this.rodada.jogadaAtual);
+    const jogadasCollection = jogadaDoc.collection(collections.jogadas);
 
     const cartaCombate = carta.combate(Carta.fromString(this.jogada.maiorCarta), this.rodada.manilha);
 

@@ -35,10 +35,12 @@ import { GanhadorComponent } from './components/jogo/ganhador/ganhador.component
 import { BotaoComecarComponent } from './components/jogo/botao-comecar/botao-comecar.component';
 import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-palpite.component';
 import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.component';
+import { BotaoComecarJogoComponent } from './components/jogador/botao-comecar-jogo/botao-comecar-jogo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    BotaoComecarComponent,
     JogoComponent,
     JogadorComponent,
     CartaComponent,
@@ -52,6 +54,7 @@ import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.c
     PlacarRodadaComponent,
     JogadasComponent,
     GanhadorComponent,
+    BotaoComecarJogoComponent,
     BotaoComecarComponent,
     BotaoPalpiteComponent,
     MaoJogadorComponent

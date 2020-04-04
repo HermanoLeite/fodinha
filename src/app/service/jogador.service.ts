@@ -1,28 +1,44 @@
 import { CookieService } from 'ngx-cookie-service';
 import { collections } from '../context';
-import { Jogador } from '../containers/jogador/jogador.model';
+import { Jogador } from '../models/jogador';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
+import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class JogadorService {
     jogadores: AngularFirestoreCollection<Jogador>;
     private jogadorDoc: AngularFirestoreDocument<Jogador>;
+    private jogadorDocId: string;
 
     constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService) {
         this.jogadores = db.collection(collections.jogador);
+        this.jogadorDocId = this.cookieService.get("userId");
+    }
+
+
+    buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
+        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorDocId).snapshotChanges()
+            .pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
     setJogo(jogoId) {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }
 
+    async criarJogador(jogadorNome: string, jogoId): Promise<Jogador> {
+        var jogador = new Jogador(jogadorNome);
+        this.jogadorDocId = await this._addjogador(jogador, jogoId);
+        return jogador;
+    }
 
-    addjogador(jogador, jogoId): Promise<string> {
+    private _addjogador(jogador: Jogador, jogoId): Promise<string> {
+        var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
         return new Promise(resolve => {
-            this.jogadores.add(jogador)
+            jogadorCollections.add({ ...jogador })
                 .then(function (docRef) {
                     this.cookieService.set("userId", docRef.id);
                     this.jogoService.acrescentaJogador(jogoId);
@@ -39,9 +55,9 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    updatejogador(id, update, jogoId) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${id}`);
-        this.jogadorDoc.update(update);
+    updatejogador(jogador: Jogador, jogoId) {
+        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${this.jogadorDocId}`);
+        this.jogadorDoc.update({ ...jogador });
     }
 
     deletejogador(id, jogoId) {
@@ -67,10 +83,11 @@ export class JogadorService {
         });
     }
 
-    todosJogadoresComecaram(jogoId) {
+    async todosJogadoresComecaram(jogoId) {
         var count = 0;
+        var querySnapshotPromise = this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get()
         return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
+            querySnapshotPromise.then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
                     const data = doc.data();
                     if (!data.removido && !data.comecar) resolve(false);

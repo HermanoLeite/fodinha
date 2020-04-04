@@ -3,7 +3,7 @@ import { JogadorService } from 'src/app/service/jogador.service';
 import { ActivatedRoute } from '@angular/router';
 import { collections } from '../../../context';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Jogador } from 'src/app/containers/jogador/jogador.model';
+import { Jogador } from 'src/app/models/jogador';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -22,7 +22,7 @@ export class ListarJogadoresComponent implements OnInit {
 
   removerJogador(jogador) {
     jogador.removido = true;
-    this.jogadorService.updatejogador(jogador.id, jogador, this.jogoId);
+    this.jogadorService.updatejogador(jogador, this.jogoId);
   }
 
   ngOnInit() {

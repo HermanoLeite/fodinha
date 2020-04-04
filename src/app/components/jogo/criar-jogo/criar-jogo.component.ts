@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { JogoService } from '../../../service/jogo.service';
 
 @Component({
@@ -8,23 +7,23 @@ import { JogoService } from '../../../service/jogo.service';
 })
 export class CriarJogoComponent {
   criandoJogo: Boolean = false;
-  jogoNome: String;
-  constructor(private db: AngularFirestore, private jogoService: JogoService) { }
+  jogoNome: string;
+  constructor(private jogoService: JogoService) { }
 
   iniciar() {
     this.criandoJogo = true;
     this.jogoNome = null;
   }
 
-  fechar() {
+  cancelar() {
     this.criandoJogo = false;
     this.jogoNome = null;
   }
 
-  salvar() {
+  salvarNovoJogo() {
     if (this.jogoNome !== null) {
-      this.jogoService.criarJogoInicio(this.jogoNome);
+      this.jogoService.novoJogo(this.jogoNome);
     }
-    this.fechar();
+    this.cancelar();
   }
 }

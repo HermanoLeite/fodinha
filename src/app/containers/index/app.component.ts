@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +16,7 @@ export class AppComponent {
   }
 
   sairDoJogo() {
-    this.cookieService.set("userId", "" );
-    this.cookieService.set("jogoId", "" );
+    this.cookieService.set("userId", "");
     this.router.navigate(['/']);
   }
 }
