@@ -1,20 +1,22 @@
 import { CookieService } from 'ngx-cookie-service';
 import { collections } from '../context';
-import { Jogador } from '../containers/jogador/jogador.model';
+import { Jogador } from '../models/jogador';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class JogadorService {
     jogadores: AngularFirestoreCollection<Jogador>;
     private jogadorDoc: AngularFirestoreDocument<Jogador>;
+    private jogadorDocId: string;
 
     constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService) {
         this.jogadores = db.collection(collections.jogador);
+        this.jogadorDocId = this.cookieService.get("userId");
     }
 
 
@@ -27,21 +29,16 @@ export class JogadorService {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }
 
-    criarJogador(jogadorNome, jogoId): Promise<string> {
-        var jogador = {
-            nome: jogadorNome,
-            comecar: false,
-            removido: false,
-            jogando: true,
-            vidas: 5,
-        };
-        return this._addjogador(jogador, jogoId);
+    async criarJogador(jogadorNome: string, jogoId): Promise<Jogador> {
+        var jogador = new Jogador(jogadorNome);
+        this.jogadorDocId = await this._addjogador(jogador, jogoId);
+        return jogador;
     }
 
-    private _addjogador(jogador, jogoId): Promise<string> {
+    private _addjogador(jogador: Jogador, jogoId): Promise<string> {
         var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
         return new Promise(resolve => {
-            jogadorCollections.add(jogador)
+            jogadorCollections.add({ ...jogador })
                 .then(function (docRef) {
                     this.cookieService.set("userId", docRef.id);
                     this.jogoService.acrescentaJogador(jogoId);
@@ -58,9 +55,9 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    updatejogador(id, update, jogoId) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${id}`);
-        this.jogadorDoc.update(update);
+    updatejogador(jogador: Jogador, jogoId) {
+        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${this.jogadorDocId}`);
+        this.jogadorDoc.update({ ...jogador });
     }
 
     deletejogador(id, jogoId) {

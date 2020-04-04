@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Jogador } from 'src/app/containers/jogador/jogador.model';
+import { Jogador } from 'src/app/models/jogador';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { JogadorService } from '../../../service/jogador.service';
 
@@ -27,7 +27,7 @@ export class BotaoComecarJogoComponent implements OnInit {
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
-    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
     const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
 
     if (todosJogadoresComecaram) {
@@ -38,7 +38,7 @@ export class BotaoComecarJogoComponent implements OnInit {
 
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
-    this.jogadorService.updatejogador(this.jogadorDocId, this.jogadorAtual, this.jogoId);
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
   }
 
   ngOnInit() {

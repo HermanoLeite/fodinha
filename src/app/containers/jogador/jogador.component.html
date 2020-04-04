@@ -3,13 +3,12 @@
     <div class="col-md-6">
       <listar-jogadores></listar-jogadores>
     </div>
-    {{jogadorDocId}}
     <div class="col-md-6">
-      <div *ngIf="!jogadorDocId">
-        <criar-jogador [jogadorDocId]="jogadorDocId" [jogoId]="jogoId">
+      <div *ngIf="!jogadorAtual">
+        <criar-jogador (criarJogador)="criarJogador($event)">
         </criar-jogador>
       </div>
-      <div *ngIf="jogadorDocId">
+      <div *ngIf="jogadorAtual">
         <botao-comecar-jogo [jogadorDocId]="jogadorDocId" [jogoId]="jogoId" [jogadorAtual]="jogadorAtual">
         </botao-comecar-jogo>
       </div>
