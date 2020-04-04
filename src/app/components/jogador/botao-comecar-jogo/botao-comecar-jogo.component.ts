@@ -1,26 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { Jogador } from 'src/app/models/jogador';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { JogadorService } from '../../../service/jogador.service';
-
-import { collections } from '../../../context';
-
-import { map } from 'rxjs/operators';
-import { Jogo } from 'src/app/models/jogo';
-import { Status } from 'src/app/containers/jogo/jogo.status';
 
 @Component({
   selector: 'botao-comecar-jogo',
   templateUrl: './botao-comecar-jogo.component.html'
 })
-export class BotaoComecarJogoComponent implements OnInit {
+export class BotaoComecarJogoComponent {
   @Input() jogadorDocId: string
   @Input() jogoId: string;
   @Input() jogadorAtual: Jogador;
 
   constructor(
-    private db: AngularFirestore,
     private jogadorService: JogadorService,
     private router: Router) {
   }
@@ -39,20 +31,5 @@ export class BotaoComecarJogoComponent implements OnInit {
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
     this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
-  }
-
-  ngOnInit() {
-    var jogadorDoc = this.db.collection(collections.jogo).doc(this.jogoId);
-    jogadorDoc.snapshotChanges().pipe(
-      map(a => {
-        const data = a.payload.data() as Jogo;
-        const id = a.payload.id;
-
-        if (this.jogadorDocId && data.status === Status.jogando)
-          this.router.navigate(['jogo', this.jogoId]);
-
-        return { id, ...data };
-      })
-    ).subscribe();
   }
 }
