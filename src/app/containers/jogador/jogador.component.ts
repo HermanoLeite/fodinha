@@ -33,11 +33,26 @@ export class JogadorComponent {
 
   }
 
-
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
       this.jogadorAtual = await this.jogadorService.criarJogador(jogadorNome, this.jogoId);
     }
+  }
+
+  async comecarJogo() {
+    this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
+    const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId);
+
+    if (todosJogadoresComecaram) {
+      this.jogadorService.comecarJogo(this.jogoId);
+      this.router.navigate(['jogo', this.jogoId]);
+    }
+  }
+
+  retornarAoJogo() {
+    this.jogadorAtual.removido = false;
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
   }
 
   ngOnInit() {

@@ -9,7 +9,8 @@
         </criar-jogador>
       </div>
       <div *ngIf="jogadorAtual">
-        <botao-comecar-jogo [jogadorDocId]="jogadorDocId" [jogoId]="jogoId" [jogadorAtual]="jogadorAtual">
+        <botao-comecar-jogo [comecou]="jogadorAtual.comecar" [removido]="jogadorAtual.removido"
+          (comecarJogo)="comecarJogo()" (retornarAoJogo)="retornarAoJogo()">
         </botao-comecar-jogo>
       </div>
     </div>
