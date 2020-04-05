@@ -8,6 +8,7 @@ import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { JogadorDocument } from '../models/jogadorDocument';
 
 @Injectable()
 export class JogadorService {
@@ -57,26 +58,26 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    removerJogador(jogador: Jogador, jogoId) {
+    removerJogador({ jogador, id }: JogadorDocument, jogoId: string): void {
         jogador.removido = true;
-        this._updatejogador(jogador, jogoId, jogador.id);
+        this._updatejogador(jogador, jogoId, id);
     }
 
-    updatejogador(jogador: Jogador, jogoId) {
+    updatejogador(jogador: Jogador, jogoId: string): void {
         this._updatejogador(jogador, jogoId, this.jogadorDocId)
     }
 
-    private _updatejogador(jogador: Jogador, jogoId, jogadorId) {
+    private _updatejogador(jogador: Jogador, jogoId: string, jogadorId: string): void {
         this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
         this.jogadorDoc.update({ ...jogador });
     }
 
-    deletejogador(id, jogoId) {
+    deletejogador(id: string, jogoId: string): void {
         this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${id}`);
         this.jogadorDoc.delete();
     }
 
-    async comecarJogo(jogoId) {
+    async comecarJogo(jogoId: string): Promise<void> {
         var jogadores = await this.jogadoresParaOJogo(jogoId)
         return this.jogoService.comecarJogo(jogadores, jogoId);
     }

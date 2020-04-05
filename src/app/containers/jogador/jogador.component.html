@@ -1,7 +1,9 @@
 <section>
   <div class="row">
     <div class="col-md-6">
-      <listar-jogadores [jogadorDocId]="jogadorDocId"></listar-jogadores>
+      <listar-jogadores [jogadores]="jogadores" [mostrarRemover]="jogadorDocId"
+        (removerJogador)="removerJogador($event)">
+      </listar-jogadores>
     </div>
     <div class="col-md-6">
       <div *ngIf="!jogadorAtual">

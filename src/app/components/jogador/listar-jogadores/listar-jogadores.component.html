@@ -5,13 +5,13 @@
     <th>Começar</th>
     <th></th>
   </tr>
-  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+  <tr *ngFor="let documento of jogadores | async; let i = index;" [attr.data-index]="i">
     <td>{{i + 1}}</td>
-    <td>{{jogador.nome}}</td>
-    <td>{{jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
-    <td *ngIf="jogadorDocId">
-      <button (click)="removerJogador(jogador)" *ngIf="!jogador.removido">remover</button>
-      <p *ngIf="jogador.removido">removido</p>
+    <td>{{documento.jogador.nome}}</td>
+    <td>{{documento.jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
+    <td *ngIf="mostrarRemover">
+      <button (click)="remover(documento)" *ngIf="!documento.jogador.removido">remover</button>
+      <p *ngIf="documento.jogador.removido">removido</p>
     </td>
   </tr>
 </table>

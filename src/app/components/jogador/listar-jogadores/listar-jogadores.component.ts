@@ -1,42 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { JogadorService } from 'src/app/service/jogador.service';
-import { ActivatedRoute } from '@angular/router';
-import { collections } from '../../../context';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Jogador } from 'src/app/models/jogador';
-import { map } from 'rxjs/operators';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { JogadorDocument } from 'src/app/models/jogadorDocument';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'listar-jogadores',
   templateUrl: './listar-jogadores.component.html',
 })
-export class ListarJogadoresComponent implements OnInit {
-  jogadores;
-  jogoId: string;
-  @Input() jogadorDocId: string;
+export class ListarJogadoresComponent {
+  @Input() jogadores: Observable<JogadorDocument[]>;
+  @Input() mostrarRemover: boolean;
 
-  constructor(private db: AngularFirestore, private jogadorService: JogadorService, private route: ActivatedRoute) {
-    this.jogoId = route.snapshot.paramMap.get("id");
+  @Output() removerJogador = new EventEmitter<JogadorDocument>()
+
+  remover(jogador) {
+    this.removerJogador.emit(jogador)
   }
-
-  removerJogador(jogador) {
-    this.jogadorService.removerJogador(jogador, this.jogoId);
-  }
-
-  ngOnInit() {
-    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
-    var jogadorDB = jogoDB.collection(collections.jogador);
-
-    this.jogadores = jogadorDB.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(({ payload }) => {
-          const data = payload.doc.data() as Jogador;
-          const id = payload.doc.id;
-
-          return { id, ...data };
-        });
-      }),
-    )
-  }
-
 }

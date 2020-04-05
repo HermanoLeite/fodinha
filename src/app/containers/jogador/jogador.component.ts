@@ -7,6 +7,8 @@ import { collections } from 'src/app/context'
 import { AngularFirestore } from '@angular/fire/firestore'
 import { Jogo } from 'src/app/models/jogo'
 import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
+import { JogadorDocument } from 'src/app/models/jogadorDocument'
 @Component({
   selector: 'jogador',
   templateUrl: './jogador.component.html'
@@ -16,6 +18,7 @@ export class JogadorComponent {
   jogadorDocId: string
   jogoId: string
   jogadorAtual: Jogador
+  jogadores: Observable<any>
 
   constructor(
     private jogadorService: JogadorService,
@@ -57,9 +60,26 @@ export class JogadorComponent {
     this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId)
   }
 
+  removerJogador(jogadorDocument: JogadorDocument) {
+    this.jogadorService.removerJogador(jogadorDocument, this.jogoId);
+  }
+
   ngOnInit() {
-    var jogadorDoc = this.db.collection(collections.jogo).doc(this.jogoId)
-    jogadorDoc.valueChanges().pipe(
+    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
+    var jogadorDB = jogoDB.collection(collections.jogador);
+
+    this.jogadores = jogadorDB.snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(({ payload }) => {
+          const data = payload.doc.data() as Jogador;
+          const id = payload.doc.id;
+
+          return new JogadorDocument(id, data);
+        });
+      }),
+    )
+
+    jogoDB.valueChanges().pipe(
       map(a => {
         const data = a as Jogo
 
