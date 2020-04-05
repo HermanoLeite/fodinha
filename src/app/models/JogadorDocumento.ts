@@ -1,6 +1,6 @@
-import { Jogador } from './jogador';
+import { Jogador } from './Jogador';
 
-export class JogadorDocument {
+export class JogadorDocumento {
     constructor(id: string, jogador: Jogador) {
         this.id = id;
         this.jogador = jogador;

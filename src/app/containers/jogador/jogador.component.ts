@@ -1,14 +1,14 @@
 import { Component } from '@angular/core'
 import { JogadorService } from 'src/app/service/jogador.service'
 import { ActivatedRoute, Router } from '@angular/router'
-import { Jogador } from '../../models/jogador'
+import { Jogador } from '../../models/Jogador'
 import { Status } from '../jogo/jogo.status'
 import { collections } from 'src/app/context'
 import { AngularFirestore } from '@angular/fire/firestore'
-import { Jogo } from 'src/app/models/jogo'
+import { Jogo } from 'src/app/models/Jogo'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { JogadorDocument } from 'src/app/models/jogadorDocument'
+import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
 @Component({
   selector: 'jogador',
   templateUrl: './jogador.component.html'
@@ -32,7 +32,6 @@ export class JogadorComponent {
       var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
       jogadorObservable.subscribe(data => this.jogadorAtual = data)
     }
-
   }
 
   async criarJogador(jogadorNome: string) {
@@ -60,7 +59,7 @@ export class JogadorComponent {
     this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId)
   }
 
-  removerJogador(jogadorDocument: JogadorDocument) {
+  removerJogador(jogadorDocument: JogadorDocumento) {
     this.jogadorService.removerJogador(jogadorDocument, this.jogoId);
   }
 
@@ -74,7 +73,7 @@ export class JogadorComponent {
           const data = payload.doc.data() as Jogador;
           const id = payload.doc.id;
 
-          return new JogadorDocument(id, data);
+          return new JogadorDocumento(id, data);
         });
       }),
     )

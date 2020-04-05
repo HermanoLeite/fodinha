@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { JogadorDocument } from 'src/app/models/jogadorDocument';
+import { JogadorDocumento } from 'src/app/models/JogadorDocumento';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
   templateUrl: './listar-jogadores.component.html',
 })
 export class ListarJogadoresComponent {
-  @Input() jogadores: Observable<JogadorDocument[]>;
+  @Input() jogadores: Observable<JogadorDocumento[]>;
   @Input() mostrarRemover: boolean;
 
-  @Output() removerJogador = new EventEmitter<JogadorDocument>()
+  @Output() removerJogador = new EventEmitter<JogadorDocumento>()
 
   remover(jogador) {
     this.removerJogador.emit(jogador)

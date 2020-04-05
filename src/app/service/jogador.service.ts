@@ -1,6 +1,6 @@
 import { CookieService } from 'ngx-cookie-service';
 import { collections } from '../context';
-import { Jogador } from '../models/jogador';
+import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
@@ -8,7 +8,7 @@ import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { JogadorDocument } from '../models/jogadorDocument';
+import { JogadorDocumento } from '../models/JogadorDocumento';
 
 @Injectable()
 export class JogadorService {
@@ -58,7 +58,7 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    removerJogador({ jogador, id }: JogadorDocument, jogoId: string): void {
+    removerJogador({ jogador, id }: JogadorDocumento, jogoId: string): void {
         jogador.removido = true;
         this._updatejogador(jogador, jogoId, id);
     }

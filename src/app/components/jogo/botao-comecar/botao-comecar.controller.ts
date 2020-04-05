@@ -1,4 +1,4 @@
-import { Baralho } from 'src/app/models/baralho';
+import { Baralho } from 'src/app/models/Baralho';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { collections } from 'src/app/context'
 
