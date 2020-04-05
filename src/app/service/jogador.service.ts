@@ -6,7 +6,8 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class JogadorService {
@@ -14,7 +15,8 @@ export class JogadorService {
     private jogadorDoc: AngularFirestoreDocument<Jogador>;
     private jogadorDocId: string;
 
-    constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService) {
+    constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService,
+        private route: ActivatedRoute, ) {
         this.jogadores = db.collection(collections.jogador);
         this.jogadorDocId = this.cookieService.get("userId");
     }
@@ -29,10 +31,10 @@ export class JogadorService {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }
 
-    async criarJogador(jogadorNome: string, jogoId): Promise<Jogador> {
+    async criarJogador(jogadorNome: string, jogoId): Promise<string> {
         var jogador = new Jogador(jogadorNome);
         this.jogadorDocId = await this._addjogador(jogador, jogoId);
-        return jogador;
+        return this.jogadorDocId;
     }
 
     private _addjogador(jogador: Jogador, jogoId): Promise<string> {
@@ -55,8 +57,17 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
+    removerJogador(jogador: Jogador, jogoId) {
+        jogador.removido = true;
+        this._updatejogador(jogador, jogoId, jogador.id);
+    }
+
     updatejogador(jogador: Jogador, jogoId) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${this.jogadorDocId}`);
+        this._updatejogador(jogador, jogoId, this.jogadorDocId)
+    }
+
+    private _updatejogador(jogador: Jogador, jogoId, jogadorId) {
+        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
         this.jogadorDoc.update({ ...jogador });
     }
 

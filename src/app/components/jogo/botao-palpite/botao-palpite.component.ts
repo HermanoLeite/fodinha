@@ -14,9 +14,6 @@ export class BotaoPalpiteComponent {
   @Input() jogador: any;
   @Input() rodada: any;
   @Input() criarJogada: Function;
-  constructor() {
-    console.log("-------------- construindo botao palpite");
-  }
 
   etapaPalpite() {
     return this.etapa === Etapa.palpite;

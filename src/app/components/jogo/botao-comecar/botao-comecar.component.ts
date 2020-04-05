@@ -18,10 +18,6 @@ export class BotaoComecarComponent {
   @Input() quantidadeDeJogadores: number;
   @Input() rodada: number;
 
-  constructor() {
-    console.log("------- construindo botao começar");
-  }
-
   etapaEmbaralhar() {
     this.controller = new BotaoComecarController(this.rodadaDoc, this.jogadorVez, this.quantidadeDeJogadores, this.rodada);
     return this.etapa === Etapa.embaralhar;

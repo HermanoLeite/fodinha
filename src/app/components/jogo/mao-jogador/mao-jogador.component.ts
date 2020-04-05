@@ -20,7 +20,6 @@ export class MaoJogadorComponent {
   @Input() criarJogada: Function;
   jogando: Boolean;
   constructor(private jogoService: JogoService) {
-    console.log('--------- construindo cartas mão');
   }
 
   etapaJogarCarta() {

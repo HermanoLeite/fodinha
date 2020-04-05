@@ -12,4 +12,5 @@ export class Jogador {
     removido: boolean;
     jogando: boolean;
     vidas: number;
+    id: number;
 }

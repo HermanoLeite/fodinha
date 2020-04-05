@@ -8,9 +8,6 @@ export class CriarJogadorComponent {
   jogadorNome: string;
   @Output() criarJogador = new EventEmitter<string>();
 
-  constructor() {
-  }
-
   async criar() {
     this.criarJogador.emit(this.jogadorNome);
   }

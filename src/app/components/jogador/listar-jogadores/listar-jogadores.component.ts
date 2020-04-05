@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { JogadorService } from 'src/app/service/jogador.service';
 import { ActivatedRoute } from '@angular/router';
 import { collections } from '../../../context';
@@ -13,16 +13,14 @@ import { map } from 'rxjs/operators';
 export class ListarJogadoresComponent implements OnInit {
   jogadores;
   jogoId: string;
-  jogadorDocId: string;
+  @Input() jogadorDocId: string;
 
   constructor(private db: AngularFirestore, private jogadorService: JogadorService, private route: ActivatedRoute) {
     this.jogoId = route.snapshot.paramMap.get("id");
-    this.jogadorDocId = jogadorService.jogadorCriado();
   }
 
   removerJogador(jogador) {
-    jogador.removido = true;
-    this.jogadorService.updatejogador(jogador, this.jogoId);
+    this.jogadorService.removerJogador(jogador, this.jogoId);
   }
 
   ngOnInit() {
@@ -38,7 +36,7 @@ export class ListarJogadoresComponent implements OnInit {
           return { id, ...data };
         });
       }),
-    );
+    )
   }
 
 }
