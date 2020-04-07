@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Carta, combate } from '../../../models/carta';
+import { Carta, combate } from '../../../models/Carta';
 import { Etapa, Status } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { JogoService } from 'src/app/service/jogo.service';
@@ -20,7 +20,6 @@ export class MaoJogadorComponent {
   @Input() criarJogada: Function;
   jogando: Boolean;
   constructor(private jogoService: JogoService) {
-    console.log('--------- construindo cartas mão');
   }
 
   etapaJogarCarta() {

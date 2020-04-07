@@ -1,12 +1,14 @@
 import { CookieService } from 'ngx-cookie-service';
 import { collections } from '../context';
-import { Jogador } from '../models/jogador';
+import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { JogadorDocumento } from '../models/JogadorDocumento';
 
 @Injectable()
 export class JogadorService {
@@ -14,7 +16,8 @@ export class JogadorService {
     private jogadorDoc: AngularFirestoreDocument<Jogador>;
     private jogadorDocId: string;
 
-    constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService) {
+    constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService,
+        private route: ActivatedRoute, ) {
         this.jogadores = db.collection(collections.jogador);
         this.jogadorDocId = this.cookieService.get("userId");
     }
@@ -29,10 +32,10 @@ export class JogadorService {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }
 
-    async criarJogador(jogadorNome: string, jogoId): Promise<Jogador> {
+    async criarJogador(jogadorNome: string, jogoId): Promise<string> {
         var jogador = new Jogador(jogadorNome);
         this.jogadorDocId = await this._addjogador(jogador, jogoId);
-        return jogador;
+        return this.jogadorDocId;
     }
 
     private _addjogador(jogador: Jogador, jogoId): Promise<string> {
@@ -55,17 +58,26 @@ export class JogadorService {
         return this.cookieService.get("userId");
     }
 
-    updatejogador(jogador: Jogador, jogoId) {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${this.jogadorDocId}`);
+    removerJogador({ jogador, id }: JogadorDocumento, jogoId: string): void {
+        jogador.removido = true;
+        this._updatejogador(jogador, jogoId, id);
+    }
+
+    updatejogador(jogador: Jogador, jogoId: string): void {
+        this._updatejogador(jogador, jogoId, this.jogadorDocId)
+    }
+
+    private _updatejogador(jogador: Jogador, jogoId: string, jogadorId: string): void {
+        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
         this.jogadorDoc.update({ ...jogador });
     }
 
-    deletejogador(id, jogoId) {
+    deletejogador(id: string, jogoId: string): void {
         this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${id}`);
         this.jogadorDoc.delete();
     }
 
-    async comecarJogo(jogoId) {
+    async comecarJogo(jogoId: string): Promise<void> {
         var jogadores = await this.jogadoresParaOJogo(jogoId)
         return this.jogoService.comecarJogo(jogadores, jogoId);
     }

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Baralho } from '../../../models/baralho';
+import { Baralho } from '../../../models/Baralho';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
@@ -17,10 +17,6 @@ export class BotaoComecarComponent {
   @Input() rodadaDoc: AngularFirestoreDocument;
   @Input() quantidadeDeJogadores: number;
   @Input() rodada: number;
-
-  constructor() {
-    console.log("------- construindo botao começar");
-  }
 
   etapaEmbaralhar() {
     this.controller = new BotaoComecarController(this.rodadaDoc, this.jogadorVez, this.quantidadeDeJogadores, this.rodada);

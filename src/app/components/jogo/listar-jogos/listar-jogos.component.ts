@@ -28,7 +28,6 @@ export class ListarJogosComponent implements OnInit {
       this.router.navigate(['jogo', jogo.id]);
     }
     else {
-      console.log("navigate jogo id => ", jogo.id)
       this.router.navigate(['jogador', jogo.id]);
     }
   }

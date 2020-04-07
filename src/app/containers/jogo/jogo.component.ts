@@ -4,10 +4,10 @@ import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { collections } from '../../context';
 import { Status, Etapa } from './jogo.status';
-import { Jogo } from '../../models/jogo';
+import { Jogo } from '../../models/Jogo';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Carta } from '../../models/carta'
-import { Jogada } from '../../models/jogada'
+import { Carta } from '../../models/Carta'
+import { Jogada } from '../../models/Jogada'
 
 @Component({
   selector: 'app-jogo',
