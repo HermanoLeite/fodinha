@@ -9,6 +9,7 @@ import { Jogo } from 'src/app/models/Jogo'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
+import { LocalStorageService } from 'src/app/service/local-storage'
 @Component({
   selector: 'jogador',
   templateUrl: './jogador.component.html'
@@ -24,9 +25,11 @@ export class JogadorComponent {
     private jogadorService: JogadorService,
     private route: ActivatedRoute,
     private db: AngularFirestore,
-    private router: Router) {
+    private router: Router,
+    private localStorage: LocalStorageService) {
 
-    this.jogadorDocId = this.jogadorService.jogadorCriado()
+    this.jogadorDocId = this.localStorage.get("userId")
+
     this.jogoId = this.route.snapshot.paramMap.get("id");
     if (this.jogadorDocId) {
       var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
@@ -36,7 +39,10 @@ export class JogadorComponent {
 
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
-      this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
+      const jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
+
+      this.localStorage.set("userId", jogadorDocId)
+      this.jogadorDocId = jogadorDocId
     }
 
     var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
@@ -45,7 +51,7 @@ export class JogadorComponent {
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
-    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId);
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId);
     const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId)
 
     if (todosJogadoresComecaram) {
@@ -56,7 +62,7 @@ export class JogadorComponent {
 
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
-    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId)
+    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId)
   }
 
   removerJogador(jogadorDocument: JogadorDocumento) {

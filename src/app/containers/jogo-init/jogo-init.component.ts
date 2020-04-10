@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
+import { Component } from '@angular/core';
+import { LocalStorageService } from 'src/app/service/local-storage';
 
 @Component({
   selector: 'app-jogo-init',
   templateUrl: './jogo-init.component.html',
 })
 export class JogoInitComponent {
-  constructor(private cookieService: CookieService) {
-    this.cookieService.set("userId", "");
+  constructor(private localStorageService: LocalStorageService) {
+    this.localStorageService.clear()
   }
 }
