@@ -3,7 +3,6 @@ import { Jogo } from '../models/Jogo';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { Status, Etapa } from '../containers/jogo/jogo.status';
-import { CookieService } from 'ngx-cookie-service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +12,7 @@ export class JogoService {
     jogos: AngularFirestoreCollection<Jogo>;
     private jogosDoc: AngularFirestoreDocument<Jogo>;
 
-    constructor(private db: AngularFirestore, private cookieService: CookieService, private route: ActivatedRoute) {
+    constructor(private db: AngularFirestore, private route: ActivatedRoute) {
         this.jogos = db.collection(collections.jogo)
     }
 
@@ -48,10 +47,6 @@ export class JogoService {
                     });
                 })
             );
-    }
-
-    jogadorCriado() {
-        return this.cookieService.get("userId");
     }
 
     criarJogadores(jogadoresParticipantes, id) {

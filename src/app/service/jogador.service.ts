@@ -1,4 +1,3 @@
-import { CookieService } from 'ngx-cookie-service';
 import { collections } from '../context';
 import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
@@ -7,19 +6,17 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { JogadorDocumento } from '../models/JogadorDocumento';
 
 @Injectable()
 export class JogadorService {
     jogadores: AngularFirestoreCollection<Jogador>;
     private jogadorDoc: AngularFirestoreDocument<Jogador>;
-    private jogadorDocId: string;
 
-    constructor(private db: AngularFirestore, private jogoService: JogoService, private cookieService: CookieService,
-        private route: ActivatedRoute, ) {
+    constructor(
+        private db: AngularFirestore,
+        private jogoService: JogoService, ) {
         this.jogadores = db.collection(collections.jogador);
-        this.jogadorDocId = this.cookieService.get("userId");
     }
 
 
@@ -34,8 +31,8 @@ export class JogadorService {
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
         var jogador = new Jogador(jogadorNome);
-        this.jogadorDocId = await this._addjogador(jogador, jogoId);
-        return this.jogadorDocId;
+        const jogadorDocId = await this._addjogador(jogador, jogoId);
+        return jogadorDocId;
     }
 
     private _addjogador(jogador: Jogador, jogoId): Promise<string> {
@@ -43,7 +40,6 @@ export class JogadorService {
         return new Promise(resolve => {
             jogadorCollections.add({ ...jogador })
                 .then(function (docRef) {
-                    this.cookieService.set("userId", docRef.id);
                     this.jogoService.acrescentaJogador(jogoId);
                     resolve(docRef.id);
                 }.bind(this))
@@ -54,27 +50,18 @@ export class JogadorService {
         });
     }
 
-    jogadorCriado(): string {
-        return this.cookieService.get("userId");
-    }
-
     removerJogador({ jogador, id }: JogadorDocumento, jogoId: string): void {
         jogador.removido = true;
         this._updatejogador(jogador, jogoId, id);
     }
 
-    updatejogador(jogador: Jogador, jogoId: string): void {
-        this._updatejogador(jogador, jogoId, this.jogadorDocId)
+    updatejogador(jogador: Jogador, jogoId: string, jogadorDocId): void {
+        this._updatejogador(jogador, jogoId, jogadorDocId)
     }
 
     private _updatejogador(jogador: Jogador, jogoId: string, jogadorId: string): void {
         this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
         this.jogadorDoc.update({ ...jogador });
-    }
-
-    deletejogador(id: string, jogoId: string): void {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${id}`);
-        this.jogadorDoc.delete();
     }
 
     async comecarJogo(jogoId: string): Promise<void> {
@@ -113,6 +100,5 @@ export class JogadorService {
             });
         });
     }
-
 }
 

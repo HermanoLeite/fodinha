@@ -10,18 +10,19 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 
-import { CookieService } from 'ngx-cookie-service';
-
 import { environment } from '../environments/environment';
+
+import { LocalStorageService } from './service/local-storage';
+import { CartaService } from './service/carta.service';
+import { JogadorService } from './service/jogador.service';
+import { JogoService } from './service/jogo.service';
+
 
 import { AppComponent } from './containers/index/app.component';
 import { JogadorComponent } from './containers/jogador/jogador.component';
 import { JogoComponent } from './containers/jogo/jogo.component';
 import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
-import { CartaService } from './service/carta.service';
-import { JogadorService } from './service/jogador.service';
-import { JogoService } from './service/jogo.service';
 import { CartaComponent } from './components/cartas/carta/carta.component';
 import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
 import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
@@ -36,6 +37,8 @@ import { BotaoComecarComponent } from './components/jogo/botao-comecar/botao-com
 import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-palpite.component';
 import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.component';
 import { BotaoComecarJogoComponent } from './components/jogador/botao-comecar-jogo/botao-comecar-jogo.component';
+import { PageHeaderComponent } from './containers/index/components/page-header/page-header';
+import { StorageServiceModule } from 'angular-webstorage-service';
 
 @NgModule({
   declarations: [
@@ -57,7 +60,8 @@ import { BotaoComecarJogoComponent } from './components/jogador/botao-comecar-jo
     BotaoComecarJogoComponent,
     BotaoComecarComponent,
     BotaoPalpiteComponent,
-    MaoJogadorComponent
+    MaoJogadorComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -68,8 +72,9 @@ import { BotaoComecarJogoComponent } from './components/jogador/botao-comecar-jo
     AngularFirestoreModule,
     AngularFireStorageModule,
     BrowserAnimationsModule,
+    StorageServiceModule
   ],
-  providers: [JogoService, JogadorService, CartaService, CookieService],
+  providers: [JogoService, JogadorService, CartaService, LocalStorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

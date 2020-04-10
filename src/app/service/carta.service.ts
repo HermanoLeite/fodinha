@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { CookieService } from 'ngx-cookie-service';
+import { LocalStorageService } from './local-storage';
 
 @Injectable()
 export class CartaService {
-    constructor(private cookieService: CookieService) {
+    constructor(private localStorageService: LocalStorageService) {
     }
     getVisaoCarta(): boolean {
-        var visaoCarta = this.cookieService.get("visaoCarta");
+        var visaoCarta = this.localStorageService.get("visaoCarta");
         if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
             visaoCarta = "true";
             this.setVisaoCarta(visaoCarta)
@@ -15,7 +15,7 @@ export class CartaService {
     }
 
     async setVisaoCarta(visaoCarta) {
-        this.cookieService.set("visaoCarta", visaoCarta);
+        this.localStorageService.set("visaoCarta", visaoCarta);
         return visaoCarta;
     }
 }
