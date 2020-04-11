@@ -10,7 +10,7 @@ import { Status } from '../jogo/jogo.status';
   templateUrl: './jogo-init.component.html',
 })
 export class JogoInitComponent {
-  private jogos: Observable<any>;
+  jogos: Observable<any>;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -30,6 +30,12 @@ export class JogoInitComponent {
 
   removerJogo(jogoId) {
     this.jogoService.deletarJogo(jogoId)
+  }
+
+  salvarJogo(jogoNome: string) {
+    if (jogoNome !== null) {
+      this.jogoService.novoJogo(jogoNome);
+    }
   }
 
   ngOnInit() {

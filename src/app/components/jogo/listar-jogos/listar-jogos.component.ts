@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'listar-jogos',
-  templateUrl: './listar-jogos.component.html'
+  templateUrl: './listar-jogos.component.html',
+  styleUrls: ['./listar-jogos.component.css']
 })
 export class ListarJogosComponent {
   @Input() jogos: Observable<any>;

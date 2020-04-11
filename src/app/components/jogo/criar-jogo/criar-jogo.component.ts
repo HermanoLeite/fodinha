@@ -1,29 +1,27 @@
-import { Component } from '@angular/core';
-import { JogoService } from '../../../service/jogo.service';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'criar-jogo',
   templateUrl: './criar-jogo.component.html'
 })
 export class CriarJogoComponent {
+  @Output() salvarJogo = new EventEmitter<string>()
+
   criandoJogo: Boolean = false;
   jogoNome: string;
-  constructor(private jogoService: JogoService) { }
 
   iniciar() {
     this.criandoJogo = true;
     this.jogoNome = null;
   }
 
-  cancelar() {
+  fechar() {
     this.criandoJogo = false;
     this.jogoNome = null;
   }
 
   salvarNovoJogo() {
-    if (this.jogoNome !== null) {
-      this.jogoService.novoJogo(this.jogoNome);
-    }
-    this.cancelar();
+    this.salvarJogo.emit(this.jogoNome)
+    this.fechar();
   }
 }
