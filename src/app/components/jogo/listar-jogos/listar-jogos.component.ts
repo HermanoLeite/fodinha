@@ -1,7 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { Status } from 'src/app/containers/jogo/jogo.status';
-import { Router } from '@angular/router';
-import { JogoService } from 'src/app/service/jogo.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -10,10 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class ListarJogosComponent {
   @Input() jogos: Observable<any>;
-  constructor(
-    private router: Router,
-    private jogoService: JogoService) {
-  }
+  @Output() removerJogo = new EventEmitter<string>()
+  @Output() entrarJogo = new EventEmitter<any>()
 
   getStatus(status: Status) {
     switch (status) {
@@ -21,18 +17,5 @@ export class ListarJogosComponent {
       case Status.jogando: return "Jogando"
       case Status.finalizado: return "Finalizado"
     }
-  }
-
-  entrarJogo(jogo) {
-    if (jogo.status === Status.finalizado) {
-      this.router.navigate(['jogo', jogo.id]);
-    }
-    else {
-      this.router.navigate(['jogador', jogo.id]);
-    }
-  }
-
-  deletarJogo(jogoId) {
-    this.jogoService.deletarJogo(jogoId)
   }
 }

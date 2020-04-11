@@ -3,6 +3,7 @@ import { LocalStorageService } from 'src/app/service/local-storage';
 import { Router } from '@angular/router';
 import { JogoService } from 'src/app/service/jogo.service';
 import { Observable } from 'rxjs';
+import { Status } from '../jogo/jogo.status';
 
 @Component({
   selector: 'app-jogo-init',
@@ -16,6 +17,19 @@ export class JogoInitComponent {
     private router: Router,
     private jogoService: JogoService) {
     this.localStorageService.clear()
+  }
+
+  entrarJogo(jogo) {
+    if (jogo.status === Status.finalizado) {
+      this.router.navigate(['jogo', jogo.id]);
+    }
+    else {
+      this.router.navigate(['jogador', jogo.id]);
+    }
+  }
+
+  removerJogo(jogoId) {
+    this.jogoService.deletarJogo(jogoId)
   }
 
   ngOnInit() {
