@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { JogadorComponent } from './containers/jogador';
-import { JogoComponent } from './containers/jogo/jogo.component';
+import { JogoComponent } from './containers/jogo';
 import { JogoInitComponent } from './containers/jogo-init';
 
 const routes: Routes = [

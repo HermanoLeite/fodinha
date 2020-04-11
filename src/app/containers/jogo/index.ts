@@ -12,7 +12,7 @@ import { LocalStorageService } from 'src/app/service/local-storage';
 
 @Component({
   selector: 'app-jogo',
-  templateUrl: './jogo.component.html',
+  templateUrl: './index.html',
 })
 export class JogoComponent implements OnInit {
   jogo: any;
