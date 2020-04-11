@@ -1,4 +1,4 @@
-import { Etapa } from 'src/app/containers/jogo/jogo.status';
+import { Etapa } from 'src/app/components/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { collections } from 'src/app/context'
 

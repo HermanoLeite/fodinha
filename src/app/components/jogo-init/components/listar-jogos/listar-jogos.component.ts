@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { Status } from 'src/app/containers/jogo/jogo.status';
+import { Status } from 'src/app/components/jogo/jogo.status';
 import { Observable } from 'rxjs';
 
 @Component({

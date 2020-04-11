@@ -18,26 +18,26 @@ import { JogadorService } from './service/jogador.service';
 import { JogoService } from './service/jogo.service';
 
 
-import { AppComponent } from './containers/index/app.component';
-import { JogadorComponent } from './containers/jogador';
-import { JogoComponent } from './containers/jogo/jogo.component';
-import { JogoInitComponent } from './containers/jogo-init';
+import { AppComponent } from './components/index/app.component';
+import { JogadorComponent } from './components/jogador';
+import { JogoComponent } from './components/jogo';
+import { JogoInitComponent } from './components/jogo-init';
 
-import { CartaComponent } from './components/cartas/carta/carta.component';
-import { CriarJogoComponent } from './containers/jogo-init/components/criar-jogo/criar-jogo.component';
-import { ListarJogosComponent } from './containers/jogo-init/components/listar-jogos/listar-jogos.component';
-import { ListarJogadoresComponent } from './containers/jogador/components/listar-jogadores/listar-jogadores.component';
-import { CriarJogadorComponent } from './containers/jogador/components/criar-jogador/criar-jogador.component';
-import { ToggleVisaoCartaComponent } from './components/cartas/toggle-visao-carta/toggle-visao-carta.component';
-import { PlacarJogoComponent } from './components/jogo/placar/placar-jogo/placar-jogo.component';
-import { PlacarRodadaComponent } from './components/jogo/placar/placar-rodada/placar-rodada.component';
-import { JogadasComponent } from './components/jogo/jogadas/jogadas.component';
-import { GanhadorComponent } from './components/jogo/ganhador/ganhador.component';
-import { BotaoComecarComponent } from './components/jogo/botao-comecar/botao-comecar.component';
-import { BotaoPalpiteComponent } from './components/jogo/botao-palpite/botao-palpite.component';
-import { MaoJogadorComponent } from './components/jogo/mao-jogador/mao-jogador.component';
-import { BotaoComecarJogoComponent } from './containers/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
-import { PageHeaderComponent } from './containers/index/components/page-header/page-header';
+import { CartaComponent } from './components/jogo/components/carta/carta.component';
+import { CriarJogoComponent } from './components/jogo-init/components/criar-jogo/criar-jogo.component';
+import { ListarJogosComponent } from './components/jogo-init/components/listar-jogos/listar-jogos.component';
+import { ListarJogadoresComponent } from './components/jogador/components/listar-jogadores/listar-jogadores.component';
+import { CriarJogadorComponent } from './components/jogador/components/criar-jogador/criar-jogador.component';
+import { ToggleVisaoCartaComponent } from './components/jogo/components/toggle-visao-carta/toggle-visao-carta.component';
+import { PlacarJogoComponent } from './components/jogo/components/placar/placar-jogo/placar-jogo.component';
+import { PlacarRodadaComponent } from './components/jogo/components/placar/placar-rodada/placar-rodada.component';
+import { JogadasComponent } from './components/jogo/components/jogadas/jogadas.component';
+import { GanhadorComponent } from './components/jogo/components/ganhador/ganhador.component';
+import { BotaoComecarComponent } from './components/jogo/components/botao-comecar/botao-comecar.component';
+import { BotaoPalpiteComponent } from './components/jogo/components/botao-palpite/botao-palpite.component';
+import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/mao-jogador.component';
+import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
+import { PageHeaderComponent } from './components/index/components/page-header/page-header';
 import { StorageServiceModule } from 'angular-webstorage-service';
 
 @NgModule({
