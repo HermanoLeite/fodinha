@@ -24,8 +24,8 @@ import { JogoComponent } from './containers/jogo/jogo.component';
 import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
 
 import { CartaComponent } from './components/cartas/carta/carta.component';
-import { CriarJogoComponent } from './components/jogo/criar-jogo/criar-jogo.component';
-import { ListarJogosComponent } from './components/jogo/listar-jogos/listar-jogos.component';
+import { CriarJogoComponent } from './containers/jogo-init/components/criar-jogo/criar-jogo.component';
+import { ListarJogosComponent } from './containers/jogo-init/components/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './components/jogador/listar-jogadores/listar-jogadores.component';
 import { CriarJogadorComponent } from './components/jogador/criar-jogador/criar-jogador.component';
 import { ToggleVisaoCartaComponent } from './components/cartas/toggle-visao-carta/toggle-visao-carta.component';
