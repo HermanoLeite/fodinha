@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Carta, combate } from '../../../../models/Carta';
-import { Etapa, Status } from 'src/app/containers/jogo/jogo.status';
+import { Etapa, Status } from 'src/app/components/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { JogoService } from 'src/app/service/jogo.service';
 import { collections } from 'src/app/context'

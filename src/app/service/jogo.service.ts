@@ -2,7 +2,7 @@ import { collections } from '../context';
 import { Jogo } from '../models/Jogo';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
-import { Status, Etapa } from '../containers/jogo/jogo.status';
+import { Status, Etapa } from '../components/jogo/jogo.status';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
