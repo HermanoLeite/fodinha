@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CartaService } from 'src/app/service/carta.service';
 
 @Component({
@@ -10,13 +10,10 @@ import { CartaService } from 'src/app/service/carta.service';
   styleUrls: ['./toggle-visao-carta.component.css']
 })
 export class ToggleVisaoCartaComponent {
-  visaoCarta: boolean = true;
-
-  constructor(private cartaService: CartaService) {
-    this.visaoCarta = this.cartaService.getVisaoCarta();
-  }
+  @Input() visaoCarta: boolean = true;
+  @Output() setVisaoCarta = new EventEmitter<boolean>()
 
   async toggleVisaoCarta() {
-    this.visaoCarta = await this.cartaService.setVisaoCarta(!this.visaoCarta);
+    this.setVisaoCarta.emit(!this.visaoCarta);
   }
 }

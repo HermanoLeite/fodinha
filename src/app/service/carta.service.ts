@@ -5,6 +5,7 @@ import { LocalStorageService, Keys } from './local-storage';
 export class CartaService {
     constructor(private localStorageService: LocalStorageService) {
     }
+
     getVisaoCarta(): boolean {
         var visaoCarta = this.localStorageService.get(Keys.userId);
         if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {

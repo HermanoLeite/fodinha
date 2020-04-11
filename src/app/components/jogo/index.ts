@@ -9,6 +9,7 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
 import { LocalStorageService } from 'src/app/service/local-storage';
+import { CartaService } from 'src/app/service/carta.service';
 
 @Component({
   selector: 'app-jogo',
@@ -28,13 +29,21 @@ export class JogoComponent implements OnInit {
   rodadaDoc: AngularFirestoreDocument<any>;
   Etapa: Etapa;
   jogando: boolean = false;
+  visaoCarta: boolean;
 
   constructor(
     private db: AngularFirestore,
     private jogoService: JogoService,
     private route: ActivatedRoute,
-    private localStorageService: LocalStorageService) {
+    private localStorageService: LocalStorageService,
+    private cartaService: CartaService) {
+
+    this.visaoCarta = this.cartaService.getVisaoCarta();
     this.jogoDoc = this.db.collection(collections.jogo).doc(this.route.snapshot.paramMap.get("id"));
+  }
+
+  async setVisaoCarta(visaoCarta: boolean) {
+    this.visaoCarta = await this.cartaService.setVisaoCarta(visaoCarta);
   }
 
   jogoFinalizado(): boolean {

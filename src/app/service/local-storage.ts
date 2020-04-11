@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { LOCAL_STORAGE, WebStorageService } from 'angular-webstorage-service';
 
-@Injectable()
 export class LocalStorageService {
 
     constructor(@Inject(LOCAL_STORAGE) private storage: WebStorageService) {
