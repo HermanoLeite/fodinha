@@ -1,7 +1,5 @@
 <section>
-  <criar-jogo></criar-jogo>
-  <div class="row">
-    <br/>
-    <listar-jogos></listar-jogos>
-  </div>
+  <criar-jogo (salvarJogo)="salvarJogo($event)"></criar-jogo>
+  <listar-jogos [jogos]="jogos" (removerJogo)="removerJogo($event)" (entrarJogo)="entrarJogo($event)">
+  </listar-jogos>
 </section>
