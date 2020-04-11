@@ -7,7 +7,7 @@ import { Status } from '../jogo/jogo.status';
 
 @Component({
   selector: 'app-jogo-init',
-  templateUrl: './jogo-init.component.html',
+  templateUrl: './index.html',
 })
 export class JogoInitComponent {
   jogos: Observable<any>;

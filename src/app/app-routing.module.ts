@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { JogadorComponent } from './containers/jogador/jogador.component';
+import { JogadorComponent } from './containers/jogador';
 import { JogoComponent } from './containers/jogo/jogo.component';
-import { JogoInitComponent } from './containers/jogo-init/jogo-init.component';
+import { JogoInitComponent } from './containers/jogo-init';
 
 const routes: Routes = [
   { path: '', component: JogoInitComponent },

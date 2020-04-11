@@ -12,7 +12,7 @@ import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
 import { LocalStorageService } from 'src/app/service/local-storage'
 @Component({
   selector: 'jogador',
-  templateUrl: './jogador.component.html'
+  templateUrl: './index.html'
 })
 
 export class JogadorComponent {
