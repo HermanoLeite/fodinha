@@ -9,7 +9,7 @@ import { Jogo } from 'src/app/models/Jogo'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
-import { LocalStorageService } from 'src/app/service/local-storage'
+import { LocalStorageService, Keys } from 'src/app/service/local-storage'
 @Component({
   selector: 'jogador',
   templateUrl: './index.html'
@@ -28,7 +28,7 @@ export class JogadorComponent {
     private router: Router,
     private localStorage: LocalStorageService) {
 
-    this.jogadorDocId = this.localStorage.get("userId")
+    this.jogadorDocId = this.localStorage.get(Keys.userId)
 
     this.jogoId = this.route.snapshot.paramMap.get("id");
     if (this.jogadorDocId) {
@@ -41,7 +41,7 @@ export class JogadorComponent {
     if (jogadorNome !== null) {
       const jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
 
-      this.localStorage.set("userId", jogadorDocId)
+      this.localStorage.set(Keys.userId, jogadorDocId)
       this.jogadorDocId = jogadorDocId
     }
 

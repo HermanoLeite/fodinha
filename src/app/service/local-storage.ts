@@ -8,7 +8,7 @@ export class LocalStorageService {
 
     }
 
-    gameKeys = ["userId"]
+    gameKeys = [Keys.userId]
 
     set = (key, val): void => this.storage.set(key, val)
 
@@ -17,4 +17,9 @@ export class LocalStorageService {
     clear = (): void => this.gameKeys.forEach(k => this.delete(k))
 
     private delete = (key): void => this.storage.remove(key)
+}
+
+export enum Keys {
+    userId = "userId",
+    visaoCarta = "visaoCarta"
 }

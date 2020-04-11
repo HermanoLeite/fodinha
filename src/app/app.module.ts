@@ -8,7 +8,7 @@ import { FormsModule } from "@angular/forms";
 
 import { NgModule } from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
+import { Router } from './router';
 
 import { environment } from '../environments/environment';
 
@@ -67,7 +67,7 @@ import { StorageServiceModule } from 'angular-webstorage-service';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    AppRoutingModule,
+    Router,
     AngularFireAuthModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
