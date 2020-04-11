@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { CartaService } from '../../../service/carta.service';
-import { Carta } from '../../../models/Carta';
+import { CartaService } from '../../../../service/carta.service';
+import { Carta } from '../../../../models/Carta';
 
 @Component({
   selector: 'carta',

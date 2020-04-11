@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Baralho } from '../../../models/Baralho';
+import { Baralho } from '../../../../models/Baralho';
 import { Etapa } from 'src/app/containers/jogo/jogo.status';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
