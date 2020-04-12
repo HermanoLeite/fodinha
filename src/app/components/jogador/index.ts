@@ -29,8 +29,11 @@ export class JogadorComponent {
     private localStorage: LocalStorageService) {
 
     this.jogadorDocId = this.localStorage.get(Keys.userId)
+    this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.subscribeJogadorAtual()
+  }
 
-    this.jogoId = this.route.snapshot.paramMap.get("id");
+  private subscribeJogadorAtual() {
     if (this.jogadorDocId) {
       var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
       jogadorObservable.subscribe(data => this.jogadorAtual = data)
@@ -39,14 +42,10 @@ export class JogadorComponent {
 
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
-      const jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
-
-      this.localStorage.set(Keys.userId, jogadorDocId)
-      this.jogadorDocId = jogadorDocId
+      this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
+      this.localStorage.set(Keys.userId, this.jogadorDocId)
     }
-
-    var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
-    jogadorObservable.subscribe(data => this.jogadorAtual = data)
+    this.subscribeJogadorAtual()
   }
 
   async comecarJogo() {

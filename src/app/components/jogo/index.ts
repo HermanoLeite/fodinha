@@ -39,11 +39,14 @@ export class JogoComponent implements OnInit {
     private cartaService: CartaService) {
 
     this.visaoCarta = this.cartaService.getVisaoCarta();
+    console.log('visaoCarta => ', this.visaoCarta)
     this.jogoDoc = this.db.collection(collections.jogo).doc(this.route.snapshot.paramMap.get("id"));
   }
 
   async setVisaoCarta(visaoCarta: boolean) {
+    console.log('setVisaoCarta => ', visaoCarta)
     this.visaoCarta = await this.cartaService.setVisaoCarta(visaoCarta);
+    console.log('nova visaoCarta => ', this.visaoCarta)
   }
 
   jogoFinalizado(): boolean {
