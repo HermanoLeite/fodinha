@@ -25,6 +25,16 @@ export class JogadorService {
             .pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
+    buscarJogadores(jogoId: string) {
+        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
+            .pipe(map((data) => data.map(({ payload }) => {
+                const data = payload.doc.data() as Jogador;
+                const id = payload.doc.id;
+
+                return new JogadorDocumento(id, data);
+            })))
+    }
+
     setJogo(jogoId) {
         this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
     }

@@ -28,24 +28,21 @@ export class JogadorComponent {
     private router: Router,
     private localStorage: LocalStorageService) {
 
-    this.jogadorDocId = this.localStorage.get(Keys.userId)
     this.jogoId = this.route.snapshot.paramMap.get("id")
-    this.subscribeJogadorAtual()
+    this.jogadorDocId = this.localStorage.get(Keys.userId)
   }
 
   private subscribeJogadorAtual() {
-    if (this.jogadorDocId) {
-      var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
-      jogadorObservable.subscribe(data => this.jogadorAtual = data)
-    }
+    var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
+    jogadorObservable.subscribe(data => this.jogadorAtual = data)
   }
 
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
       this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
       this.localStorage.set(Keys.userId, this.jogadorDocId)
+      this.subscribeJogadorAtual()
     }
-    this.subscribeJogadorAtual()
   }
 
   async comecarJogo() {
@@ -69,20 +66,13 @@ export class JogadorComponent {
   }
 
   ngOnInit() {
+    if (this.jogadorDocId) {
+      this.subscribeJogadorAtual()
+    }
+
+    this.jogadores = this.jogadorService.buscarJogadores(this.jogoId)
+
     var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
-    var jogadorDB = jogoDB.collection(collections.jogador);
-
-    this.jogadores = jogadorDB.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(({ payload }) => {
-          const data = payload.doc.data() as Jogador;
-          const id = payload.doc.id;
-
-          return new JogadorDocumento(id, data);
-        });
-      }),
-    )
-
     jogoDB.valueChanges().pipe(
       map(a => {
         const data = a as Jogo
