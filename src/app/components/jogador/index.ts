@@ -28,25 +28,21 @@ export class JogadorComponent {
     private router: Router,
     private localStorage: LocalStorageService) {
 
+    this.jogoId = this.route.snapshot.paramMap.get("id")
     this.jogadorDocId = this.localStorage.get(Keys.userId)
+  }
 
-    this.jogoId = this.route.snapshot.paramMap.get("id");
-    if (this.jogadorDocId) {
-      var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
-      jogadorObservable.subscribe(data => this.jogadorAtual = data)
-    }
+  private subscribeJogadorAtual() {
+    var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
+    jogadorObservable.subscribe(data => this.jogadorAtual = data)
   }
 
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
-      const jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
-
-      this.localStorage.set(Keys.userId, jogadorDocId)
-      this.jogadorDocId = jogadorDocId
+      this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
+      this.localStorage.set(Keys.userId, this.jogadorDocId)
+      this.subscribeJogadorAtual()
     }
-
-    var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
-    jogadorObservable.subscribe(data => this.jogadorAtual = data)
   }
 
   async comecarJogo() {
@@ -70,21 +66,14 @@ export class JogadorComponent {
   }
 
   ngOnInit() {
-    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
-    var jogadorDB = jogoDB.collection(collections.jogador);
+    if (this.jogadorDocId) {
+      this.subscribeJogadorAtual()
+    }
 
-    this.jogadores = jogadorDB.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(({ payload }) => {
-          const data = payload.doc.data() as Jogador;
-          const id = payload.doc.id;
+    this.jogadores = this.jogadorService.buscarJogadores(this.jogoId)
+    const jogo = this.jogadorService.buscarJogo(this.jogoId)
 
-          return new JogadorDocumento(id, data);
-        });
-      }),
-    )
-
-    jogoDB.valueChanges().pipe(
+    jogo.pipe(
       map(a => {
         const data = a as Jogo
 

@@ -10,23 +10,26 @@ import { JogadorDocumento } from '../models/JogadorDocumento';
 
 @Injectable()
 export class JogadorService {
-    jogadores: AngularFirestoreCollection<Jogador>;
-    private jogadorDoc: AngularFirestoreDocument<Jogador>;
 
-    constructor(
-        private db: AngularFirestore,
-        private jogoService: JogoService, ) {
-        this.jogadores = db.collection(collections.jogador);
-    }
-
+    constructor(private db: AngularFirestore, private jogoService: JogoService) { }
 
     buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
         return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorDocId).snapshotChanges()
             .pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
-    setJogo(jogoId) {
-        this.jogadores = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
+    buscarJogadores(jogoId: string): Observable<JogadorDocumento[]> {
+        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
+            .pipe(map((data) => data.map(({ payload }) => {
+                const data = payload.doc.data() as Jogador;
+                const id = payload.doc.id;
+
+                return new JogadorDocumento(id, data);
+            })))
+    }
+
+    buscarJogo(jogoId: string) {
+        return this.db.collection(collections.jogo).doc(jogoId).valueChanges()
     }
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
@@ -60,8 +63,8 @@ export class JogadorService {
     }
 
     private _updatejogador(jogador: Jogador, jogoId: string, jogadorId: string): void {
-        this.jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
-        this.jogadorDoc.update({ ...jogador });
+        const jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
+        jogadorDoc.update({ ...jogador });
     }
 
     async comecarJogo(jogoId: string): Promise<void> {

@@ -10,6 +10,24 @@ export class BotaoComecarJogoComponent {
   @Input() comecou: boolean
   @Input() removido: boolean
 
+  label: string
+  acao: Function
+
+  ngOnChanges() {
+    this.label = this.getLabel()
+    this.acao = this.getAcao()
+  }
+
+  getLabel() {
+    if (this.removido) return 'Retornar'
+    if (this.comecou) return 'Desistir'
+    return 'Começar'
+  }
+
+  getAcao() {
+    return this.removido ? this.retornar : this.comecar
+  }
+
   comecar() {
     this.comecarJogo.emit();
   }
