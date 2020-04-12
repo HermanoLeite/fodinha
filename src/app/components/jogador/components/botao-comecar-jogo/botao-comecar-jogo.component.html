@@ -1,9 +1,3 @@
-<button *ngIf="!removido && !comecou" class="btn btn-success" (click)="comecar()">
-  Começar
-</button>
-<button *ngIf="!removido && comecou" class="btn btn-success" (click)="comecar()">
-  Desistir
-</button>
-<button *ngIf="removido" class="btn btn-success" (click)="retornar()">
-  Retornar
+<button class="btn btn-success" (click)="acao()">
+  {{label}}
 </button>
