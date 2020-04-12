@@ -71,9 +71,9 @@ export class JogadorComponent {
     }
 
     this.jogadores = this.jogadorService.buscarJogadores(this.jogoId)
+    const jogo = this.jogadorService.buscarJogo(this.jogoId)
 
-    var jogoDB = this.db.collection(collections.jogo).doc(this.jogoId);
-    jogoDB.valueChanges().pipe(
+    jogo.pipe(
       map(a => {
         const data = a as Jogo
 
