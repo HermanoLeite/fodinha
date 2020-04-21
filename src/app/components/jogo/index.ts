@@ -16,20 +16,20 @@ import { CartaService } from 'src/app/service/carta.service';
   templateUrl: './index.html',
 })
 export class JogoComponent implements OnInit {
-  jogo: any;
-  jogadores: any;
-  jogadoresJogo: any;
-  rodada: any;
-  jogadorJogandoId: any;
-  jogadorJogando: any;
-  jogada: any = null;
-  jogadas: any = null;
-  todosPalpitaram: boolean = false;
-  jogoDoc: AngularFirestoreDocument<any>;
-  rodadaDoc: AngularFirestoreDocument<any>;
-  Etapa: Etapa;
-  jogando: boolean = false;
-  visaoCarta: boolean;
+  jogo: any
+  jogadores: any
+  jogadoresJogo: any
+  rodada: any
+  jogadorJogandoId: any
+  jogadorJogando: any
+  jogada: any = null
+  jogadas: any = null
+  todosPalpitaram: boolean = false
+  jogoDoc: AngularFirestoreDocument<any>
+  rodadaDoc: AngularFirestoreDocument<any>
+  Etapa: Etapa
+  jogando: boolean = false
+  visaoCarta: boolean
 
   constructor(
     private db: AngularFirestore,
@@ -53,9 +53,7 @@ export class JogoComponent implements OnInit {
     return false;
   }
 
-  etapaJogarCarta(etapa) {
-    return etapa === Etapa.jogarCarta;
-  }
+  etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
 
   criarJogada(jogadorComeca, rodadaDoc): void {
     const jogadaCollection = rodadaDoc.collection(collections.jogada);
@@ -68,6 +66,35 @@ export class JogoComponent implements OnInit {
     jogadaCollection.add(jogada)
       .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
       .catch((error) => console.error("Error adding document: ", error));
+  }
+
+  proximoJogador(rodadaVez: number, jogadoresCount: number): number {
+    const vez = rodadaVez + 1;
+    return vez === jogadoresCount ? 0 : vez;
+  }
+
+  acabaramAsCartas = () => this.jogadorJogando.cartas.length === 0
+  completouRodada = (proximoJogador) => proximoJogador === this.jogada.comeca
+
+  async jogarCarta(cartaJogadorIndex) {
+    var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
+
+    var vencedor = this.jogoService.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.rodadaDoc);
+    var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+
+    if (this.completouRodada(proximoJogador)) {
+      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, vencedor);
+
+      if (this.acabaramAsCartas()) {
+        this.jogoService.encerrarJogada(this.jogo.id, this.rodada.id, this.jogoDoc, this.jogo.rodada);
+      }
+      else {
+        this.jogoService.comecarNovaJogada(vencedor, this.jogada.comeca, this.rodadaDoc)
+      }
+    }
+    else {
+      this.rodadaDoc.update({ vez: proximoJogador });
+    }
   }
 
   loadRodada(rodadaId): void {

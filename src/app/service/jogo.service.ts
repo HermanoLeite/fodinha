@@ -242,5 +242,29 @@ export class JogoService {
 
         return maiorCartaJogador
     }
+
+    criarJogada(jogadorComeca, rodadaDoc): void {
+        const jogadaCollection = rodadaDoc.collection(collections.jogada);
+
+        const jogada = {
+            comeca: jogadorComeca,
+            maiorCarta: null,
+        }
+
+        jogadaCollection.add(jogada)
+            .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
+            .catch((error) => console.error("Error adding document: ", error));
+    }
+
+    comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada, rodadaDoc) {
+        if (maiorCartaJogador !== null) {
+            this.criarJogada(maiorCartaJogador, rodadaDoc);
+            rodadaDoc.update({ vez: maiorCartaJogador });
+        }
+        else {
+            this.criarJogada(jogadorComecouJogada, rodadaDoc);
+            rodadaDoc.update({ vez: jogadorComecouJogada });
+        }
+    }
 }
 
