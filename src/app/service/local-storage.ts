@@ -3,9 +3,7 @@ import { LOCAL_STORAGE, WebStorageService } from 'angular-webstorage-service';
 
 export class LocalStorageService {
 
-    constructor(@Inject(LOCAL_STORAGE) private storage: WebStorageService) {
-
-    }
+    constructor(@Inject(LOCAL_STORAGE) private storage: WebStorageService) { }
 
     gameKeys = [Keys.userId]
 

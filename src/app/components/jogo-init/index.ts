@@ -3,7 +3,7 @@ import { LocalStorageService } from 'src/app/service/local-storage';
 import { Router } from '@angular/router';
 import { JogoService } from 'src/app/service/jogo.service';
 import { Observable } from 'rxjs';
-import { Status } from '../jogo/jogo.status';
+import { Status } from '../../models/Jogo';
 
 @Component({
   selector: 'app-jogo-init',

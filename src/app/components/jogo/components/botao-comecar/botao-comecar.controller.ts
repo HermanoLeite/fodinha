@@ -1,5 +1,5 @@
 import { Baralho } from 'src/app/models/Baralho';
-import { Etapa } from 'src/app/components/jogo/jogo.status';
+import { Etapa } from 'src/app/models/Jogo';
 import { collections } from 'src/app/context'
 
 export class BotaoComecarController {

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Baralho } from '../../../../models/Baralho';
-import { Etapa } from 'src/app/components/jogo/jogo.status';
+import { Etapa } from 'src/app/models/Jogo';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { BotaoComecarController } from './botao-comecar.controller';

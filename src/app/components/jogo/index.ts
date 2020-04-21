@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { collections } from '../../context';
-import { Status, Etapa } from './jogo.status';
-import { Jogo } from '../../models/Jogo';
+import { Jogo, Status, Etapa } from '../../models/Jogo';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'

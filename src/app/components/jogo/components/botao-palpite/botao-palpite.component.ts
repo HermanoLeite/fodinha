@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Etapa } from 'src/app/components/jogo/jogo.status';
+import { Etapa } from 'src/app/models/Jogo';
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { BotaoPalpiteController } from './botao-palpite.controller';
