@@ -34,8 +34,8 @@
           [criarJogada]="criarJogada"></botao-palpite>
       </div>
       <div class="row">
-        <mao-jogador [rodada]="rodada" [jogador]="jogadorJogando" [rodadaDoc]="rodadaDoc" [jogoDoc]="jogoDoc"
-          [jogada]="jogada" [jogo]="jogo" [criarJogada]="criarJogada">
+        <mao-jogador [rodada]="rodada" [jogador]="jogadorJogando" [podeJogarCarta]="etapaJogarCarta(rodada.etapa)"
+          (jogarCarta)="jogarCarta($event)">
         </mao-jogador>
       </div>
     </div>
