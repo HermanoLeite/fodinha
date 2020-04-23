@@ -72,7 +72,7 @@ import { StorageServiceModule } from 'angular-webstorage-service';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireStorageModule,
-    StorageServiceModule
+    StorageServiceModule,
   ],
   providers: [JogoService, JogadorService, CartaService, LocalStorageService],
   bootstrap: [AppComponent]
