@@ -9,6 +9,7 @@ import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
 import { LocalStorageService } from 'src/app/service/local-storage';
 import { CartaService } from 'src/app/service/carta.service';
+import { RodadaController } from './controllers/rodada.controller';
 
 @Component({
   selector: 'app-jogo',
@@ -39,6 +40,11 @@ export class JogoComponent implements OnInit {
 
     this.visaoCarta = this.cartaService.getVisaoCarta();
     this.jogoDoc = this.db.collection(collections.jogo).doc(this.route.snapshot.paramMap.get("id"));
+  }
+
+  comecarRodada() {
+    const controller = new RodadaController(this.rodadaDoc, this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada);
+    controller.comecar();
   }
 
   async setVisaoCarta(visaoCarta: boolean) {
