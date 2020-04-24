@@ -8,7 +8,6 @@ export class CartaService {
 
     getVisaoCarta(): boolean {
         var visaoCarta = this.localStorageService.get(Keys.visaoCarta);
-        console.log('getVisaoCarta => ', visaoCarta)
         if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
             visaoCarta = "true";
             this.setVisaoCarta(visaoCarta)

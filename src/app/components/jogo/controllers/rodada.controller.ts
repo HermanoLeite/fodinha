@@ -2,11 +2,12 @@ import { Baralho } from 'src/app/models/Baralho';
 import { Etapa } from 'src/app/models/Jogo';
 import { collections } from 'src/app/context'
 
-export class BotaoComecarController {
+export class RodadaController {
     public rodadaDoc;
     public jogadorVez;
     public quantidadeDeJogadores;
     public rodada;
+
     constructor(rodadaDoc, jogadorVez, quantidadeDeJogadores, rodada) {
         this.rodadaDoc = rodadaDoc
         this.jogadorVez = jogadorVez
@@ -32,9 +33,8 @@ export class BotaoComecarController {
         return baralho;
     }
 
-    distribuir(baralho) {
+    distribuir(baralho: Baralho) {
         var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), this.quantidadeDeJogadores, this.rodada);
-
         for (var i = 0; i < this.quantidadeDeJogadores; i++) {
             const cartaArray = baralho.tiraCartas(quantidadeCartas);
             const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));

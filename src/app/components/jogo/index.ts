@@ -9,6 +9,7 @@ import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
 import { LocalStorageService } from 'src/app/service/local-storage';
 import { CartaService } from 'src/app/service/carta.service';
+import { RodadaController } from './controllers/rodada.controller';
 
 @Component({
   selector: 'app-jogo',
@@ -39,6 +40,26 @@ export class JogoComponent implements OnInit {
 
     this.visaoCarta = this.cartaService.getVisaoCarta();
     this.jogoDoc = this.db.collection(collections.jogo).doc(this.route.snapshot.paramMap.get("id"));
+  }
+
+  comecarRodada() {
+    const controller = new RodadaController(this.rodadaDoc, this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada);
+    controller.comecar();
+  }
+
+  enviarPalpite(palpite: number): void {
+    const jogadorDoc = this.rodadaDoc.collection(collections.jogadores).doc(this.jogadorJogando.id.toString());
+    jogadorDoc.update({ palpite: palpite });
+
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+
+    if (this.rodada.comeca === this.rodada.vez) {
+      this.criarJogada(proximoJogador, this.rodadaDoc)
+      this.rodadaDoc.update({ etapa: Etapa.jogarCarta, vez: proximoJogador });
+    }
+    else {
+      this.rodadaDoc.update({ vez: proximoJogador });
+    }
   }
 
   async setVisaoCarta(visaoCarta: boolean) {
