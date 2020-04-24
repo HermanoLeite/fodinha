@@ -29,8 +29,9 @@
       <div *ngIf="jogadorJogando.id == rodada.vez">
         <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
 
-        <botao-palpite [etapa]="rodada.etapa" [rodadaDoc]="rodadaDoc" [jogador]="jogadorJogando" [rodada]="rodada"
-          [criarJogada]="criarJogada"></botao-palpite>
+        <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
+          [quantidadeCartas]="jogadorJogando.cartas.length">
+        </botao-palpite>
       </div>
       <div class="row">
         <mao-jogador [rodada]="rodada" [jogador]="jogadorJogando" [podeJogarCarta]="etapaJogarCarta(rodada.etapa)"

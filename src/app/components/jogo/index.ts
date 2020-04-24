@@ -47,6 +47,21 @@ export class JogoComponent implements OnInit {
     controller.comecar();
   }
 
+  enviarPalpite(palpite: number): void {
+    const jogadorDoc = this.rodadaDoc.collection(collections.jogadores).doc(this.jogadorJogando.id.toString());
+    jogadorDoc.update({ palpite: palpite });
+
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+
+    if (this.rodada.comeca === this.rodada.vez) {
+      this.criarJogada(proximoJogador, this.rodadaDoc)
+      this.rodadaDoc.update({ etapa: Etapa.jogarCarta, vez: proximoJogador });
+    }
+    else {
+      this.rodadaDoc.update({ vez: proximoJogador });
+    }
+  }
+
   async setVisaoCarta(visaoCarta: boolean) {
     this.visaoCarta = await this.cartaService.setVisaoCarta(visaoCarta);
   }
