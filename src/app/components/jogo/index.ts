@@ -99,7 +99,7 @@ export class JogoComponent implements OnInit {
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
-    var vencedor = this.jogoService.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.rodadaDoc);
+    var vencedor = this.jogoService.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.rodadaDoc, this.jogo.id);
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
     if (this.completouRodada(proximoJogador)) {

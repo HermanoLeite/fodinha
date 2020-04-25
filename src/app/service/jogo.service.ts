@@ -16,11 +16,9 @@ export class JogoService {
         this.firebase.addJogo(jogo)
     }
 
-    jogosStream(): Observable<Jogo[]> {
-        return this.firebase.jogosSnapshot().pipe(
-            map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload)))
-        );
-    }
+    jogosStream = (): Observable<Jogo[]> =>
+        this.firebase.jogosSnapshot()
+            .pipe(map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload))));
 
     deletarJogo(id: string): void {
         this.firebase.deletarJogo(id)
@@ -61,27 +59,16 @@ export class JogoService {
         }
     }
 
-    realizarJogada(carta: Carta, jogador, jogada, rodada, rodadaDoc) {
-        const jogadorId = jogador.id
-        const rodadaJogadaAtual = rodada.jogadaAtual
-        const maiorCarta = jogada.maiorCarta
-        const maiorCartaJogador = jogada.maiorCartaJogador
-        const manilha = rodada.manilha
-        const jogadorNome = jogador.nome
-        const jogadorCartas = jogador.cartas
+    realizarJogada(carta, jogador, jogada, rodada, rodadaDoc, jogoId) {
+        const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);
 
-        const resultado = carta.combate(Carta.fromString(maiorCarta), manilha);
+        this.firebase.adicionaJogada(jogoId, rodada.id, rodada.jogadaAtual, { jogador: jogador.nome, ...carta, jogadorId: jogador.id });
+        this.firebase.atualizaCartas(jogoId, rodada.id, jogador.id.toString(), jogador.cartas.map(carta => JSON.stringify(carta)));
 
-        const jogadorDoc = rodadaDoc.collection(collections.jogadores).doc(jogadorId.toString());
-        const jogadaDoc = rodadaDoc.collection(collections.jogada).doc(rodadaJogadaAtual);
-        const jogadasCollection = jogadaDoc.collection(collections.jogadas);
-
-        jogadasCollection.add({ jogador: jogadorNome, ...carta, jogadorId: jogadorId });
-        jogadorDoc.update({ cartas: jogadorCartas.map(carta => JSON.stringify(carta)) });
-
+        const jogadaDoc = rodadaDoc.collection(collections.jogada).doc(rodada.jogadaAtual);
         if (resultado === combate.ganhou) {
-            jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogadorId });
-            return jogadorId
+            jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogador.id });
+            return jogador.id
         }
 
         if (resultado === combate.empate) {
@@ -89,7 +76,7 @@ export class JogoService {
             return null
         }
 
-        return maiorCartaJogador
+        return jogada.maiorCartaJogador
     }
 
     criarJogada(jogadorComeca, rodadaDoc): void {

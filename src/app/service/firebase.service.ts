@@ -97,4 +97,27 @@ export class FirebaseService {
             .collection(collections.jogadores)
             .doc(jogadorId).update({ fez: fez + 1 });
     }
+
+    adicionaJogada(jogoId, rodadaId, jogadaAtual, jogada) {
+        this.db
+            .collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogada)
+            .doc(jogadaAtual)
+            .collection(collections.jogadas)
+            .add(jogada)
+    }
+
+    atualizaCartas(jogoId, rodadaId, jogadorId, cartas) {
+        this.db
+            .collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId)
+            .update({ cartas });
+    }
 }
