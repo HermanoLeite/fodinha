@@ -16,7 +16,7 @@ export class JogadorComponent {
   jogadorDocId: string
   jogoId: string
   jogadorAtual: Jogador
-  jogadores: Observable<any>
+  jogadores: Observable<JogadorDocumento[]>
 
   constructor(
     private jogadorService: JogadorService,
@@ -66,14 +66,10 @@ export class JogadorComponent {
       this.subscribeJogadorAtual()
     }
 
-    this.jogadores = this.jogadorService.buscarJogadores(this.jogoId)
-    const jogo = this.jogadorService.buscarJogo(this.jogoId)
-
-    jogo.pipe(
-      map(a => {
-        const data = a as Jogo
-
-        if (data && data.status === Status.jogando)
+    this.jogadores = this.jogadorService.jogadoresStream(this.jogoId)
+    this.jogadorService.jogoStream(this.jogoId).pipe(
+      map((jogo: Jogo) => {
+        if (jogo && jogo.status === Status.jogando)
           this.router.navigate(['jogo', this.jogoId])
       })
     ).subscribe()

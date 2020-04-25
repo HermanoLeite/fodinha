@@ -40,8 +40,6 @@ export class JogoService {
         return this.route.snapshot.paramMap.get("id");
     }
 
-
-
     criarJogadores(jogadoresParticipantes, id) {
         jogadoresParticipantes.forEach(jogador => {
             this.jogos.doc(id).collection(collections.jogador).doc(jogador.id).set({
@@ -260,6 +258,7 @@ export class JogoService {
 
         return { id, ...data } as Jogo;
     }
+
     private _addJogo = (jogo: Jogo) => this.jogos.add({ ...jogo })
     private _jogosSnapshot = () => this.jogos.snapshotChanges()
     private _deletarJogo = (id: string) => this.jogos.doc(id).delete()
