@@ -1,9 +1,17 @@
 export class Jogo {
-    id: string;
-    nome: string;
-    status: number;
-    rodada: number;
-    rodadas: any;
+    constructor(nome: string) {
+        this.nome = nome
+        this.status = Status.aguardandoJogadores
+        this.rodada = 0
+        this.quantidadeJogadores = 0
+    }
+
+    id: string
+    nome: string
+    status: number
+    rodada: number
+    quantidadeJogadores: number
+    rodadas: any
 }
 
 export enum Status {

@@ -2,12 +2,11 @@ import { Component } from '@angular/core'
 import { JogadorService } from 'src/app/service/jogador.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Jogador } from '../../models/Jogador'
-import { AngularFirestore } from '@angular/fire/firestore'
 import { Jogo, Status } from 'src/app/models/Jogo'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
-import { LocalStorageService, Keys } from 'src/app/service/local-storage'
+import { StorageService, Keys } from 'src/app/service/storage.service'
 @Component({
   selector: 'jogador',
   templateUrl: './index.html'
@@ -22,12 +21,11 @@ export class JogadorComponent {
   constructor(
     private jogadorService: JogadorService,
     private route: ActivatedRoute,
-    private db: AngularFirestore,
     private router: Router,
-    private localStorage: LocalStorageService) {
+    private storage: StorageService) {
 
     this.jogoId = this.route.snapshot.paramMap.get("id")
-    this.jogadorDocId = this.localStorage.get(Keys.userId)
+    this.jogadorDocId = this.storage.get(Keys.userId)
   }
 
   private subscribeJogadorAtual() {
@@ -38,7 +36,7 @@ export class JogadorComponent {
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
       this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
-      this.localStorage.set(Keys.userId, this.jogadorDocId)
+      this.storage.set(Keys.userId, this.jogadorDocId)
       this.subscribeJogadorAtual()
     }
   }
