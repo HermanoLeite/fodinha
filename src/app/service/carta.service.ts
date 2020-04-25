@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
-import { LocalStorageService, Keys } from './local-storage';
+import { StorageService, Keys } from './storage.service';
 
 @Injectable()
 export class CartaService {
-    constructor(private localStorageService: LocalStorageService) {
+    constructor(private storageService: StorageService) {
     }
 
     getVisaoCarta(): boolean {
-        var visaoCarta = this.localStorageService.get(Keys.visaoCarta);
+        var visaoCarta = this.storageService.get(Keys.visaoCarta);
         if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
             visaoCarta = "true";
             this.setVisaoCarta(visaoCarta)
@@ -16,7 +16,7 @@ export class CartaService {
     }
 
     async setVisaoCarta(visaoCarta) {
-        this.localStorageService.set(Keys.visaoCarta, visaoCarta);
+        this.storageService.set(Keys.visaoCarta, visaoCarta);
         return visaoCarta;
     }
 }

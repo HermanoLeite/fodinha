@@ -1,7 +1,7 @@
 import { collections } from '../context';
 import { Jogo, Status, Etapa } from '../models/Jogo';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChange, DocumentChangeAction } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -9,11 +9,26 @@ import { Carta, combate } from '../models/Carta';
 
 @Injectable()
 export class JogoService {
-    jogos: AngularFirestoreCollection<Jogo>;
+    private jogos: AngularFirestoreCollection<Jogo>;
     private jogosDoc: AngularFirestoreDocument<Jogo>;
 
     constructor(private db: AngularFirestore, private route: ActivatedRoute) {
         this.jogos = db.collection(collections.jogo)
+    }
+
+    novoJogo(nomeJogo: string): void {
+        const jogo = new Jogo(nomeJogo)
+        this._addJogo(jogo)
+    }
+
+    jogosStream(): Observable<Jogo[]> {
+        return this._jogosSnapshot().pipe(
+            map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload)))
+        );
+    }
+
+    deletarJogo(id: string) {
+        this._deletarJogo(id)
     }
 
     async comecarJogo(jogadoresParticipantes, jogoId) {
@@ -21,32 +36,8 @@ export class JogoService {
         this.criarRodada(jogadoresParticipantes, jogoId, 0)
     }
 
-    async novoJogo(nomeJogo: string): Promise<DocumentReference> {
-        const jogo = { nome: nomeJogo, status: Status.aguardandoJogadores, rodada: 0, quantidadeJogadores: 0 }
-        return this._addJogo(jogo)
-    }
-
-    private _addJogo(jogo): Promise<DocumentReference> {
-        var jogoDoc: Promise<DocumentReference> = this.db.collection(collections.jogo).add(jogo)
-        return jogoDoc
-    }
-
     buscarJogoId(): string {
         return this.route.snapshot.paramMap.get("id");
-    }
-
-    jogosStream(): Observable<any> {
-        return this.db.collection(collections.jogo).snapshotChanges()
-            .pipe(
-                map(actions => {
-                    return actions.map(a => {
-                        const data = a.payload.doc.data() as Jogo;
-                        const id = a.payload.doc.id;
-
-                        return { id, ...data };
-                    });
-                })
-            );
     }
 
     criarJogadores(jogadoresParticipantes, id) {
@@ -184,11 +175,6 @@ export class JogoService {
         this.jogosDoc.update(update);
     }
 
-    deletarJogo(id) {
-        this.jogosDoc = this.db.collection(collections.jogo).doc(id)
-        this.jogosDoc.delete();
-    }
-
     async encerrarJogada(jogoId, rodadaId, jogoDoc, rodada) {
         var jogadoresVidasPerdidas = await this.jogadoresVidasPerdidas(jogoId, rodadaId);
         await this.atualizaJogadorVida(jogoDoc, jogadoresVidasPerdidas);
@@ -265,5 +251,16 @@ export class JogoService {
             rodadaDoc.update({ vez: jogadorComecouJogada });
         }
     }
+
+    private _payloadToJogo(payload: DocumentChange<Jogo>): Jogo {
+        const data = payload.doc.data() as Jogo;
+        const id = payload.doc.id;
+
+        return { id, ...data } as Jogo;
+    }
+
+    private _addJogo = (jogo: Jogo) => this.jogos.add({ ...jogo })
+    private _jogosSnapshot = () => this.jogos.snapshotChanges()
+    private _deletarJogo = (id: string) => this.jogos.doc(id).delete()
 }
 

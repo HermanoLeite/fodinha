@@ -7,12 +7,8 @@ import { Observable } from 'rxjs';
   templateUrl: './listar-jogadores.component.html',
 })
 export class ListarJogadoresComponent {
-  @Input() jogadores: Observable<JogadorDocumento[]>;
-  @Input() mostrarRemover: boolean;
-
   @Output() removerJogador = new EventEmitter<JogadorDocumento>()
 
-  remover(jogador) {
-    this.removerJogador.emit(jogador)
-  }
+  @Input() jogadores: Observable<JogadorDocumento[]>;
+  @Input() mostrarRemover: boolean;
 }

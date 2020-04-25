@@ -12,7 +12,7 @@ import { Router } from './router';
 
 import { environment } from '../environments/environment';
 
-import { LocalStorageService } from './service/local-storage';
+import { StorageService } from './service/storage.service';
 import { CartaService } from './service/carta.service';
 import { JogadorService } from './service/jogador.service';
 import { JogoService } from './service/jogo.service';
@@ -74,7 +74,7 @@ import { StorageServiceModule } from 'angular-webstorage-service';
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoService, JogadorService, CartaService, LocalStorageService],
+  providers: [JogoService, JogadorService, CartaService, StorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

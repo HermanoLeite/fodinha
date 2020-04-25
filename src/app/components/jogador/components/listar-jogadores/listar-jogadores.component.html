@@ -10,7 +10,7 @@
     <td>{{documento.jogador.nome}}</td>
     <td>{{documento.jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
     <td *ngIf="mostrarRemover">
-      <button (click)="remover(documento)" *ngIf="!documento.jogador.removido">remover</button>
+      <button (click)="removerJogador.emit(documento)" *ngIf="!documento.jogador.removido">remover</button>
       <p *ngIf="documento.jogador.removido">removido</p>
     </td>
   </tr>

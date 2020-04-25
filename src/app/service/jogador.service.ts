@@ -1,7 +1,7 @@
 import { collections } from '../context';
 import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
@@ -14,22 +14,16 @@ export class JogadorService {
     constructor(private db: AngularFirestore, private jogoService: JogoService) { }
 
     buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
-        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorDocId).snapshotChanges()
-            .pipe(map(({ payload }) => payload.data() as Jogador));
+        return this._jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload as Jogador));
     }
 
-    buscarJogadores(jogoId: string): Observable<JogadorDocumento[]> {
-        return this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
-            .pipe(map((data) => data.map(({ payload }) => {
-                const data = payload.doc.data() as Jogador;
-                const id = payload.doc.id;
-
-                return new JogadorDocumento(id, data);
-            })))
+    jogadoresStream(jogoId: string): Observable<JogadorDocumento[]> {
+        return this._jogadoresSnapshot(jogoId)
+            .pipe(map((jogadores) => jogadores.map(({ payload }) => this._payloadToJogadorDocumento(payload))))
     }
 
-    buscarJogo(jogoId: string) {
-        return this.db.collection(collections.jogo).doc(jogoId).valueChanges()
+    jogoStream(jogoId: string) {
+        return this._jogoSnapshot(jogoId)
     }
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
@@ -103,5 +97,16 @@ export class JogadorService {
             });
         });
     }
+
+    private _payloadToJogadorDocumento(payload): JogadorDocumento {
+        const data = payload.doc.data() as Jogador;
+        const id = payload.doc.id;
+
+        return new JogadorDocumento(id, data);
+    }
+
+    private _jogoSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).valueChanges()
+    private _jogadoresSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
+    private _jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).valueChanges()
 }
 

@@ -5,7 +5,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
   templateUrl: './criar-jogo.component.html'
 })
 export class CriarJogoComponent {
-  @Output() salvarJogo = new EventEmitter<string>()
+  @Output() criarJogo = new EventEmitter<string>()
 
   criandoJogo: Boolean = false;
   jogoNome: string;
@@ -20,8 +20,8 @@ export class CriarJogoComponent {
     this.jogoNome = null;
   }
 
-  salvarNovoJogo() {
-    this.salvarJogo.emit(this.jogoNome)
+  criar() {
+    this.criarJogo.emit(this.jogoNome)
     this.fechar();
   }
 }

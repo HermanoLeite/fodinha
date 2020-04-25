@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { LocalStorageService } from 'src/app/service/local-storage';
+import { StorageService } from 'src/app/service/storage.service';
 
 @Component({
     selector: 'page-header',
@@ -9,11 +9,11 @@ import { LocalStorageService } from 'src/app/service/local-storage';
 })
 export class PageHeaderComponent {
     title = 'fodinha';
-    constructor(private localStorageService: LocalStorageService, private router: Router) {
+    constructor(private storageService: StorageService, private router: Router) {
     }
 
     sairDoJogo() {
-        this.localStorageService.clear()
+        this.storageService.clear()
         this.router.navigate(['/'])
     }
 }

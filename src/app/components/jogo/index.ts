@@ -7,7 +7,7 @@ import { Jogo, Status, Etapa } from '../../models/Jogo';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
-import { LocalStorageService } from 'src/app/service/local-storage';
+import { StorageService } from 'src/app/service/storage.service';
 import { CartaService } from 'src/app/service/carta.service';
 import { RodadaController } from './controllers/rodada.controller';
 
@@ -35,7 +35,7 @@ export class JogoComponent implements OnInit {
     private db: AngularFirestore,
     private jogoService: JogoService,
     private route: ActivatedRoute,
-    private localStorageService: LocalStorageService,
+    private storageService: StorageService,
     private cartaService: CartaService) {
 
     this.visaoCarta = this.cartaService.getVisaoCarta();
@@ -181,7 +181,7 @@ export class JogoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jogadorJogandoId = this.localStorageService.get("userId")
+    this.jogadorJogandoId = this.storageService.get("userId")
 
     this.jogoDoc.snapshotChanges().pipe(
       map(a => {

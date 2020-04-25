@@ -1,30 +1,30 @@
 import { Component } from '@angular/core';
-import { LocalStorageService } from 'src/app/service/local-storage';
-import { Router } from '@angular/router';
-import { JogoService } from 'src/app/service/jogo.service';
-import { Observable } from 'rxjs';
-import { Status } from '../../models/Jogo';
+import { Router } from '@angular/router'
+import { Observable } from 'rxjs'
+import { Status, Jogo } from 'src/app/models/Jogo'
+import { JogoService } from 'src/app/service/jogo.service'
+import { StorageService } from 'src/app/service/storage.service';
 
 @Component({
   selector: 'app-jogo-init',
   templateUrl: './index.html',
 })
 export class JogoInitComponent {
-  jogos: Observable<any>;
+  jogos: Observable<Jogo[]>
 
   constructor(
-    private localStorageService: LocalStorageService,
+    private storageService: StorageService,
     private router: Router,
     private jogoService: JogoService) {
-    this.localStorageService.clear()
+    this.storageService.clear()
   }
 
   entrarJogo(jogo) {
     if (jogo.status === Status.finalizado) {
-      this.router.navigate(['jogo', jogo.id]);
+      this.router.navigate(['jogo', jogo.id])
     }
     else {
-      this.router.navigate(['jogador', jogo.id]);
+      this.router.navigate(['jogador', jogo.id])
     }
   }
 
@@ -34,7 +34,7 @@ export class JogoInitComponent {
 
   salvarJogo(jogoNome: string) {
     if (jogoNome !== null) {
-      this.jogoService.novoJogo(jogoNome);
+      this.jogoService.novoJogo(jogoNome)
     }
   }
 
