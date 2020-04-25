@@ -32,7 +32,7 @@ export class JogoInitComponent {
     this.jogoService.deletarJogo(jogoId)
   }
 
-  salvarJogo(jogoNome: string) {
+  criarJogo(jogoNome: string) {
     if (jogoNome !== null) {
       this.jogoService.novoJogo(jogoNome)
     }

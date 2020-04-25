@@ -7,14 +7,15 @@ import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { JogadorDocumento } from '../models/JogadorDocumento';
+import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class JogadorService {
 
-    constructor(private db: AngularFirestore, private jogoService: JogoService) { }
+    constructor(private db: AngularFirestore, private jogoService: JogoService, private firebase: FirebaseService) { }
 
     buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
-        return this._jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload as Jogador));
+        return this._jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
     jogadoresStream(jogoId: string): Observable<JogadorDocumento[]> {
@@ -32,19 +33,11 @@ export class JogadorService {
         return jogadorDocId;
     }
 
-    private _addjogador(jogador: Jogador, jogoId): Promise<string> {
-        var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador);
-        return new Promise(resolve => {
-            jogadorCollections.add({ ...jogador })
-                .then(function (docRef) {
-                    this.jogoService.acrescentaJogador(jogoId);
-                    resolve(docRef.id);
-                }.bind(this))
-                .catch(function (error) {
-                    console.error("Error adding document: ", error);
-                    resolve(null);
-                });
-        });
+    private async _addjogador(jogador: Jogador, jogoId): Promise<string> {
+        var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador)
+        const jogadorDoc = await jogadorCollections.add({ ...jogador })
+        this.firebase.acrescentaJogador(jogoId);
+        return jogadorDoc.id;
     }
 
     removerJogador({ jogador, id }: JogadorDocumento, jogoId: string): void {
@@ -107,6 +100,6 @@ export class JogadorService {
 
     private _jogoSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).valueChanges()
     private _jogadoresSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
-    private _jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).valueChanges()
+    private _jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).snapshotChanges()
 }
 

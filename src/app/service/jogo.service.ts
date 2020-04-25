@@ -1,99 +1,35 @@
 import { collections } from '../context';
 import { Jogo, Status, Etapa } from '../models/Jogo';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChange, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { Carta, combate } from '../models/Carta';
+import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class JogoService {
-    private jogos: AngularFirestoreCollection<Jogo>;
-    private jogosDoc: AngularFirestoreDocument<Jogo>;
-
-    constructor(private db: AngularFirestore, private route: ActivatedRoute) {
-        this.jogos = db.collection(collections.jogo)
+    constructor(private db: AngularFirestore, private firebase: FirebaseService) {
     }
 
     novoJogo(nomeJogo: string): void {
         const jogo = new Jogo(nomeJogo)
-        this._addJogo(jogo)
+        this.firebase.addJogo(jogo)
     }
 
     jogosStream(): Observable<Jogo[]> {
-        return this._jogosSnapshot().pipe(
+        return this.firebase.jogosSnapshot().pipe(
             map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload)))
         );
     }
 
-    deletarJogo(id: string) {
-        this._deletarJogo(id)
+    deletarJogo(id: string): void {
+        this.firebase.deletarJogo(id)
     }
 
-    async comecarJogo(jogadoresParticipantes, jogoId) {
-        this.db.firestore.collection(collections.jogo).doc(jogoId).update({ status: Status.jogando })
+    comecarJogo(jogadoresParticipantes, jogoId): void {
+        this.firebase.comecarJogo(jogoId)
         this.criarRodada(jogadoresParticipantes, jogoId, 0)
-    }
-
-    buscarJogoId(): string {
-        return this.route.snapshot.paramMap.get("id");
-    }
-
-    criarJogadores(jogadoresParticipantes, id) {
-        jogadoresParticipantes.forEach(jogador => {
-            this.jogos.doc(id).collection(collections.jogador).doc(jogador.id).set({
-                nome: jogador.nome,
-                vidas: 5,
-                removido: false,
-                jogando: true
-            });
-        });
-    }
-
-    jogadoresProximaRodada(jogoId) {
-        var jogadoresProximaRodada: any[] = [];
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const jogador = doc.data();
-                    if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome });
-                });
-                resolve(jogadoresProximaRodada);
-            });
-        });
-    }
-
-    jogadoresVidasPerdidas(jogoId, rodadaId) {
-        var jogadoresVidasPerdidas: Array<any> = [];
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.rodadas).doc(rodadaId).collection(collections.jogadores).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const jogador = doc.data()
-                    const vidasPerdidas = Math.abs(jogador.fez - jogador.palpite)
-                    jogadoresVidasPerdidas.push({ id: jogador.jogadorId, vidasPerdidas })
-                });
-                resolve(jogadoresVidasPerdidas)
-            });
-        });
-    }
-
-    atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas) {
-        var allPromises = jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
-            return new Promise(resolve => {
-                jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).ref.get().then(function (doc) {
-                    const { vidas } = doc.data()
-                    if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
-                        jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).update({ vidas: vidas - jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve())
-                    }
-                    else {
-                        jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).update({ vidas: vidas - jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve())
-                    }
-                });
-            });
-        });
-
-        return Promise.all(allPromises)
     }
 
     atualizaQuemFezJogada(rodadaQuery, maiorCartaJogador) {
@@ -110,44 +46,9 @@ export class JogoService {
         })
     }
 
-    seJogoFinalizado(jogadoresParticipantes) {
-        return jogadoresParticipantes.length < 2
-    }
-
-    seJogoEmpatado(jogadoresParticipantes) {
-        return jogadoresParticipantes.length < 1
-    }
-
-
-
     async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
-        var count = 0;
-
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
-        var rodadaDoc = this.jogos.doc(jogoId).collection(collections.rodadas).doc(rodadaNro.toString());
-
-        await new Promise(resolve => {
-            rodadaDoc.set({
-                manilha: null,
-                comeca: jogadorComeca,
-                vez: jogadorComeca,
-                etapa: Etapa.embaralhar,
-                jogadoresCount: jogadoresParticipantes.length
-            }).then(res => resolve());
-        });
-
-        jogadoresParticipantes.forEach(jogador => {
-            rodadaDoc.collection(collections.jogadores).doc(count.toString()).set({
-                jogadorId: jogador.id,
-                nome: jogador.nome,
-                fez: 0,
-                cartas: null,
-                palpite: null
-            });
-            count++;
-        });
-
-        this.jogos.doc(jogoId).update({ rodada: rodadaNro });
+        this.firebase.criarRodada(jogoId, rodadaNro, jogadorComeca, jogadoresParticipantes)
     }
 
     buscarJogo(id): Promise<string> {
@@ -162,25 +63,9 @@ export class JogoService {
         });
     }
 
-    acrescentaJogador(jogoId) {
-        var jogoQuery = this.db.firestore.collection(collections.jogo).doc(jogoId);
-        jogoQuery.get().then(function (doc) {
-            const { quantidadeJogadores } = doc.data();
-            jogoQuery.update({ quantidadeJogadores: quantidadeJogadores + 1 });
-        });
-    }
-
-    updateJogo(id, update) {
-        this.jogosDoc = this.db.doc<Jogo>(`${collections.jogo}/${id}`);
-        this.jogosDoc.update(update);
-    }
-
     async encerrarJogada(jogoId, rodadaId, jogoDoc, rodada) {
-        var jogadoresVidasPerdidas = await this.jogadoresVidasPerdidas(jogoId, rodadaId);
-        await this.atualizaJogadorVida(jogoDoc, jogadoresVidasPerdidas);
-        var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId);
-
-        if (this.seJogoFinalizado(jogadoresProximaRodada)) {
+        var jogadoresProximaRodada = await this.firebase.jogadoresProximaRodada(jogoId, rodadaId);
+        if (jogadoresProximaRodada.length < 2) {
             this.encerrarJogo(jogoDoc, jogadoresProximaRodada)
         }
         else {
@@ -189,7 +74,7 @@ export class JogoService {
     }
 
     async encerrarJogo(jogoDoc, jogadoresProximaRodada) {
-        if (this.seJogoEmpatado(jogadoresProximaRodada)) {
+        if (jogadoresProximaRodada.length < 1) {
             jogoDoc.update({ status: Status.finalizado });
         }
         else {
@@ -252,15 +137,11 @@ export class JogoService {
         }
     }
 
-    private _payloadToJogo(payload: DocumentChange<Jogo>): Jogo {
+    private _payloadToJogo(payload): Jogo {
         const data = payload.doc.data() as Jogo;
         const id = payload.doc.id;
 
         return { id, ...data } as Jogo;
     }
-
-    private _addJogo = (jogo: Jogo) => this.jogos.add({ ...jogo })
-    private _jogosSnapshot = () => this.jogos.snapshotChanges()
-    private _deletarJogo = (id: string) => this.jogos.doc(id).delete()
 }
 

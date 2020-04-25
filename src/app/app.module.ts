@@ -39,6 +39,7 @@ import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/ma
 import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { PageHeaderComponent } from './components/index/components/page-header/page-header';
 import { StorageServiceModule } from 'angular-webstorage-service';
+import { FirebaseService } from './service/firebase.service';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,7 @@ import { StorageServiceModule } from 'angular-webstorage-service';
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoService, JogadorService, CartaService, StorageService],
+  providers: [JogoService, JogadorService, CartaService, StorageService, FirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
