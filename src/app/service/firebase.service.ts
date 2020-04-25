@@ -77,4 +77,24 @@ export class FirebaseService {
             jogoQuery.update({ quantidadeJogadores: quantidadeJogadores + 1 });
         });
     }
+
+    async atualizaQuantasJogadorFez(jogoId, rodadaId, jogadorId) {
+        const doc = await this.db.firestore
+            .collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId).get();
+
+        const { fez } = doc.data()
+
+        await this.db
+            .collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId).update({ fez: fez + 1 });
+    }
 }

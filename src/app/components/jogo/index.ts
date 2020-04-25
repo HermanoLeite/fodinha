@@ -103,7 +103,7 @@ export class JogoComponent implements OnInit {
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
     if (this.completouRodada(proximoJogador)) {
-      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, vencedor);
+      await this.jogoService.atualizaQuemFezJogada(this.jogo.id, this.rodada.id, vencedor);
 
       if (this.acabaramAsCartas()) {
         this.jogoService.encerrarJogada(this.jogo.id, this.rodada.id, this.jogoDoc, this.jogo.rodada);

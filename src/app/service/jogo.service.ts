@@ -1,7 +1,6 @@
 import { collections } from '../context';
-import { Jogo, Status, Etapa } from '../models/Jogo';
+import { Jogo, Status } from '../models/Jogo';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Carta, combate } from '../models/Carta';
@@ -9,7 +8,7 @@ import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class JogoService {
-    constructor(private db: AngularFirestore, private firebase: FirebaseService) {
+    constructor(private firebase: FirebaseService) {
     }
 
     novoJogo(nomeJogo: string): void {
@@ -32,35 +31,15 @@ export class JogoService {
         this.criarRodada(jogadoresParticipantes, jogoId, 0)
     }
 
-    atualizaQuemFezJogada(rodadaQuery, maiorCartaJogador) {
-        return new Promise(resolve => {
-            if (maiorCartaJogador !== null) {
-                rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).ref.get().then(function (doc) {
-                    const { fez } = doc.data()
-                    rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).update({ fez: fez + 1 }).then(res => resolve())
-                })
-            }
-            else {
-                resolve()
-            }
-        })
-    }
-
-    async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
+    criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
         this.firebase.criarRodada(jogoId, rodadaNro, jogadorComeca, jogadoresParticipantes)
     }
 
-    buscarJogo(id): Promise<string> {
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(id).get().then(function (docRef) {
-                resolve(docRef.data());
-            }.bind(this))
-                .catch(function (error) {
-                    console.error("Error adding document: ", error);
-                    resolve(null);
-                });
-        });
+    async atualizaQuemFezJogada(jogoId, rodadaId, maiorCartaJogador) {
+        if (maiorCartaJogador !== null) {
+            await this.firebase.atualizaQuantasJogadorFez(jogoId, rodadaId, maiorCartaJogador.toString())
+        }
     }
 
     async encerrarJogada(jogoId, rodadaId, jogoDoc, rodada) {
