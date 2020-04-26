@@ -1,266 +1,107 @@
-import { collections } from '../context';
-import { Jogo, Status, Etapa } from '../models/Jogo';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChange, DocumentChangeAction } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { FirebaseService } from './firebase.service';
+import { Jogo, Status } from '../models/Jogo';
 import { Carta, combate } from '../models/Carta';
 
 @Injectable()
 export class JogoService {
-    private jogos: AngularFirestoreCollection<Jogo>;
-    private jogosDoc: AngularFirestoreDocument<Jogo>;
-
-    constructor(private db: AngularFirestore, private route: ActivatedRoute) {
-        this.jogos = db.collection(collections.jogo)
-    }
+    constructor(private firebase: FirebaseService) { }
 
     novoJogo(nomeJogo: string): void {
         const jogo = new Jogo(nomeJogo)
-        this._addJogo(jogo)
+        this.firebase.adicionaJogo(jogo)
     }
 
-    jogosStream(): Observable<Jogo[]> {
-        return this._jogosSnapshot().pipe(
-            map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload)))
-        );
+    jogosStream = (): Observable<Jogo[]> =>
+        this.firebase.jogosSnapshot()
+            .pipe(map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload))));
+
+    deletarJogo(id: string): void {
+        this.firebase.deletarJogo(id)
     }
 
-    deletarJogo(id: string) {
-        this._deletarJogo(id)
-    }
-
-    async comecarJogo(jogadoresParticipantes, jogoId) {
-        this.db.firestore.collection(collections.jogo).doc(jogoId).update({ status: Status.jogando })
+    comecarJogo(jogadoresParticipantes, jogoId): void {
+        this.firebase.atualizaJogo(jogoId, { status: Status.jogando })
         this.criarRodada(jogadoresParticipantes, jogoId, 0)
     }
 
-    buscarJogoId(): string {
-        return this.route.snapshot.paramMap.get("id");
-    }
-
-    criarJogadores(jogadoresParticipantes, id) {
-        jogadoresParticipantes.forEach(jogador => {
-            this.jogos.doc(id).collection(collections.jogador).doc(jogador.id).set({
-                nome: jogador.nome,
-                vidas: 5,
-                removido: false,
-                jogando: true
-            });
-        });
-    }
-
-    jogadoresProximaRodada(jogoId) {
-        var jogadoresProximaRodada: any[] = [];
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const jogador = doc.data();
-                    if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome });
-                });
-                resolve(jogadoresProximaRodada);
-            });
-        });
-    }
-
-    jogadoresVidasPerdidas(jogoId, rodadaId) {
-        var jogadoresVidasPerdidas: Array<any> = [];
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.rodadas).doc(rodadaId).collection(collections.jogadores).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const jogador = doc.data()
-                    const vidasPerdidas = Math.abs(jogador.fez - jogador.palpite)
-                    jogadoresVidasPerdidas.push({ id: jogador.jogadorId, vidasPerdidas })
-                });
-                resolve(jogadoresVidasPerdidas)
-            });
-        });
-    }
-
-    atualizaJogadorVida(jogoQuery, jogadoresVidasPerdidas) {
-        var allPromises = jogadoresVidasPerdidas.map(jogadorVidasPerdidas => {
-            return new Promise(resolve => {
-                jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).ref.get().then(function (doc) {
-                    const { vidas } = doc.data()
-                    if (vidas > jogadorVidasPerdidas.vidasPerdidas) {
-                        jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).update({ vidas: vidas - jogadorVidasPerdidas.vidasPerdidas }).then(res => resolve())
-                    }
-                    else {
-                        jogoQuery.collection(collections.jogador).doc(jogadorVidasPerdidas.id).update({ vidas: vidas - jogadorVidasPerdidas.vidasPerdidas, jogando: false }).then(res => resolve())
-                    }
-                });
-            });
-        });
-
-        return Promise.all(allPromises)
-    }
-
-    atualizaQuemFezJogada(rodadaQuery, maiorCartaJogador) {
-        return new Promise(resolve => {
-            if (maiorCartaJogador !== null) {
-                rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).ref.get().then(function (doc) {
-                    const { fez } = doc.data()
-                    rodadaQuery.collection(collections.jogadores).doc(maiorCartaJogador.toString()).update({ fez: fez + 1 }).then(res => resolve())
-                })
-            }
-            else {
-                resolve()
-            }
-        })
-    }
-
-    seJogoFinalizado(jogadoresParticipantes) {
-        return jogadoresParticipantes.length < 2
-    }
-
-    seJogoEmpatado(jogadoresParticipantes) {
-        return jogadoresParticipantes.length < 1
-    }
-
-
-
-    async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
-        var count = 0;
-
+    criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
-        var rodadaDoc = this.jogos.doc(jogoId).collection(collections.rodadas).doc(rodadaNro.toString());
-
-        await new Promise(resolve => {
-            rodadaDoc.set({
-                manilha: null,
-                comeca: jogadorComeca,
-                vez: jogadorComeca,
-                etapa: Etapa.embaralhar,
-                jogadoresCount: jogadoresParticipantes.length
-            }).then(res => resolve());
-        });
-
-        jogadoresParticipantes.forEach(jogador => {
-            rodadaDoc.collection(collections.jogadores).doc(count.toString()).set({
-                jogadorId: jogador.id,
-                nome: jogador.nome,
-                fez: 0,
-                cartas: null,
-                palpite: null
-            });
-            count++;
-        });
-
-        this.jogos.doc(jogoId).update({ rodada: rodadaNro });
+        this.firebase.novaRodada(jogoId, rodadaNro, jogadorComeca, jogadoresParticipantes)
     }
 
-    buscarJogo(id): Promise<string> {
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(id).get().then(function (docRef) {
-                resolve(docRef.data());
-            }.bind(this))
-                .catch(function (error) {
-                    console.error("Error adding document: ", error);
-                    resolve(null);
-                });
-        });
+    async atualizaQuemFezJogada(jogoId, rodadaId, maiorCartaJogador) {
+        if (maiorCartaJogador !== null) {
+            await this.firebase.atualizaQuantasJogadorFez(jogoId, rodadaId, maiorCartaJogador.toString())
+        }
     }
 
-    acrescentaJogador(jogoId) {
-        var jogoQuery = this.db.firestore.collection(collections.jogo).doc(jogoId);
-        jogoQuery.get().then(function (doc) {
-            const { quantidadeJogadores } = doc.data();
-            jogoQuery.update({ quantidadeJogadores: quantidadeJogadores + 1 });
-        });
-    }
-
-    updateJogo(id, update) {
-        this.jogosDoc = this.db.doc<Jogo>(`${collections.jogo}/${id}`);
-        this.jogosDoc.update(update);
-    }
-
-    async encerrarJogada(jogoId, rodadaId, jogoDoc, rodada) {
-        var jogadoresVidasPerdidas = await this.jogadoresVidasPerdidas(jogoId, rodadaId);
-        await this.atualizaJogadorVida(jogoDoc, jogadoresVidasPerdidas);
-        var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId);
-
-        if (this.seJogoFinalizado(jogadoresProximaRodada)) {
-            this.encerrarJogo(jogoDoc, jogadoresProximaRodada)
+    async encerrarJogada(jogoId, rodadaId, rodada) {
+        var jogadoresProximaRodada = await this.firebase.jogadoresProximaRodada(jogoId, rodadaId);
+        if (jogadoresProximaRodada.length < 2) {
+            this.encerrarJogo(jogoId, jogadoresProximaRodada)
         }
         else {
             this.criarRodada(jogadoresProximaRodada, jogoId, rodada + 1);
         }
     }
 
-    async encerrarJogo(jogoDoc, jogadoresProximaRodada) {
-        if (this.seJogoEmpatado(jogadoresProximaRodada)) {
-            jogoDoc.update({ status: Status.finalizado });
+    async encerrarJogo(jogoId, jogadoresProximaRodada) {
+        if (jogadoresProximaRodada.length < 1) {
+            this.firebase.atualizaJogo(jogoId, { status: Status.finalizado });
         }
         else {
-            jogoDoc.update({ status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome });
+            this.firebase.atualizaJogo(jogoId, { status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome });
         }
     }
 
-    realizarJogada(carta: Carta, jogador, jogada, rodada, rodadaDoc) {
-        const jogadorId = jogador.id
-        const rodadaJogadaAtual = rodada.jogadaAtual
-        const maiorCarta = jogada.maiorCarta
-        const maiorCartaJogador = jogada.maiorCartaJogador
-        const manilha = rodada.manilha
-        const jogadorNome = jogador.nome
-        const jogadorCartas = jogador.cartas
+    realizarJogada(carta, jogador, jogada, rodada, jogoId) {
+        const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);
 
-        const resultado = carta.combate(Carta.fromString(maiorCarta), manilha);
-
-        const jogadorDoc = rodadaDoc.collection(collections.jogadores).doc(jogadorId.toString());
-        const jogadaDoc = rodadaDoc.collection(collections.jogada).doc(rodadaJogadaAtual);
-        const jogadasCollection = jogadaDoc.collection(collections.jogadas);
-
-        jogadasCollection.add({ jogador: jogadorNome, ...carta, jogadorId: jogadorId });
-        jogadorDoc.update({ cartas: jogadorCartas.map(carta => JSON.stringify(carta)) });
+        this.firebase.adicionaJogadaJogador(jogoId, rodada.id, rodada.jogadaAtual, { jogador: jogador.nome, ...carta, jogadorId: jogador.id });
+        this.firebase.atualizaCartas(jogoId, rodada.id, jogador.id.toString(), jogador.cartas.map(carta => JSON.stringify(carta)));
 
         if (resultado === combate.ganhou) {
-            jogadaDoc.update({ maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogadorId });
-            return jogadorId
+            this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogador.id });
+            return jogador.id
         }
 
         if (resultado === combate.empate) {
-            jogadaDoc.update({ maiorCartaJogador: null });
+            this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCartaJogador: null });
             return null
         }
 
-        return maiorCartaJogador
+        return jogada.maiorCartaJogador
     }
 
-    criarJogada(jogadorComeca, rodadaDoc): void {
-        const jogadaCollection = rodadaDoc.collection(collections.jogada);
-
+    async criarJogada(jogadorComeca, jogoId, rodadaId) {
         const jogada = {
             comeca: jogadorComeca,
             maiorCarta: null,
         }
 
-        jogadaCollection.add(jogada)
-            .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
-            .catch((error) => console.error("Error adding document: ", error));
+        var docRef = await this.firebase.adicionaJogadaRodada(jogoId, rodadaId, jogada)
+        this.firebase.atualizaRodada(jogoId, rodadaId, { jogadaAtual: docRef.id, vez: jogadorComeca })
     }
 
-    comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada, rodadaDoc) {
+    comecarNovaJogada(maiorCartaJogador, jogadorComecouJogada, jogoId, rodadaId) {
         if (maiorCartaJogador !== null) {
-            this.criarJogada(maiorCartaJogador, rodadaDoc);
-            rodadaDoc.update({ vez: maiorCartaJogador });
+            this.criarJogada(maiorCartaJogador, jogoId, rodadaId);
+            this.firebase.atualizaRodada(jogoId, rodadaId, { vez: maiorCartaJogador });
         }
         else {
-            this.criarJogada(jogadorComecouJogada, rodadaDoc);
-            rodadaDoc.update({ vez: jogadorComecouJogada });
+            this.criarJogada(jogadorComecouJogada, jogoId, rodadaId);
+            this.firebase.atualizaRodada(jogoId, rodadaId, { vez: jogadorComecouJogada });
         }
     }
 
-    private _payloadToJogo(payload: DocumentChange<Jogo>): Jogo {
+    private _payloadToJogo(payload): Jogo {
         const data = payload.doc.data() as Jogo;
         const id = payload.doc.id;
 
         return { id, ...data } as Jogo;
     }
-
-    private _addJogo = (jogo: Jogo) => this.jogos.add({ ...jogo })
-    private _jogosSnapshot = () => this.jogos.snapshotChanges()
-    private _deletarJogo = (id: string) => this.jogos.doc(id).delete()
 }
 

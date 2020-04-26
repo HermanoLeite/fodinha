@@ -12,7 +12,7 @@ export class RodadaController {
         this.rodadaDoc = rodadaDoc
         this.jogadorVez = jogadorVez
         this.quantidadeDeJogadores = quantidadeDeJogadores
-        this.rodada = rodada
+        this.rodada = parseInt(rodada)
     }
 
     comecar() {
@@ -35,6 +35,7 @@ export class RodadaController {
 
     distribuir(baralho: Baralho) {
         var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), this.quantidadeDeJogadores, this.rodada);
+        console.log('quantidadeCartas => ', quantidadeCartas)
         for (var i = 0; i < this.quantidadeDeJogadores; i++) {
             const cartaArray = baralho.tiraCartas(quantidadeCartas);
             const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
@@ -46,6 +47,9 @@ export class RodadaController {
     }
 
     quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
+        console.log('qtdCartasTotal => ', qtdCartasTotal)
+        console.log('jogadoresCount => ', jogadoresCount)
+        console.log('rodada => ', rodada)
         var qtdCartasMax = qtdCartasTotal - 1 / jogadoresCount;
         if (rodada < qtdCartasMax) {
             return rodada + 1;

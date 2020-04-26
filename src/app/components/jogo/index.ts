@@ -99,17 +99,17 @@ export class JogoComponent implements OnInit {
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
-    var vencedor = this.jogoService.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.rodadaDoc);
+    var vencedor = this.jogoService.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogo.id);
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
     if (this.completouRodada(proximoJogador)) {
-      await this.jogoService.atualizaQuemFezJogada(this.rodadaDoc, vencedor);
+      await this.jogoService.atualizaQuemFezJogada(this.jogo.id, this.rodada.id, vencedor);
 
       if (this.acabaramAsCartas()) {
-        this.jogoService.encerrarJogada(this.jogo.id, this.rodada.id, this.jogoDoc, this.jogo.rodada);
+        this.jogoService.encerrarJogada(this.jogo.id, this.rodada.id, this.jogo.rodada);
       }
       else {
-        this.jogoService.comecarNovaJogada(vencedor, this.jogada.comeca, this.rodadaDoc)
+        this.jogoService.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogo.id, this.rodada.id)
       }
     }
     else {
