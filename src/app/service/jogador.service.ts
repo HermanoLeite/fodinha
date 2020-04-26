@@ -1,7 +1,5 @@
-import { collections } from '../context';
 import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
 
 import { JogoService } from './jogo.service';
 import { map } from 'rxjs/operators';
@@ -12,19 +10,19 @@ import { FirebaseService } from './firebase.service';
 @Injectable()
 export class JogadorService {
 
-    constructor(private db: AngularFirestore, private jogoService: JogoService, private firebase: FirebaseService) { }
+    constructor(private jogoService: JogoService, private firebase: FirebaseService) { }
 
     buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
-        return this._jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload.data() as Jogador));
+        return this.firebase.jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
     jogadoresStream(jogoId: string): Observable<JogadorDocumento[]> {
-        return this._jogadoresSnapshot(jogoId)
+        return this.firebase.jogadoresSnapshot(jogoId)
             .pipe(map((jogadores) => jogadores.map(({ payload }) => this._payloadToJogadorDocumento(payload))))
     }
 
     jogoStream(jogoId: string) {
-        return this._jogoSnapshot(jogoId)
+        return this.firebase.jogoSnapshot(jogoId)
     }
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
@@ -34,9 +32,10 @@ export class JogadorService {
     }
 
     private async _addjogador(jogador: Jogador, jogoId): Promise<string> {
-        var jogadorCollections = this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador)
-        const jogadorDoc = await jogadorCollections.add({ ...jogador })
-        this.firebase.acrescentaJogador(jogoId);
+        const { quantidadeJogadores } = await this.firebase.getJogo(jogoId)
+        this.firebase.atualizaJogo(jogoId, { quantidadeJogadores: quantidadeJogadores + 1 })
+
+        const jogadorDoc = await this.firebase.adicionaJogadorAoJogo(jogoId, jogador)
         return jogadorDoc.id;
     }
 
@@ -50,8 +49,7 @@ export class JogadorService {
     }
 
     private _updatejogador(jogador: Jogador, jogoId: string, jogadorId: string): void {
-        const jogadorDoc = this.db.doc<Jogador>(`${collections.jogo}/${jogoId}/${collections.jogador}/${jogadorId}`);
-        jogadorDoc.update({ ...jogador });
+        this.firebase.atualizaJogadorJogo(jogoId, jogadorId, { ...jogador });
     }
 
     async comecarJogo(jogoId: string): Promise<void> {
@@ -59,36 +57,31 @@ export class JogadorService {
         return this.jogoService.comecarJogo(jogadores, jogoId);
     }
 
-    jogadoresParaOJogo(jogoId) {
+    async jogadoresParaOJogo(jogoId) {
         var jogadoresNoJogo: any[] = [];
-        return new Promise(resolve => {
-            this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const data = doc.data();
-                    if (!data.removido && data.comecar) jogadoresNoJogo.push({ id: doc.id, ...data })
-                });
-                resolve(jogadoresNoJogo);
-            });
+        const jogadores = await this.firebase.getJogadoresJogo(jogoId)
+        jogadores.forEach((doc) => {
+            const data = doc.data();
+            if (!data.removido && data.comecar) jogadoresNoJogo.push({ id: doc.id, ...data })
         });
+        return jogadoresNoJogo;
     }
 
     async todosJogadoresComecaram(jogoId) {
         var count = 0;
-        var querySnapshotPromise = this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get()
-        return new Promise(resolve => {
-            querySnapshotPromise.then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    const data = doc.data();
-                    if (!data.removido && !data.comecar) resolve(false);
-                    if (!data.removido && data.comecar) count++;
-                });
-                if (count > 1) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
+
+        var querySnapshot = await this.firebase.getJogadoresJogo(jogoId)
+        querySnapshot.forEach(function (doc) {
+            const data = doc.data();
+            if (!data.removido && !data.comecar) return false;
+            if (!data.removido && data.comecar) count++;
         });
+
+        if (count > 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private _payloadToJogadorDocumento(payload): JogadorDocumento {
@@ -97,9 +90,5 @@ export class JogadorService {
 
         return new JogadorDocumento(id, data);
     }
-
-    private _jogoSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).valueChanges()
-    private _jogadoresSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
-    private _jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).snapshotChanges()
 }
 

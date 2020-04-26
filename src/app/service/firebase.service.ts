@@ -1,29 +1,129 @@
 import { AngularFirestore } from '@angular/fire/firestore';
 import { collections } from '../context';
-import { Jogo, Status, Etapa } from '../models/Jogo';
+import { Jogo, Etapa } from '../models/Jogo';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class FirebaseService {
     constructor(private db: AngularFirestore) { }
 
+    async getJogo(jogoId) {
+        var doc = await this.db.firestore.collection(collections.jogo).doc(jogoId).get()
+        return doc.data()
+    }
+
+    getJogadoresJogo = (jogoId) => this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get()
+
+    getJogadoresRodada = (jogoId, rodadaId, jogadorId) =>
+        this.db.firestore.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId)
+            .get();
+
+    jogadoresSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
+
+    jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).snapshotChanges()
+
+    jogoSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).valueChanges()
+
     jogosSnapshot = () => this.db.collection(collections.jogo).snapshotChanges()
-    addJogo = (jogo: Jogo) => this.db.collection(collections.jogo).add({ ...jogo })
+
     deletarJogo = (id: string) => this.db.collection(collections.jogo).doc(id).delete()
-    comecarJogo = (id: string) => this.db.collection(collections.jogo).doc(id).update({ status: Status.jogando })
 
-    async criarRodada(jogoId, rodadaNro, jogadorComeca, jogadoresParticipantes) {
-        var count = 0;
-        var rodadaDoc = this.db.collection(collections.jogo).doc(jogoId).collection(collections.rodadas).doc(rodadaNro.toString());
+    adicionaJogo = (jogo: Jogo) => this.db.collection(collections.jogo).add({ ...jogo })
 
+    adicionaJogadorAoJogo = (jogoId, jogador) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).add({ ...jogador })
+
+    adicionaJogadaJogador = (jogoId, rodadaId, jogadorId, jogada) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogada)
+            .doc(jogadorId)
+            .collection(collections.jogadas)
+            .add(jogada)
+
+    adicionaJogadaRodada = (jogoId, rodadaId, jogada) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogada)
+            .add(jogada)
+
+    atualizaJogo = (id: string, update) => this.db.collection(collections.jogo).doc(id).update(update)
+
+    atualizaRodada = (jogoId, rodadaId, update) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .update(update)
+
+    atualizaCartas = (jogoId, rodadaId, jogadorId, cartas) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId).update({ cartas })
+
+    atualizaJogada = (jogoId, rodadaId, jogadaId, update) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogada)
+            .doc(jogadaId)
+            .update(update)
+
+    atualizaJogadorRodada = (jogoId, rodadaId, jogadorId, update) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.rodadas)
+            .doc(rodadaId)
+            .collection(collections.jogadores)
+            .doc(jogadorId)
+            .update(update);
+
+    atualizaJogadorJogo = (jogoId, jogadorId, update) =>
+        this.db.collection(collections.jogo)
+            .doc(jogoId)
+            .collection(collections.jogador)
+            .doc(jogadorId)
+            .update(update);
+
+    async atualizaQuantasJogadorFez(jogoId, rodadaId, jogadorId) {
+        const doc = await this.getJogadoresRodada(jogoId, rodadaId, jogadorId)
+
+        const { fez } = doc.data()
+        await this.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { fez: fez + 1 });
+    }
+
+    async novaRodada(jogoId, rodadaId, jogadorComeca, jogadoresParticipantes) {
+        var rodadaDoc = this.db.collection(collections.jogo).doc(jogoId).collection(collections.rodadas).doc(rodadaId.toString());
+
+        await this.criaRodada(rodadaDoc, jogadorComeca, jogadoresParticipantes.length)
+        this.criaJogadoresRodada(jogadoresParticipantes, rodadaDoc)
+        this.atualizaJogo(jogoId, { rodada: rodadaId })
+    }
+
+    private async criaRodada(rodadaDoc, jogadorComeca, quantidadeJogadores) {
         await rodadaDoc.set({
             manilha: null,
             comeca: jogadorComeca,
             vez: jogadorComeca,
             etapa: Etapa.embaralhar,
-            jogadoresCount: jogadoresParticipantes.length
+            jogadoresCount: quantidadeJogadores
         })
+    }
 
+    private criaJogadoresRodada(jogadoresParticipantes, rodadaDoc) {
+        var count = 0
         jogadoresParticipantes.forEach(jogador => {
             rodadaDoc.collection(collections.jogadores).doc(count.toString()).set({
                 jogadorId: jogador.id,
@@ -34,14 +134,12 @@ export class FirebaseService {
             });
             count++;
         });
-
-        this.db.collection(collections.jogo).doc(jogoId).update({ rodada: rodadaNro });
     }
 
     async jogadoresProximaRodada(jogoId, rodadaId) {
         await this.atualizaJogadorVida(jogoId, rodadaId)
         var jogadoresProximaRodada: any[] = [];
-        var jogadores = await this.db.firestore.collection(collections.jogo).doc(jogoId).collection(collections.jogador).get()
+        var jogadores = await this.getJogadoresJogo(jogoId)
         jogadores.forEach((doc) => {
             const jogador = doc.data();
             if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome });
@@ -66,58 +164,7 @@ export class FirebaseService {
 
     async asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
-            await callback(array[index], index, array);
+            await callback(array[index], index, array)
         }
-    }
-
-    acrescentaJogador(jogoId) {
-        var jogoQuery = this.db.firestore.collection(collections.jogo).doc(jogoId);
-        jogoQuery.get().then(function (doc) {
-            const { quantidadeJogadores } = doc.data();
-            jogoQuery.update({ quantidadeJogadores: quantidadeJogadores + 1 });
-        });
-    }
-
-    async atualizaQuantasJogadorFez(jogoId, rodadaId, jogadorId) {
-        const doc = await this.db.firestore
-            .collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .doc(jogadorId).get();
-
-        const { fez } = doc.data()
-
-        await this.db
-            .collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .doc(jogadorId).update({ fez: fez + 1 });
-    }
-
-    adicionaJogada(jogoId, rodadaId, jogadaAtual, jogada) {
-        this.db
-            .collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .doc(jogadaAtual)
-            .collection(collections.jogadas)
-            .add(jogada)
-    }
-
-    atualizaCartas(jogoId, rodadaId, jogadorId, cartas) {
-        this.db
-            .collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .doc(jogadorId)
-            .update({ cartas });
     }
 }
