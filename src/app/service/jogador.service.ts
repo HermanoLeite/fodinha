@@ -22,7 +22,7 @@ export class JogadorService {
     }
 
     jogoStream(jogoId: string) {
-        return this.firebase.jogoSnapshot(jogoId)
+        return this.firebase.jogoStream(jogoId)
     }
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
