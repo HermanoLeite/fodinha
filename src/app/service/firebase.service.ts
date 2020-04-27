@@ -1,11 +1,47 @@
 import { AngularFirestore } from '@angular/fire/firestore';
 import { collections } from '../context';
-import { Jogo } from '../models/Jogo';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class FirebaseService {
     constructor(private db: AngularFirestore) { }
+
+    jogos = this.db.collection(collections.jogo)
+    rodadasJogo = (jogoId) => this.jogo(jogoId).collection(collections.rodadas)
+    jogadoresJogo = (jogoId) => this.jogo(jogoId).collection(collections.jogador)
+    jogadasRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(collections.jogada)
+    jogadoresRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(collections.jogadores)
+    jogadasJogadaRodada = (jogoId, rodadaId, jogadaId) => this.jogadaRodada(jogoId, rodadaId, jogadaId).collection(collections.jogadas)
+    jogo = (jogoId) => this.jogos.doc(jogoId)
+    rodadaJogo = (jogoId, rodadaId) => this.rodadasJogo(jogoId).doc(rodadaId)
+    jogadorJogo = (jogoId, jogadorId) => this.jogadoresJogo(jogoId).doc(jogadorId)
+    jogadaRodada = (jogoId, rodadaId, jogadaId) => this.jogadasRodada(jogoId, rodadaId).doc(jogadaId)
+    jogadorRodada = (jogoId, rodadaId, jogadorId) => this.jogadoresRodada(jogoId, rodadaId).doc(jogadorId)
+
+    jogosSnapshot = () => this.jogos.snapshotChanges()
+    jogoSnapshot = (jogoId) => this.jogo(jogoId).snapshotChanges()
+    jogoStream = (jogoId) => this.jogo(jogoId).valueChanges()
+    jogadoresSnapshot = (jogoId) => this.jogadoresJogo(jogoId).snapshotChanges()
+    rodadaSnapshot = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).snapshotChanges()
+    jogadoresRodadaSnapshot = (jogoId, rodadaId) => this.jogadoresRodada(jogoId, rodadaId).snapshotChanges()
+    jogadorSnapshot = (jogoId, jogadorId) => this.jogadorJogo(jogoId, jogadorId).snapshotChanges()
+    jogadaSnapshot = (jogoId, rodadaId, jogadaId) => this.jogadaRodada(jogoId, rodadaId, jogadaId).snapshotChanges()
+    jogadasSnapshot = (jogoId, rodadaId, jogadaId) => this.jogadasJogadaRodada(jogoId, rodadaId, jogadaId).snapshotChanges()
+
+    deletarJogo = (jogoId) => this.jogo(jogoId).delete()
+
+    adicionaJogo = (jogo) => this.jogos.add({ ...jogo })
+    adicionaJogadorAoJogo = (jogoId, jogador) => this.jogadoresJogo(jogoId).add({ ...jogador })
+    adicionaJogadaJogador = (jogoId, rodadaId, jogadaId, jogada) => this.jogadasJogadaRodada(jogoId, rodadaId, jogadaId).add(jogada)
+    adicionaJogadaRodada = (jogoId, rodadaId, jogada) => this.jogadasRodada(jogoId, rodadaId).add(jogada)
+    adicionaRodada = (jogoId, rodadaId, rodada) => this.rodadaJogo(jogoId, rodadaId).set(rodada);
+    adicionaJogadorRodada = (jogoId, rodadaId, jogadorId, jogador) => this.jogadorRodada(jogoId, rodadaId, jogadorId).set(jogador);
+
+    atualizaJogo = (jogoId, update) => this.jogo(jogoId).update(update)
+    atualizaRodada = (jogoId, rodadaId, update) => this.rodadaJogo(jogoId, rodadaId).update(update)
+    atualizaJogada = (jogoId, rodadaId, jogadaId, update) => this.jogadaRodada(jogoId, rodadaId, jogadaId).update(update)
+    atualizaJogadorRodada = (jogoId, rodadaId, jogadorId, update) => this.jogadorRodada(jogoId, rodadaId, jogadorId).update(update);
+    atualizaJogadorJogo = (jogoId, jogadorId, update) => this.jogadorJogo(jogoId, jogadorId).update(update);
 
     getJogadoresJogo = (jogoId) =>
         this.db.firestore.collection(collections.jogo)
@@ -46,129 +82,4 @@ export class FirebaseService {
 
         return doc.data()
     }
-
-    jogadoresRodadaSnapshot = (jogoId, rodadaId) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .snapshotChanges()
-
-    jogadoresSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).snapshotChanges()
-
-    jogadorSnapshot = (jogoId, jogadorId) => this.db.collection(collections.jogo).doc(jogoId).collection(collections.jogador).doc(jogadorId).snapshotChanges()
-
-    jogoSnapshot = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).snapshotChanges()
-
-    jogoStream = (jogoId) => this.db.collection(collections.jogo).doc(jogoId).valueChanges()
-
-    jogosSnapshot = () => this.db.collection(collections.jogo).snapshotChanges()
-
-    rodadaSnapshot = (jogoId, rodadaId) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .snapshotChanges()
-
-    jogadaSnapshot = (jogoId, rodadaId, jogadaId) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .doc(jogadaId)
-            .snapshotChanges()
-
-    jogadasSnapshot = (jogoId, rodadaId, jogadaId) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .doc(jogadaId)
-            .collection(collections.jogadas)
-            .snapshotChanges()
-
-    deletarJogo = (id: string) => this.db.collection(collections.jogo).doc(id).delete()
-
-    adicionaJogo = (jogo: Jogo) => this.db.collection(collections.jogo).add({ ...jogo })
-
-    adicionaJogadorAoJogo = (jogoId, jogador) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.jogador)
-            .add({ ...jogador })
-
-    adicionaJogadaJogador = (jogoId, rodadaId, jogadorId, jogada) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .doc(jogadorId)
-            .collection(collections.jogadas)
-            .add(jogada)
-
-    adicionaJogadaRodada = (jogoId, rodadaId, jogada) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .add(jogada)
-
-    adicionaRodada = (jogoId, rodadaId, rodada) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .set(rodada);
-
-    adicionaJogadorRodada = (jogoId, rodadaId, jogadorId, jogador) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .doc(jogadorId)
-            .set(jogador);
-
-    atualizaJogo = (jogoId: string, update) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .update(update)
-
-    atualizaRodada = (jogoId, rodadaId, update) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .update(update)
-
-    atualizaJogada = (jogoId, rodadaId, jogadaId, update) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogada)
-            .doc(jogadaId)
-            .update(update)
-
-    atualizaJogadorRodada = (jogoId, rodadaId, jogadorId, update) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.rodadas)
-            .doc(rodadaId)
-            .collection(collections.jogadores)
-            .doc(jogadorId)
-            .update(update);
-
-    atualizaJogadorJogo = (jogoId, jogadorId, update) =>
-        this.db.collection(collections.jogo)
-            .doc(jogoId)
-            .collection(collections.jogador)
-            .doc(jogadorId)
-            .update(update);
 }

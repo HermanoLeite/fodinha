@@ -9,7 +9,6 @@ import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
 import { StorageService } from 'src/app/service/storage.service';
 import { CartaService } from 'src/app/service/carta.service';
-import { RodadaController } from './controllers/rodada.controller';
 
 @Component({
   selector: 'app-jogo',
@@ -42,9 +41,7 @@ export class JogoComponent implements OnInit {
   }
 
   comecarRodada() {
-    const rodadaDoc = this.db.collection(collections.jogo).doc(this.jogoId).collection(collections.rodadas).doc(this.rodadaId);
-    const controller = new RodadaController(rodadaDoc, this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada);
-    controller.comecar();
+    this.cartaService.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)
   }
 
   enviarPalpite(palpite: number): void {
