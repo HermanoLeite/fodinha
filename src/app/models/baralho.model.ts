@@ -1,4 +1,4 @@
-import { Carta, cartaValor, naipeValor } from './Carta'
+import { Carta, cartaValor, naipeValor } from './carta.model'
 
 export class Baralho {
   public cartas = new Array<Carta>();

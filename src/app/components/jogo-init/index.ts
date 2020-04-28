@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router'
 import { Observable } from 'rxjs'
-import { Status, Jogo } from '../../models/Jogo'
+import { Status, Jogo } from '../../models/jogo.model'
 import { JogoController } from '../../controllers/jogo.controller'
 import { StorageService } from '../../services/storage.service';
 

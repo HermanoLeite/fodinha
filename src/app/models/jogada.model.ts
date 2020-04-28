@@ -1,4 +1,4 @@
-import { Carta } from './Carta'
+import { Carta } from './carta.model'
 
 export class Jogada {
     comeca: string;
