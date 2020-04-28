@@ -1,12 +1,14 @@
-import { AngularFireAuthModule } from '@angular/fire/auth';
+import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
+import { FormsModule } from "@angular/forms";
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from "@angular/forms";
 
-import { NgModule } from '@angular/core';
+import { StorageServiceModule } from 'angular-webstorage-service';
+
 
 import { Router } from './router';
 
@@ -39,7 +41,6 @@ import { BotaoPalpiteComponent } from './components/jogo/components/botao-palpit
 import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/mao-jogador.component';
 import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { PageHeaderComponent } from './components/index/components/page-header/page-header';
-import { StorageServiceModule } from 'angular-webstorage-service';
 
 @NgModule({
   declarations: [

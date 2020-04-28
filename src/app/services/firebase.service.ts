@@ -1,17 +1,25 @@
 import { AngularFirestore } from '@angular/fire/firestore';
-import { collections } from '../context';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class FirebaseService {
     constructor(private db: AngularFirestore) { }
 
-    jogos = this.db.collection(collections.jogo)
-    rodadasJogo = (jogoId) => this.jogo(jogoId).collection(collections.rodadas)
-    jogadoresJogo = (jogoId) => this.jogo(jogoId).collection(collections.jogador)
-    jogadasRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(collections.jogada)
-    jogadoresRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(collections.jogadores)
-    jogadasJogadaRodada = (jogoId, rodadaId, jogadaId) => this.jogadaRodada(jogoId, rodadaId, jogadaId).collection(collections.jogadas)
+    private collections = {
+        jogo: "Jogo",
+        jogador: "Jogador",
+        rodadas: "Rodadas",
+        jogadores: "Jogadores",
+        jogada: "Jogada",
+        jogadas: "Jogadas",
+    };
+
+    jogos = this.db.collection(this.collections.jogo)
+    rodadasJogo = (jogoId) => this.jogo(jogoId).collection(this.collections.rodadas)
+    jogadoresJogo = (jogoId) => this.jogo(jogoId).collection(this.collections.jogador)
+    jogadasRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(this.collections.jogada)
+    jogadoresRodada = (jogoId, rodadaId) => this.rodadaJogo(jogoId, rodadaId).collection(this.collections.jogadores)
+    jogadasJogadaRodada = (jogoId, rodadaId, jogadaId) => this.jogadaRodada(jogoId, rodadaId, jogadaId).collection(this.collections.jogadas)
     jogo = (jogoId) => this.jogos.doc(jogoId)
     rodadaJogo = (jogoId, rodadaId) => this.rodadasJogo(jogoId).doc(rodadaId)
     jogadorJogo = (jogoId, jogadorId) => this.jogadoresJogo(jogoId).doc(jogadorId)
@@ -44,39 +52,39 @@ export class FirebaseService {
     atualizaJogadorJogo = (jogoId, jogadorId, update) => this.jogadorJogo(jogoId, jogadorId).update(update);
 
     getJogadoresJogo = (jogoId) =>
-        this.db.firestore.collection(collections.jogo)
+        this.db.firestore.collection(this.collections.jogo)
             .doc(jogoId)
-            .collection(collections.jogador)
+            .collection(this.collections.jogador)
             .get()
 
     getJogadorJogo = async (jogoId, jogadorId) => {
-        const doc = await this.db.firestore.collection(collections.jogo)
+        const doc = await this.db.firestore.collection(this.collections.jogo)
             .doc(jogoId)
-            .collection(collections.jogador)
+            .collection(this.collections.jogador)
             .doc(jogadorId)
             .get()
         return doc.data()
     }
 
     getJogo = async (jogoId) => {
-        var doc = await this.db.firestore.collection(collections.jogo).doc(jogoId).get()
+        var doc = await this.db.firestore.collection(this.collections.jogo).doc(jogoId).get()
         return doc.data()
     }
 
     getJogadoresRodada = (jogoId, rodadaId) =>
-        this.db.firestore.collection(collections.jogo)
+        this.db.firestore.collection(this.collections.jogo)
             .doc(jogoId)
-            .collection(collections.rodadas)
+            .collection(this.collections.rodadas)
             .doc(rodadaId)
-            .collection(collections.jogadores)
+            .collection(this.collections.jogadores)
             .get();
 
     getJogadorRodada = async (jogoId, rodadaId, jogadorId) => {
-        const doc = await this.db.firestore.collection(collections.jogo)
+        const doc = await this.db.firestore.collection(this.collections.jogo)
             .doc(jogoId)
-            .collection(collections.rodadas)
+            .collection(this.collections.rodadas)
             .doc(rodadaId)
-            .collection(collections.jogadores)
+            .collection(this.collections.jogadores)
             .doc(jogadorId)
             .get();
 
