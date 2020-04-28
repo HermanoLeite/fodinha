@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { StorageService } from 'src/app/service/storage.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
     selector: 'page-header',

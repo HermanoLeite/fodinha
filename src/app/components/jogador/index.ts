@@ -1,12 +1,12 @@
 import { Component } from '@angular/core'
-import { JogadorService } from 'src/app/service/jogador.service'
+import { JogadorController } from 'src/app/controllers/jogador.controller'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Jogador } from '../../models/Jogador'
 import { Jogo, Status } from 'src/app/models/Jogo'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
-import { StorageService, Keys } from 'src/app/service/storage.service'
+import { StorageService, Keys } from 'src/app/services/storage.service'
 @Component({
   selector: 'jogador',
   templateUrl: './index.html'
@@ -19,7 +19,7 @@ export class JogadorComponent {
   jogadores: Observable<JogadorDocumento[]>
 
   constructor(
-    private jogadorService: JogadorService,
+    private jogadorService: JogadorController,
     private route: ActivatedRoute,
     private router: Router,
     private storage: StorageService) {

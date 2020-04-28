@@ -1,22 +1,25 @@
-import { AngularFireAuthModule } from '@angular/fire/auth';
+import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
+import { FormsModule } from "@angular/forms";
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from "@angular/forms";
 
-import { NgModule } from '@angular/core';
+import { StorageServiceModule } from 'angular-webstorage-service';
+
 
 import { Router } from './router';
 
 import { environment } from '../environments/environment';
 
-import { StorageService } from './service/storage.service';
-import { CartaService } from './service/carta.service';
-import { JogadorService } from './service/jogador.service';
-import { JogoService } from './service/jogo.service';
+import { FirebaseService } from './services/firebase.service';
+import { StorageService } from './services/storage.service';
 
+import { CartaController } from './controllers/carta.controller';
+import { JogadorController } from './controllers/jogador.controller';
+import { JogoController } from './controllers/jogo.controller';
 
 import { AppComponent } from './components/index/app.component';
 import { JogadorComponent } from './components/jogador';
@@ -38,8 +41,6 @@ import { BotaoPalpiteComponent } from './components/jogo/components/botao-palpit
 import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/mao-jogador.component';
 import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { PageHeaderComponent } from './components/index/components/page-header/page-header';
-import { StorageServiceModule } from 'angular-webstorage-service';
-import { FirebaseService } from './service/firebase.service';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,7 @@ import { FirebaseService } from './service/firebase.service';
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoService, JogadorService, CartaService, StorageService, FirebaseService],
+  providers: [JogoController, JogadorController, CartaController, StorageService, FirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

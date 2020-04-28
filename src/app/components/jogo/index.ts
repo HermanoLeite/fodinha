@@ -1,21 +1,21 @@
-import { JogoService } from '../../service/jogo.service';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { collections } from '../../context';
 import { Jogo, Status, Etapa } from '../../models/Jogo';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
-import { StorageService } from 'src/app/service/storage.service';
-import { CartaService } from 'src/app/service/carta.service';
-import { RodadaController } from './controllers/rodada.controller';
+import { JogoController } from '../../controllers/jogo.controller';
+import { CartaController } from '../../controllers/carta.controller';
+
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-jogo',
   templateUrl: './index.html',
 })
 export class JogoComponent implements OnInit {
+  jogoId: string
+  rodadaId: string
   jogo: any
   jogadores: any
   jogadoresJogo: any
@@ -25,40 +25,34 @@ export class JogoComponent implements OnInit {
   jogada: any = null
   jogadas: any = null
   todosPalpitaram: boolean = false
-  jogoDoc: AngularFirestoreDocument<any>
-  rodadaDoc: AngularFirestoreDocument<any>
   Etapa: Etapa
   jogando: boolean = false
   visaoCarta: boolean
 
   constructor(
-    private db: AngularFirestore,
-    private jogoService: JogoService,
+    private jogoService: JogoController,
     private route: ActivatedRoute,
     private storageService: StorageService,
-    private cartaService: CartaService) {
-
+    private cartaService: CartaController) {
+    this.jogoId = this.route.snapshot.paramMap.get("id")
     this.visaoCarta = this.cartaService.getVisaoCarta();
-    this.jogoDoc = this.db.collection(collections.jogo).doc(this.route.snapshot.paramMap.get("id"));
   }
 
   comecarRodada() {
-    const controller = new RodadaController(this.rodadaDoc, this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada);
-    controller.comecar();
+    this.cartaService.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)
   }
 
   enviarPalpite(palpite: number): void {
-    const jogadorDoc = this.rodadaDoc.collection(collections.jogadores).doc(this.jogadorJogando.id.toString());
-    jogadorDoc.update({ palpite: palpite });
+    this.jogoService.atualizaPalpiteJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), palpite)
 
     const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
     if (this.rodada.comeca === this.rodada.vez) {
-      this.criarJogada(proximoJogador, this.rodadaDoc)
-      this.rodadaDoc.update({ etapa: Etapa.jogarCarta, vez: proximoJogador });
+      this.jogoService.criarJogada(proximoJogador, this.jogoId, this.rodadaId)
+      this.jogoService.atualizaRodada(this.jogoId, this.rodadaId, { etapa: Etapa.jogarCarta, vez: proximoJogador });
     }
     else {
-      this.rodadaDoc.update({ vez: proximoJogador });
+      this.jogoService.atualizaRodada(this.jogoId, this.rodadaId, { vez: proximoJogador });
     }
   }
 
@@ -75,25 +69,13 @@ export class JogoComponent implements OnInit {
 
   etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
 
-  criarJogada(jogadorComeca, rodadaDoc): void {
-    const jogadaCollection = rodadaDoc.collection(collections.jogada);
-
-    const jogada = {
-      comeca: jogadorComeca,
-      maiorCarta: null,
-    }
-
-    jogadaCollection.add(jogada)
-      .then((docRef) => rodadaDoc.update({ jogadaAtual: docRef.id, vez: jogadorComeca }))
-      .catch((error) => console.error("Error adding document: ", error));
-  }
-
   proximoJogador(rodadaVez: number, jogadoresCount: number): number {
     const vez = rodadaVez + 1;
     return vez === jogadoresCount ? 0 : vez;
   }
 
   acabaramAsCartas = () => this.jogadorJogando.cartas.length === 0
+
   completouRodada = (proximoJogador) => proximoJogador === this.jogada.comeca
 
   async jogarCarta(cartaJogadorIndex) {
@@ -113,12 +95,12 @@ export class JogoComponent implements OnInit {
       }
     }
     else {
-      this.rodadaDoc.update({ vez: proximoJogador });
+      this.jogoService.atualizaRodada(this.jogoId, this.rodadaId, { vez: proximoJogador })
     }
   }
 
   loadRodada(rodadaId): void {
-    this.jogadoresJogo = this.jogoDoc.collection(collections.jogador).snapshotChanges().pipe(
+    this.jogadoresJogo = this.jogoService.jogadoresStream(this.jogoId).pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
@@ -127,24 +109,20 @@ export class JogoComponent implements OnInit {
         });
       }),
     );
-
-    this.rodadaDoc = this.jogoDoc.collection(collections.rodadas).doc(rodadaId);
-    this.rodadaDoc.snapshotChanges().pipe(
+    this.jogoService.rodadaStream(this.jogoId, rodadaId).pipe(
       map(a => {
         const data: any = a.payload.data();
         const id = a.payload.id;
-        if (data.manilha) data.manilha = Carta.fromString(data.manilha);
+        if (data) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
-          const jogadaQuery = this.rodadaDoc.collection(collections.jogada).doc(data.jogadaAtual);
-
-          jogadaQuery.snapshotChanges().pipe(map(a => {
+          this.jogoService.jogadaStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(map(a => {
             const data = a.payload.data() as Jogada;
             if (data.maiorCarta) data.maiorCartaObj = Carta.fromString(data.maiorCarta);
             const id = a.payload.id;
             return { id, ...data };
           })).subscribe(jogada => this.jogada = jogada);
 
-          jogadaQuery.collection(collections.jogadas).snapshotChanges().pipe(
+          this.jogoService.jogadasStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(
             map(actions => {
               return actions.map(a => {
                 const data = a.payload.doc.data();
@@ -158,7 +136,7 @@ export class JogoComponent implements OnInit {
       })
     ).subscribe(rodada => this.rodada = rodada)
 
-    this.jogadores = this.jogoDoc.collection(collections.rodadas).doc(rodadaId).collection(collections.jogadores).snapshotChanges().pipe(
+    this.jogadores = this.jogoService.jogadoresRodadaStream(this.jogoId, rodadaId).pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
@@ -183,11 +161,13 @@ export class JogoComponent implements OnInit {
   ngOnInit() {
     this.jogadorJogandoId = this.storageService.get("userId")
 
-    this.jogoDoc.snapshotChanges().pipe(
+    this.jogoService.jogoStream(this.jogoId).pipe(
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-        this.loadRodada(data.rodada.toString());
+        this.rodadaId = data.rodada.toString()
+
+        this.loadRodada(data.rodada.toString())
         return { id, ...data };
       })
     ).subscribe(jogo => this.jogo = jogo);

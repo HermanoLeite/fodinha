@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CartaService } from '../../../../service/carta.service';
+import { CartaController } from '../../../../controllers/carta.controller';
 import { Carta } from '../../../../models/Carta';
 
 @Component({
@@ -14,7 +14,7 @@ import { Carta } from '../../../../models/Carta';
 export class CartaComponent {
   @Input() carta: Carta;
 
-  constructor(private cartaService: CartaService) { }
+  constructor(private cartaService: CartaController) { }
 
   showCartaImg(): boolean {
     return this.cartaService.getVisaoCarta();
