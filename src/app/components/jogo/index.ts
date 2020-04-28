@@ -1,14 +1,13 @@
-import { JogoService } from '../../service/jogo.service';
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { collections } from '../../context';
 import { Jogo, Status, Etapa } from '../../models/Jogo';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Carta } from '../../models/Carta'
 import { Jogada } from '../../models/Jogada'
-import { StorageService } from 'src/app/service/storage.service';
-import { CartaService } from 'src/app/service/carta.service';
+import { JogoController } from '../../controllers/jogo.controller';
+import { CartaController } from '../../controllers/carta.controller';
+
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-jogo',
@@ -31,11 +30,10 @@ export class JogoComponent implements OnInit {
   visaoCarta: boolean
 
   constructor(
-    private db: AngularFirestore,
-    private jogoService: JogoService,
+    private jogoService: JogoController,
     private route: ActivatedRoute,
     private storageService: StorageService,
-    private cartaService: CartaService) {
+    private cartaService: CartaController) {
     this.jogoId = this.route.snapshot.paramMap.get("id")
     this.visaoCarta = this.cartaService.getVisaoCarta();
   }
@@ -111,12 +109,11 @@ export class JogoComponent implements OnInit {
         });
       }),
     );
-
     this.jogoService.rodadaStream(this.jogoId, rodadaId).pipe(
       map(a => {
         const data: any = a.payload.data();
         const id = a.payload.id;
-        if (data.manilha) data.manilha = Carta.fromString(data.manilha);
+        if (data) data.manilha = Carta.fromString(data.manilha);
         if (data.jogadaAtual) {
           this.jogoService.jogadaStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(map(a => {
             const data = a.payload.data() as Jogada;

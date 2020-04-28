@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../services/firebase.service';
 import { Jogo, Status, Etapa } from '../models/Jogo';
 import { Carta, combate } from '../models/Carta';
 
 @Injectable()
-export class JogoService {
+export class JogoController {
     constructor(private firebase: FirebaseService) { }
 
     novoJogo(nomeJogo: string): void {

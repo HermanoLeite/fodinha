@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { StorageService, Keys } from './storage.service';
 import { Baralho } from '../models/Baralho';
 import { Etapa } from '../models/Jogo';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../services/firebase.service';
+import { StorageService, Keys } from '../services/storage.service';
 
 @Injectable()
-export class CartaService {
+export class CartaController {
     constructor(private storageService: StorageService, private firebase: FirebaseService) {
     }
 

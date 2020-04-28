@@ -12,11 +12,12 @@ import { Router } from './router';
 
 import { environment } from '../environments/environment';
 
-import { StorageService } from './service/storage.service';
-import { CartaService } from './service/carta.service';
-import { JogadorService } from './service/jogador.service';
-import { JogoService } from './service/jogo.service';
+import { FirebaseService } from './services/firebase.service';
+import { StorageService } from './services/storage.service';
 
+import { CartaController } from './controllers/carta.controller';
+import { JogadorController } from './controllers/jogador.controller';
+import { JogoController } from './controllers/jogo.controller';
 
 import { AppComponent } from './components/index/app.component';
 import { JogadorComponent } from './components/jogador';
@@ -39,7 +40,6 @@ import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/ma
 import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { PageHeaderComponent } from './components/index/components/page-header/page-header';
 import { StorageServiceModule } from 'angular-webstorage-service';
-import { FirebaseService } from './service/firebase.service';
 
 @NgModule({
   declarations: [
@@ -75,7 +75,7 @@ import { FirebaseService } from './service/firebase.service';
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoService, JogadorService, CartaService, StorageService, FirebaseService],
+  providers: [JogoController, JogadorController, CartaController, StorageService, FirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

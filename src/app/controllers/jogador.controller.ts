@@ -1,16 +1,16 @@
 import { Jogador } from '../models/Jogador';
 import { Injectable } from '@angular/core';
 
-import { JogoService } from './jogo.service';
+import { JogoController } from './jogo.controller';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { JogadorDocumento } from '../models/JogadorDocumento';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../services/firebase.service';
 
 @Injectable()
-export class JogadorService {
+export class JogadorController {
 
-    constructor(private jogoService: JogoService, private firebase: FirebaseService) { }
+    constructor(private jogoService: JogoController, private firebase: FirebaseService) { }
 
     buscarJogador(jogoId: string, jogadorDocId: string): Observable<Jogador> {
         return this.firebase.jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload.data() as Jogador));
