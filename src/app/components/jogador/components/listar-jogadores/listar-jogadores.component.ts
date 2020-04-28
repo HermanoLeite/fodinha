@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { JogadorDocumento } from 'src/app/models/JogadorDocumento';
+import { JogadorDocumento } from 'src/app/models/jogadorDocumento.model';
 import { Observable } from 'rxjs';
 
 @Component({

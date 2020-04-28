@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Baralho } from '../models/Baralho';
-import { Etapa } from '../models/Jogo';
+import { Baralho } from '../models/baralho.model';
+import { Etapa } from '../models/jogo.model';
 import { FirebaseService } from '../services/firebase.service';
 import { StorageService, Keys } from '../services/storage.service';
 

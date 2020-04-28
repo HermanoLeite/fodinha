@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { Jogo, Status, Etapa } from '../../models/Jogo';
-import { Carta } from '../../models/Carta'
-import { Jogada } from '../../models/Jogada'
+import { Jogo, Status, Etapa } from '../../models/jogo.model';
+import { Carta } from '../../models/carta.model'
+import { Jogada } from '../../models/jogada.model'
 import { JogoController } from '../../controllers/jogo.controller';
 import { CartaController } from '../../controllers/carta.controller';
 

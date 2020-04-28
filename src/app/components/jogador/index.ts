@@ -1,11 +1,11 @@
 import { Component } from '@angular/core'
 import { JogadorController } from 'src/app/controllers/jogador.controller'
 import { ActivatedRoute, Router } from '@angular/router'
-import { Jogador } from '../../models/Jogador'
-import { Jogo, Status } from 'src/app/models/Jogo'
+import { Jogador } from '../../models/jogador.model'
+import { Jogo, Status } from 'src/app/models/jogo.model'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { JogadorDocumento } from 'src/app/models/JogadorDocumento'
+import { JogadorDocumento } from 'src/app/models/jogadorDocumento.model'
 import { StorageService, Keys } from 'src/app/services/storage.service'
 @Component({
   selector: 'jogador',

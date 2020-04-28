@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Etapa } from 'src/app/models/Jogo';
+import { Etapa } from 'src/app/models/jogo.model';
 
 @Component({
   selector: 'botao-comecar',

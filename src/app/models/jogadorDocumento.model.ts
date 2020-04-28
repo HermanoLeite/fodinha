@@ -1,4 +1,4 @@
-import { Jogador } from './Jogador';
+import { Jogador } from './jogador.model';
 
 export class JogadorDocumento {
     constructor(id: string, jogador: Jogador) {
