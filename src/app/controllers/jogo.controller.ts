@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { FirebaseService } from '../services/firebase.service';
-import { Jogo, Status, Etapa } from '../models/jogo.model';
 import { Carta, combate } from '../models/carta.model';
+import { Jogo, Status, Etapa } from '../models/jogo.model';
+import { FirebaseService } from '../services/firebase.service';
+import { StorageService, Keys } from '../services/storage.service';
+import { Baralho } from '../models/baralho.model';
 
 @Injectable()
 export class JogoController {
-    constructor(private firebase: FirebaseService) { }
+    constructor(private storage: StorageService, private firebase: FirebaseService) { }
 
     novoJogo(nomeJogo: string): void {
         const jogo = new Jogo(nomeJogo)
@@ -30,9 +32,7 @@ export class JogoController {
 
     jogadasStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadasSnapshot(jogoId, rodadaId, jogadaId)
 
-    deletarJogo(id: string): void {
-        this.firebase.deletarJogo(id)
-    }
+    deletarJogo = (id: string) => this.firebase.deletarJogo(id)
 
     comecarJogo(jogadoresParticipantes, jogoId): void {
         this.firebase.atualizaJogo(jogoId, { status: Status.jogando })
@@ -187,5 +187,76 @@ export class JogoController {
 
         return { id, ...data } as Jogo;
     }
-}
 
+    getVisaoCarta(): boolean {
+        var visaoCarta = this.storage.get(Keys.visaoCarta);
+        if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
+            visaoCarta = "true";
+            this.setVisaoCarta(visaoCarta)
+        }
+        return visaoCarta.toString() === "true";
+    }
+
+    setVisaoCarta(visaoCarta) {
+        this.storage.set(Keys.visaoCarta, visaoCarta);
+        return visaoCarta;
+    }
+
+    comecar(jogadorVez, quantidadeDeJogadores, rodada, jogoId, rodadaId) {
+        var baralho = this.embaralhar();
+        baralho = this.tirarManilha(baralho, jogoId, rodadaId);
+        this.distribuir(baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId);
+    }
+
+    embaralhar() {
+        var baralho = new Baralho();
+        baralho.embaralhar();
+        return baralho
+    }
+
+    tirarManilha(baralho: Baralho, jogoId, rodadaId) {
+        var manilha = baralho.tirarVira();
+        this.atualizarManilha(manilha, jogoId, rodadaId);
+        return baralho;
+    }
+
+    distribuir(baralho: Baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId) {
+        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada);
+        for (var i = 0; i < quantidadeDeJogadores; i++) {
+            const cartaArray = baralho.tiraCartas(quantidadeCartas);
+            const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
+
+            this.entregarCarta(i.toString(), cartaArrayJSON, jogoId, rodadaId)
+        }
+
+        this.atualizarRodada(jogadorVez, quantidadeDeJogadores, jogoId, rodadaId);
+    }
+
+    quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
+        var qtdCartasMax = qtdCartasTotal - 1 / jogadoresCount;
+        if (rodada < qtdCartasMax) {
+            return rodada + 1;
+        }
+        var sobe = (rodada / qtdCartasMax) % 2 === 0;
+        if (sobe) {
+            return (rodada % qtdCartasMax) + 1
+        }
+        return (qtdCartasMax * (rodada / qtdCartasMax)) - rodada;
+    }
+
+    atualizarManilha(manilha, jogoId, rodadaId) {
+        this.firebase.atualizaRodada(jogoId, rodadaId, { manilha: JSON.stringify(manilha) })
+    }
+
+    entregarCarta(jogador, cartaArrayJSON, jogoId, rodadaId) {
+        this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogador, { cartas: cartaArrayJSON })
+    }
+
+    atualizarRodada(jogadorVez, quantidadeDeJogadores, jogoId, rodadaId): void {
+        var proximoJogador = jogadorVez + 1;
+        if (proximoJogador === quantidadeDeJogadores) {
+            proximoJogador = 0;
+        }
+        this.firebase.atualizaRodada(jogoId, rodadaId, { etapa: Etapa.palpite, vez: proximoJogador })
+    }
+}

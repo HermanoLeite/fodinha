@@ -9,6 +9,7 @@ export class MaoJogadorComponent {
   @Input() jogador: any;
   @Input() podeJogarCarta: boolean
   @Output() jogarCarta = new EventEmitter<boolean>()
+  @Input() visaoCarta: Boolean
 
   jogando: Boolean;
 
