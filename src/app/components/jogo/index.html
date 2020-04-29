@@ -16,11 +16,11 @@
       <div class="row">
         <div *ngIf="rodada && rodada.manilha" class="col-xs-6 col-md-3">
           <p>Vira:</p>
-          <carta [carta]="rodada.manilha"></carta>
+          <carta [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
         </div>
         <div *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" class="col-xs-6 col-md-3">
           <p>Maior:</p>
-          <carta [carta]="jogada.maiorCartaObj"></carta>
+          <carta [carta]="jogada.maiorCartaObj" [visaoCarta]="visaoCarta"></carta>
         </div>
       </div>
     </div>
@@ -34,8 +34,8 @@
         </botao-palpite>
       </div>
       <div class="row">
-        <mao-jogador [rodada]="rodada" [jogador]="jogadorJogando" [podeJogarCarta]="etapaJogarCarta(rodada.etapa)"
-          (jogarCarta)="jogarCarta($event)">
+        <mao-jogador [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
+          [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
         </mao-jogador>
       </div>
     </div>

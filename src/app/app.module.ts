@@ -17,7 +17,6 @@ import { environment } from '../environments/environment';
 import { FirebaseService } from './services/firebase.service';
 import { StorageService } from './services/storage.service';
 
-import { CartaController } from './controllers/carta.controller';
 import { JogadorController } from './controllers/jogador.controller';
 import { JogoController } from './controllers/jogo.controller';
 
@@ -76,7 +75,7 @@ import { PageHeaderComponent } from './components/index/components/page-header/p
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoController, JogadorController, CartaController, StorageService, FirebaseService],
+  providers: [JogoController, JogadorController, StorageService, FirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

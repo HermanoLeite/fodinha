@@ -15,7 +15,7 @@ export class JogoInitComponent {
   constructor(
     private storageService: StorageService,
     private router: Router,
-    private jogoService: JogoController) {
+    private jogoController: JogoController) {
     this.storageService.clear()
   }
 
@@ -29,16 +29,16 @@ export class JogoInitComponent {
   }
 
   removerJogo(jogoId) {
-    this.jogoService.deletarJogo(jogoId)
+    this.jogoController.deletarJogo(jogoId)
   }
 
   criarJogo(jogoNome: string) {
     if (jogoNome !== null) {
-      this.jogoService.novoJogo(jogoNome)
+      this.jogoController.novoJogo(jogoNome)
     }
   }
 
   ngOnInit() {
-    this.jogos = this.jogoService.jogosStream()
+    this.jogos = this.jogoController.jogosStream()
   }
 }
