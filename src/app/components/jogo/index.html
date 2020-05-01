@@ -3,12 +3,7 @@
     <toggle-visao-carta [visaoCarta]="visaoCarta" (setVisaoCarta)="setVisaoCarta($event)"></toggle-visao-carta>
   </div>
   <div class="row">
-    <div class="col-md-3">
-      <placar-jogo [jogadoresJogo]="jogadoresJogo"></placar-jogo>
-    </div>
-    <div class="col-md-6">
-      <placar-rodada [jogadores]="jogadores" [rodada]="rodada"></placar-rodada>
-    </div>
+    <placar-rodada [jogadores]="jogadores" [rodada]="rodada"></placar-rodada>
   </div>
 
   <div class="row" *ngIf="jogo">

@@ -1,14 +1,15 @@
-<table class="table table-hover"  *ngIf="rodada">
+<table class="table table-hover" *ngIf="rodada">
   <tr>
-    <th>Ordem</th>
+    <th>Vidas</th>
     <th>Jogador</th>
     <th>Palpite</th>
     <th>Fez</th>
   </tr>
-  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i" [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
-    <td>{{jogador.id}}</td>
+  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i"
+    [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
+    <td>{{jogador.vidas}}</td>
     <td>{{jogador.nome}}</td>
     <td>{{jogador.palpite}}</td>
     <td>{{jogador.fez}}</td>
-  </tr> 
+  </tr>
 </table>

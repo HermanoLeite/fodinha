@@ -57,7 +57,8 @@ export class JogoController {
                 nome: jogadorParticipantes.nome,
                 fez: 0,
                 cartas: null,
-                palpite: null
+                palpite: null,
+                vidas: jogadorParticipantes.vidas
             };
             this.firebase.adicionaJogadorRodada(jogoId, rodadaId, count.toString(), jogador);
             count++;
@@ -85,7 +86,9 @@ export class JogoController {
     }
 
     async encerrarJogada(jogoId, rodadaId, rodada) {
-        var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId, rodadaId);
+        await this.atualizaJogadorVida(jogoId, rodadaId)
+
+        var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId);
         if (jogadoresProximaRodada.length < 2) {
             this.encerrarJogo(jogoId, jogadoresProximaRodada)
         }
@@ -94,20 +97,19 @@ export class JogoController {
         }
     }
 
-    async jogadoresProximaRodada(jogoId, rodadaId) {
-        await this.atualizaJogadorVida(jogoId, rodadaId)
+    async jogadoresProximaRodada(jogoId) {
         var jogadoresProximaRodada: any[] = [];
         var jogadores = await this.firebase.getJogadoresJogo(jogoId)
 
         jogadores.forEach((doc) => {
             const jogador = doc.data();
-            if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome });
+            if (jogador.jogando) jogadoresProximaRodada.push({ id: doc.id, nome: jogador.nome, vidas: jogador.vidas });
         });
 
         return jogadoresProximaRodada;
     }
 
-    async atualizaJogadorVida(jogoId, rodadaId) {
+    private async atualizaJogadorVida(jogoId, rodadaId) {
         var jogadores = await this.firebase.getJogadoresRodada(jogoId, rodadaId)
 
         await this.asyncForEach(jogadores.docs, async (doc) => {
@@ -120,13 +122,13 @@ export class JogoController {
         });
     }
 
-    async asyncForEach(array, callback) {
+    private async asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
             await callback(array[index], index, array)
         }
     }
 
-    async encerrarJogo(jogoId, jogadoresProximaRodada) {
+    private async encerrarJogo(jogoId, jogadoresProximaRodada) {
         if (jogadoresProximaRodada.length < 1) {
             this.firebase.atualizaJogo(jogoId, { status: Status.finalizado });
         }

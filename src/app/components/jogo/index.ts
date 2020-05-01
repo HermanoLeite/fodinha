@@ -54,17 +54,6 @@ export class JogoComponent implements OnInit {
     }
   }
 
-  setVisaoCarta(visaoCarta: boolean) {
-    this.visaoCarta = this.jogoController.setVisaoCarta(visaoCarta);
-  }
-
-  jogoFinalizado(): boolean {
-    if (this.jogo)
-      return this.jogo.status === Status.finalizado;
-
-    return false;
-  }
-
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
@@ -86,6 +75,17 @@ export class JogoComponent implements OnInit {
     }
   }
 
+  setVisaoCarta(visaoCarta: boolean) {
+    this.visaoCarta = this.jogoController.setVisaoCarta(visaoCarta);
+  }
+
+  jogoFinalizado(): boolean {
+    if (this.jogo)
+      return this.jogo.status === Status.finalizado;
+
+    return false;
+  }
+
   etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
 
   private acabaramAsCartas = () => this.jogadorJogando.cartas.length === 0
@@ -98,15 +98,6 @@ export class JogoComponent implements OnInit {
   }
 
   private loadRodada(rodadaId): void {
-    this.jogadoresJogo = this.jogoController.jogadoresStream(this.jogoId).pipe(
-      map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return { id, ...data };
-        });
-      }),
-    );
     this.jogoController.rodadaStream(this.jogoId, rodadaId).pipe(
       map(a => {
         const data: any = a.payload.data();
