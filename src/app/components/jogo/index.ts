@@ -98,15 +98,6 @@ export class JogoComponent implements OnInit {
   }
 
   private loadRodada(rodadaId): void {
-    this.jogadoresJogo = this.jogoController.jogadoresStream(this.jogoId).pipe(
-      map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return { id, ...data };
-        });
-      }),
-    );
     this.jogoController.rodadaStream(this.jogoId, rodadaId).pipe(
       map(a => {
         const data: any = a.payload.data();
