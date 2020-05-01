@@ -31,7 +31,6 @@ import { ListarJogosComponent } from './components/jogo-init/components/listar-j
 import { ListarJogadoresComponent } from './components/jogador/components/listar-jogadores/listar-jogadores.component';
 import { CriarJogadorComponent } from './components/jogador/components/criar-jogador/criar-jogador.component';
 import { ToggleVisaoCartaComponent } from './components/jogo/components/toggle-visao-carta/toggle-visao-carta.component';
-import { PlacarJogoComponent } from './components/jogo/components/placar-jogo/placar-jogo.component';
 import { PlacarRodadaComponent } from './components/jogo/components/placar-rodada/placar-rodada.component';
 import { JogadasComponent } from './components/jogo/components/jogadas/jogadas.component';
 import { GanhadorComponent } from './components/jogo/components/ganhador/ganhador.component';
@@ -54,7 +53,6 @@ import { PageHeaderComponent } from './components/index/components/page-header/p
     ListarJogadoresComponent,
     CriarJogadorComponent,
     ToggleVisaoCartaComponent,
-    PlacarJogoComponent,
     PlacarRodadaComponent,
     JogadasComponent,
     GanhadorComponent,

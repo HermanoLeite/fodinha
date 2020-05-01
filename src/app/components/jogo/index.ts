@@ -54,17 +54,6 @@ export class JogoComponent implements OnInit {
     }
   }
 
-  setVisaoCarta(visaoCarta: boolean) {
-    this.visaoCarta = this.jogoController.setVisaoCarta(visaoCarta);
-  }
-
-  jogoFinalizado(): boolean {
-    if (this.jogo)
-      return this.jogo.status === Status.finalizado;
-
-    return false;
-  }
-
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
@@ -84,6 +73,17 @@ export class JogoComponent implements OnInit {
     else {
       this.jogoController.atualizaRodada(this.jogoId, this.rodadaId, { vez: proximoJogador })
     }
+  }
+
+  setVisaoCarta(visaoCarta: boolean) {
+    this.visaoCarta = this.jogoController.setVisaoCarta(visaoCarta);
+  }
+
+  jogoFinalizado(): boolean {
+    if (this.jogo)
+      return this.jogo.status === Status.finalizado;
+
+    return false;
   }
 
   etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
