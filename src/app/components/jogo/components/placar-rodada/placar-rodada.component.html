@@ -1,14 +1,13 @@
 <table class="table table-hover" *ngIf="rodada">
   <tr>
-    <th></th>
+    <th>Vez</th>
     <th>Vidas</th>
     <th>Jogador</th>
     <th>Palpite</th>
     <th>Fez</th>
     <th>Carta</th>
   </tr>
-  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i"
-    [ngClass]="{'comeca': jogador.id == rodada.comeca, 'vez': jogador.id == rodada.vez}">
+  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
     <td *ngIf="jogador.id == rodada.vez">=></td>
     <td *ngIf="jogador.id != rodada.vez"></td>
     <td>{{jogador.vidas}}</td>

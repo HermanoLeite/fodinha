@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Carta } from 'src/app/models/carta.model';
+import { Etapa } from 'src/app/models/jogo.model';
 
 @Component({
   selector: 'placar-rodada',
@@ -13,8 +14,10 @@ export class PlacarRodadaComponent {
   @Input() visaoCarta
   public cartas = []
 
+  mostrarCartas = () => this.jogadas && this.jogadas.length > 0 && this.rodada.etapa == Etapa.jogarCarta
+
   ngOnChanges() {
-    if (this.jogadas && this.jogadas.length > 0) {
+    if (this.mostrarCartas()) {
       this.jogadas.map(jogada => this.cartas[jogada.jogadorId] = Carta.fromJogada(jogada))
     }
     else {

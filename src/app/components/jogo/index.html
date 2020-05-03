@@ -38,12 +38,6 @@
   </div>
 </section>
 
-<div *ngIf="jogadorJogando && !jogoFinalizado()" class="row">
-  <div class="col-md-6">
-    <jogadas [jogadas]="jogadas"></jogadas>
-  </div>
-</div>
-
 <div *ngIf="jogoFinalizado()">
   <ganhador [vencedor]="jogo.vencedor"></ganhador>
 </div>
