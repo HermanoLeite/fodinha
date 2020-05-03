@@ -3,8 +3,9 @@
     <th>Jogador</th>
     <th>Carta</th>
   </tr>
-  <tr *ngFor="let jogadaItem of jogadas">
-    <td>{{jogadaItem.jogador}}</td>
-    <td>{{jogadaItem.carta}} {{jogadaItem.naipe}}</td>
+  <tr *ngFor="let jogada of jogadas">
+    <td>{{jogada.jogadorId}}</td>
+    <td>{{jogada.jogador}}</td>
+    <td>{{jogada.carta}} {{jogada.naipe}}</td>
   </tr>
 </table>
