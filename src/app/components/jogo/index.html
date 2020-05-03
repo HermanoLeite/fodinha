@@ -1,9 +1,10 @@
 <section>
-  <div class="row justify-content-end">
+  <div class="row">
     <toggle-visao-carta [visaoCarta]="visaoCarta" (setVisaoCarta)="setVisaoCarta($event)"></toggle-visao-carta>
   </div>
   <div class="row">
-    <placar-rodada [jogadores]="jogadores" [rodada]="rodada"></placar-rodada>
+    <placar-rodada [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas" [visaoCarta]="visaoCarta">
+    </placar-rodada>
   </div>
 
   <div class="row" *ngIf="jogo">
@@ -36,12 +37,6 @@
     </div>
   </div>
 </section>
-
-<div *ngIf="jogadorJogando && !jogoFinalizado()" class="row">
-  <div class="col-md-6">
-    <jogadas [jogadas]="jogadas"></jogadas>
-  </div>
-</div>
 
 <div *ngIf="jogoFinalizado()">
   <ganhador [vencedor]="jogo.vencedor"></ganhador>

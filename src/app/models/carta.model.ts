@@ -12,6 +12,8 @@ export class Carta {
     this.img = img;
   }
 
+  static fromJogada = ({ carta, cartaValor, naipe, naipeValor, img }) => new Carta(carta, cartaValor, naipe, naipeValor, img)
+
   static fromString(carta: string) {
     if (carta === null) return null;
     const cartaObj = JSON.parse(carta);

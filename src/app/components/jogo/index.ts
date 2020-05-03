@@ -33,7 +33,7 @@ export class JogoComponent implements OnInit {
     private route: ActivatedRoute,
     private storageService: StorageService) {
     this.jogoId = this.route.snapshot.paramMap.get("id")
-    this.visaoCarta = this.jogoController.getVisaoCarta();
+    this.visaoCarta = this.jogoController.getVisaoCarta()
   }
 
   comecarRodada() {
@@ -114,14 +114,14 @@ export class JogoComponent implements OnInit {
           this.jogoController.jogadasStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(
             map(actions => {
               return actions.map(a => {
-                const data = a.payload.doc.data();
-                const id = parseInt(a.payload.doc.id, 10);
-                return { id, ...data };
+                const data = a.payload.doc.data()
+                const id = a.payload.doc.id
+                return { id, ...data }
               });
             }),
-          ).subscribe(jogadas => this.jogadas = jogadas);
+          ).subscribe(jogadas => this.jogadas = jogadas)
         }
-        return { id, ...data };
+        return { id, ...data }
       })
     ).subscribe(rodada => this.rodada = rodada)
 

@@ -6,5 +6,4 @@ import { Component, Input } from '@angular/core';
 })
 export class JogadasComponent {
   @Input() jogadas;
-  constructor() { }
 }
