@@ -11,9 +11,9 @@ import { Baralho } from '../models/baralho.model';
 export class JogoController {
     constructor(private storage: StorageService, private firebase: FirebaseService) { }
 
-    novoJogo(nomeJogo: string): void {
-        const jogo = new Jogo(nomeJogo)
-        this.firebase.adicionaJogo(jogo)
+    novoJogo() {
+        const jogo = new Jogo()
+        return this.firebase.adicionaJogo(jogo)
     }
 
     jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId)
