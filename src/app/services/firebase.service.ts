@@ -1,5 +1,6 @@
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
+import { firestore } from 'firebase';
 
 @Injectable()
 export class FirebaseService {
@@ -44,6 +45,8 @@ export class FirebaseService {
     adicionaJogadaRodada = (jogoId, rodadaId, jogada) => this.jogadasRodada(jogoId, rodadaId).add(jogada)
     adicionaRodada = (jogoId, rodadaId, rodada) => this.rodadaJogo(jogoId, rodadaId).set(rodada);
     adicionaJogadorRodada = (jogoId, rodadaId, jogadorId, jogador) => this.jogadorRodada(jogoId, rodadaId, jogadorId).set(jogador);
+
+    mandaMensagem = (jogoId, data) => this.jogo(jogoId).update({ mensagens: firestore.FieldValue.arrayUnion(data) })
 
     atualizaJogo = (jogoId, update) => this.jogo(jogoId).update(update)
     atualizaRodada = (jogoId, rodadaId, update) => this.rodadaJogo(jogoId, rodadaId).update(update)
