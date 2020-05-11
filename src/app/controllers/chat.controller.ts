@@ -6,12 +6,14 @@ export class ChatController {
     constructor(private firebase: FirebaseService) { }
 
     mandaMensagem(jogoId, nome, mensagem) {
-        const data = {
-            nome,
-            mensagem,
-            criadoEm: Date.now()
+        if (mensagem) {
+            const data = {
+                nome,
+                mensagem,
+                criadoEm: Date.now()
+            }
+            this.firebase.mandaMensagem(jogoId, data)
         }
-        this.firebase.mandaMensagem(jogoId, data)
     }
 
     buscaMensagens(jogoId) {
