@@ -9,7 +9,7 @@
   </tr>
   <tr *ngFor="let jogo of jogos | async; let i = index;" [attr.data-index]="i">
     <td>{{i + 1}}</td>
-    <td>{{jogo.nome}}</td>
+    <td>{{jogo.id}}</td>
     <td>{{jogo.quantidadeJogadores}}</td>
     <td>{{getStatus(jogo.status)}}</td>
     <td>

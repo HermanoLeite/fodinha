@@ -1,13 +1,11 @@
 export class Jogo {
-    constructor(nome: string) {
-        this.nome = nome
+    constructor() {
         this.status = Status.aguardandoJogadores
         this.rodada = 0
         this.quantidadeJogadores = 0
     }
 
     id: string
-    nome: string
     status: number
     rodada: number
     quantidadeJogadores: number
