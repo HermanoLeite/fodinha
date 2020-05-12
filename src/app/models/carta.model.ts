@@ -12,7 +12,7 @@ export class Carta {
     this.img = img;
   }
 
-  static fromJogada = ({ carta, cartaValor, naipe, naipeValor, img }) => new Carta(carta, cartaValor, naipe, naipeValor, img)
+  static fromJogada = ({ carta, cartaValor, naipe, naipeValor, img }) => new Carta(cartaValor, naipeValor, carta, naipe, img)
 
   static fromString(carta: string) {
     if (carta === null) return null;

@@ -36,6 +36,9 @@
       </div>
     </div>
   </div>
+  <div class="row" *ngIf="jogadorJogando">
+    <chat [jogoId]="jogoId" [nome]="jogadorJogando.nome"></chat>
+  </div>
 </section>
 
 <div *ngIf="jogoFinalizado()">
