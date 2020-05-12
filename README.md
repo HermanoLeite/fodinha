@@ -63,7 +63,7 @@ Se tudo estiver o correto, o projeto deveria rodar.
 ## Modelo de dados
 
 O modelo de dados foi pensado conforme o jogo foi construído, e tenho minhas dúvidas se está da melhor forma.
-Está da seguinte forma:
+Está da seguinte forma: *Essa imagem está desatualizada, mas ainda é mais ou menos isso aí*
 
 ![modelo de dados](/docs/modeloDeDados.png)
 
