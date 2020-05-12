@@ -17,6 +17,7 @@ import { environment } from '../environments/environment';
 import { FirebaseService } from './services/firebase.service';
 import { StorageService } from './services/storage.service';
 
+import { ChatController } from './controllers/chat.controller';
 import { JogadorController } from './controllers/jogador.controller';
 import { JogoController } from './controllers/jogo.controller';
 
@@ -24,6 +25,7 @@ import { AppComponent } from './components/index/app.component';
 import { JogadorComponent } from './components/jogador';
 import { JogoComponent } from './components/jogo';
 import { JogoInitComponent } from './components/jogo-init';
+import { ChatComponent } from './components/chat';
 
 import { CartaComponent } from './components/jogo/components/carta/carta.component';
 import { ListarJogosComponent } from './components/jogo-init/components/listar-jogos/listar-jogos.component';
@@ -43,6 +45,7 @@ import { PageHeaderComponent } from './components/index/components/page-header/p
   declarations: [
     AppComponent,
     BotaoComecarComponent,
+    ChatComponent,
     JogoComponent,
     JogadorComponent,
     CartaComponent,
@@ -71,7 +74,7 @@ import { PageHeaderComponent } from './components/index/components/page-header/p
     AngularFireStorageModule,
     StorageServiceModule,
   ],
-  providers: [JogoController, JogadorController, StorageService, FirebaseService],
+  providers: [ChatController, JogoController, JogadorController, StorageService, FirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

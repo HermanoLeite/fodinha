@@ -154,9 +154,10 @@ export class JogoComponent implements OnInit {
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
-        this.rodadaId = data.rodada.toString()
-
-        this.loadRodada(data.rodada.toString())
+        if (data.rodada.toString() != this.rodadaId) {
+          this.rodadaId = data.rodada.toString()
+          this.loadRodada(this.rodadaId)
+        }
         return { id, ...data };
       })
     ).subscribe(jogo => this.jogo = jogo);

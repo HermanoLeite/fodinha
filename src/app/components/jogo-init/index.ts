@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router'
 import { Observable } from 'rxjs'
 import { Status, Jogo } from '../../models/jogo.model'
@@ -8,7 +8,7 @@ import { JogoController } from '../../controllers/jogo.controller'
   selector: 'app-jogo-init',
   templateUrl: './index.html',
 })
-export class JogoInitComponent {
+export class JogoInitComponent implements OnInit {
   jogos: Observable<Jogo[]>
 
   constructor(private router: Router, private jogoController: JogoController) { }

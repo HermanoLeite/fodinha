@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { JogadorController } from 'src/app/controllers/jogador.controller'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Jogador } from '../../models/jogador.model'
@@ -12,7 +12,7 @@ import { StorageService, Keys } from 'src/app/services/storage.service'
   templateUrl: './index.html'
 })
 
-export class JogadorComponent {
+export class JogadorComponent implements OnInit {
   jogadorDocId: string
   jogoId: string
   jogadorAtual: Jogador
