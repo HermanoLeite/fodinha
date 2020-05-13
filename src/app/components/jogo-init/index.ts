@@ -11,7 +11,8 @@ import { JogoController } from '../../controllers/jogo.controller'
 export class JogoInitComponent implements OnInit {
   jogos: Observable<Jogo[]>
 
-  constructor(private router: Router, private jogoController: JogoController) { }
+  constructor(private router: Router, private jogoController: JogoController) {
+  }
 
   entrarJogo(jogo) {
     if (jogo.status === Status.finalizado) {
