@@ -40,6 +40,7 @@ import { BotaoPalpiteComponent } from './components/jogo/components/botao-palpit
 import { MaoJogadorComponent } from './components/jogo/components/mao-jogador/mao-jogador.component';
 import { BotaoComecarJogoComponent } from './components/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { PageHeaderComponent } from './components/index/components/page-header/page-header';
+import { JogoCardComponent } from './components/jogo-init/components/listar-jogos/jogo-card/jogo-card.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { PageHeaderComponent } from './components/index/components/page-header/p
     JogadorComponent,
     CartaComponent,
     JogoInitComponent,
+    JogoCardComponent,
     ListarJogosComponent,
     ListarJogadoresComponent,
     CriarJogadorComponent,
