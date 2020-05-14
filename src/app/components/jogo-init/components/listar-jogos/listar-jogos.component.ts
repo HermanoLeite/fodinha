@@ -12,6 +12,7 @@ export class ListarJogosComponent {
   @Output() removerJogo = new EventEmitter<string>()
   @Output() entrarJogo = new EventEmitter<any>()
 
+  jogoSelecionado: any;
   getStatus(status: Status) {
     switch (status) {
       case Status.aguardandoJogadores: return "Aguardando Jogadores"
@@ -19,4 +20,6 @@ export class ListarJogosComponent {
       case Status.finalizado: return "Finalizado"
     }
   }
+
+  selecionarJogo = (jogo) => this.jogoSelecionado = jogo
 }
