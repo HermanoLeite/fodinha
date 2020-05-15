@@ -1,6 +1,5 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { Status } from 'src/app/models/jogo.model';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'jogo-card',

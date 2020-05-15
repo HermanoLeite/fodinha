@@ -1,0 +1,28 @@
+<div class="page">
+  <div class="screen">
+    <jogo-init-header></jogo-init-header>
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<style>
+  .page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #114c1b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen {
+    position: relative;
+    width: 1058px;
+    height: 790px;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
