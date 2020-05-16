@@ -40,14 +40,16 @@ import { BotaoPalpiteComponent } from './containers/jogo/components/botao-palpit
 import { MaoJogadorComponent } from './containers/jogo/components/mao-jogador/mao-jogador.component';
 import { BotaoComecarJogoComponent } from './containers/jogador/components/botao-comecar-jogo/botao-comecar-jogo.component';
 import { JogoCardComponent } from './containers/jogo-init/components/jogo-card/jogo-card.component';
-import { HeaderComponent } from './components/header/header.component';
+import { JogoHeaderComponent } from './components/header/jogo-header.component';
+import { JogoInitHeaderComponent } from './components/header/jogo-init-header.component';
 import { PageComponent } from './components/page/page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BotaoComecarComponent,
-    HeaderComponent,
+    JogoHeaderComponent,
+    JogoInitHeaderComponent,
     PageComponent,
     ChatComponent,
     JogoComponent,

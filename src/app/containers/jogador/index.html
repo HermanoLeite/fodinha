@@ -1,12 +1,74 @@
 <page-jogo-init>
+  <jogo-header></jogo-header>
   <div class="game">
-    <div>
-      <listar-jogadores [jogadores]="jogadores" [mostrarRemover]="jogadorDocId"
-        (removerJogador)="removerJogador($event)">
-      </listar-jogadores>
+    <div class="left">
+      <div class="card warning">
+      </div>
+      <div class="card players-list">
+      </div>
     </div>
-    <div>
-      <div *ngIf="!jogadorAtual">
+    <div class="right">
+      <div class="card begin player-form">
+      </div>
+      <div class="card chat" *ngIf="jogadorAtual">
+        <chat [jogoId]="jogoId" [nome]="jogadorAtual.nome"></chat>
+      </div>
+    </div>
+  </div>
+</page-jogo-init>
+
+<style>
+  .game {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .card {
+    padding: 15px 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: -20px 20px 15px 0 rgba(0, 0, 0, .3);
+    margin: 10px;
+  }
+
+  .left {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .right {
+    flex-grow: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .warning {
+    flex: 1;
+  }
+
+  .players-list {
+    flex: 3;
+  }
+
+  .begin {
+    flex: 1;
+  }
+
+  .chat {
+    flex: 1;
+  }
+</style>
+
+<!-- <listar-jogadores [jogadores]="jogadores" [mostrarRemover]="jogadorDocId"
+    (removerJogador)="removerJogador($event)">
+  </listar-jogadores> -->
+
+<!-- <div *ngIf="!jogadorAtual">
         <criar-jogador (criarJogador)="criarJogador($event)">
         </criar-jogador>
       </div>
@@ -14,24 +76,4 @@
         <botao-comecar-jogo [comecou]="jogadorAtual.comecar" [removido]="jogadorAtual.removido"
           (comecarJogo)="comecarJogo()" (retornarAoJogo)="retornarAoJogo()">
         </botao-comecar-jogo>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="jogadorAtual">
-    <chat [jogoId]="jogoId" [nome]="jogadorAtual.nome"></chat>
-  </div>
-</page-jogo-init>
-
-<style>
-  .game {
-    padding: 15px 20px;
-    margin: 10px 0;
-    background-color: #fff;
-    border-radius: 10px;
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    justify-content: space-evenly;
-    box-shadow: -20px 20px 15px 0 rgba(0, 0, 0, .3);
-  }
-</style>
+      </div> -->

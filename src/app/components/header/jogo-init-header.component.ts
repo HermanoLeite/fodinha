@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'jogo-init-header',
-    templateUrl: './header.component.html',
+    templateUrl: './jogo-init-header.component.html',
 })
-export class HeaderComponent { }
+export class JogoInitHeaderComponent { }
 
