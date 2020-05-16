@@ -2,7 +2,8 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'botao-comecar-jogo',
-  templateUrl: './botao-comecar-jogo.component.html'
+  template: `<jogo-button  (acao)="acao()" [label]="label"></jogo-button>
+  <span>Quando todo mundo entrar, clique em começar</span>`,
 })
 export class BotaoComecarJogoComponent {
   @Output() comecarJogo = new EventEmitter<void>()

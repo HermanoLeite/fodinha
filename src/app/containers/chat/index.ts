@@ -34,7 +34,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   mandaMensagem() {
-    this.chatController.mandaMensagem(this.jogoId, this.nome, this.novaMensagem)
+    if (this.nome) {
+      this.chatController.mandaMensagem(this.jogoId, this.nome, this.novaMensagem)
+    }
     this.novaMensagem = ""
   }
 

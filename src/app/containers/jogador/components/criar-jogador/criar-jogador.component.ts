@@ -6,6 +6,7 @@ import { Component, Output, EventEmitter } from '@angular/core'
 })
 export class CriarJogadorComponent {
   jogadorNome: string
+  label: string = "Entrar"
   @Output() criarJogador = new EventEmitter<string>()
 
   async criar() {

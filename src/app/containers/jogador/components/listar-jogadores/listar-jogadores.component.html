@@ -1,17 +1,42 @@
-<table class="table table-hover">
-  <tr>
-    <th>#</th>
-    <th>Jogador</th>
-    <th>Começar</th>
-    <th></th>
-  </tr>
-  <tr *ngFor="let documento of jogadores | async; let i = index;" [attr.data-index]="i">
-    <td>{{i + 1}}</td>
-    <td>{{documento.jogador.nome}}</td>
-    <td>{{documento.jogador.comecar ? "Partiu!" : "Segura ai!"}}</td>
-    <td *ngIf="mostrarRemover">
-      <button (click)="removerJogador.emit(documento)" *ngIf="!documento.jogador.removido">remover</button>
-      <p *ngIf="documento.jogador.removido">removido</p>
-    </td>
-  </tr>
-</table>
+<div class="players">
+  <div class="player" *ngFor="let documento of jogadores | async; let i = index;" [attr.data-index]="i">
+    <div><span
+        [ngClass]="{'nao-comecou': !documento.jogador.comecar && !documento.jogador.removido, 'comecou': documento.jogador.comecar && !documento.jogador.removido,  'removido': documento.jogador.removido}"
+        class="status">● </span> <span>{{documento.jogador.nome}}</span></div>
+    <div [ngClass]="{'remove': !documento.jogador.removido}" *ngIf="mostrarRemover"
+      (click)="removerJogador.emit(documento)">
+      <span>{{documento.jogador.removido ? 'removido' : '🚫'}}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .player {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Nunito";
+    padding: 15px 10px;
+    border-bottom: 1px rgba(120, 155, 176, .34) solid;
+  }
+
+  .remove {
+    cursor: pointer;
+  }
+
+  .status {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  .comecou {
+    color: rgb(5, 177, 5);
+  }
+
+  .nao-comecou {
+    color: rgb(129, 129, 122);
+  }
+
+  .removido {
+    color: red;
+  }
+</style>

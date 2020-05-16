@@ -1,16 +1,14 @@
-<h3>Chat</h3>
+<div class="title">Chat</div>
 <ng-container *ngIf="chat$ | async as chat">
   <div id="chat" #scroll>
     <div class="msg" *ngFor="let msg of chat.mensagens; trackBy: trackByCreated">
-      <div class="user">
+      <div class="user-name">
         <div>{{ msg.nome }}</div>
       </div>
-      <p>{{ msg.mensagem }}</p>
+      <span class="user-msg">{{ msg.mensagem }}</span>
     </div>
   </div>
 
-  <div class="form">
-    <input [(ngModel)]="novaMensagem" (keydown.enter)="mandaMensagem()">
-    <button (click)="mandaMensagem()">Send</button>
-  </div>
+  <input class="msg-input" [(ngModel)]="novaMensagem" (keydown.enter)="mandaMensagem()"
+    placeholder="Mande uma mensagem">
 </ng-container>

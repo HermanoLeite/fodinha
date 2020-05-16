@@ -43,6 +43,7 @@ import { JogoCardComponent } from './containers/jogo-init/components/jogo-card/j
 import { JogoHeaderComponent } from './components/header/jogo-header.component';
 import { JogoInitHeaderComponent } from './components/header/jogo-init-header.component';
 import { PageComponent } from './components/page/page.component';
+import { JogoButtonComponent } from './components/button/jogo-button.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { PageComponent } from './components/page/page.component';
     PageComponent,
     ChatComponent,
     JogoComponent,
+    JogoButtonComponent,
     JogadorComponent,
     CartaComponent,
     JogoInitComponent,

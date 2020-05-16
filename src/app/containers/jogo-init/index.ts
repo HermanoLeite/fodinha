@@ -10,7 +10,7 @@ import { JogoController } from '../../controllers/jogo.controller'
 })
 export class JogoInitComponent implements OnInit {
   jogos: Observable<Jogo[]>
-
+  textoBotao: string = "Novo Jogo"
   constructor(private router: Router, private jogoController: JogoController) {
   }
 
