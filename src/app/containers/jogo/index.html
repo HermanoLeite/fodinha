@@ -1,46 +1,99 @@
-<section>
-  <div class="row">
-    <toggle-visao-carta [visaoCarta]="visaoCarta" (setVisaoCarta)="setVisaoCarta($event)"></toggle-visao-carta>
-  </div>
-  <div class="row">
-    <placar-rodada [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas" [visaoCarta]="visaoCarta">
-    </placar-rodada>
-  </div>
+<page-jogo-init>
+  <jogo-header></jogo-header>
 
-  <div class="row" *ngIf="jogo">
-    <div class="col-xs-6">
-      <div class="row">
-        <div *ngIf="rodada && rodada.manilha" class="col-xs-6 col-md-3">
-          <p>Vira:</p>
-          <carta [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
+  <div class="game" *ngIf="jogo">
+
+    <div class="left">
+
+      <div class="card left-top" *ngIf="rodada && rodada.manilha">
+        <span>Vira:</span>
+        <carta [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
+      </div>
+
+      <div class="card left-bottom">
+        <placar-jogo [jogadores]="jogadores" [rodada]="rodada">
+        </placar-jogo>
+      </div>
+
+    </div>
+
+    <div class="right">
+
+      <div class="right-top">
+
+        <div class="card round-score">
+          <placar-rodada [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas" [visaoCarta]="visaoCarta">
+          </placar-rodada>
         </div>
-        <div *ngIf="jogada && jogada.maiorCarta && etapaJogarCarta(rodada.etapa)" class="col-xs-6 col-md-3">
-          <p>Maior:</p>
-          <carta [carta]="jogada.maiorCartaObj" [visaoCarta]="visaoCarta"></carta>
+
+        <div class="card action" *ngIf="jogadorJogando">
+          <div *ngIf="jogadorJogando.id == rodada.vez">
+            <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
+
+            <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
+              [quantidadeCartas]="jogadorJogando.cartas.length">
+            </botao-palpite>
+          </div>
+          <mao-jogador [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
+            [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
+          </mao-jogador>
         </div>
+
+      </div>
+
+      <div *ngIf="jogadorJogando" class="card right-bottom">
+        <chat [jogoId]="jogoId" [nome]="jogadorJogando.nome"></chat>
       </div>
     </div>
 
-    <div class=col-xs-6 *ngIf="jogadorJogando">
-      <div *ngIf="jogadorJogando.id == rodada.vez">
-        <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
-
-        <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
-          [quantidadeCartas]="jogadorJogando.cartas.length">
-        </botao-palpite>
-      </div>
-      <div class="row">
-        <mao-jogador [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
-          [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
-        </mao-jogador>
-      </div>
-    </div>
   </div>
-  <div class="row" *ngIf="jogadorJogando">
-    <chat [jogoId]="jogoId" [nome]="jogadorJogando.nome"></chat>
-  </div>
-</section>
-
+</page-jogo-init>
 <div *ngIf="jogoFinalizado()">
   <ganhador [vencedor]="jogo.vencedor"></ganhador>
 </div>
+
+<style>
+  .game {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    font-family: "Nunito";
+  }
+
+  .card {
+    padding: 15px 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: -10px 10px 5px 0 rgba(0, 0, 0, .3);
+    margin: 10px;
+  }
+
+  .left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left-top {}
+
+  .left-bottom {}
+
+  .right {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .right-top {
+    display: flex;
+  }
+
+  .round-score,
+  .action {
+    flex: 1;
+  }
+
+  .right-bottom {}
+</style>

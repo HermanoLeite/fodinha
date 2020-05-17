@@ -1,0 +1,8 @@
+.fora {
+  text-decoration-line: line-through;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+  height: 120px;
+}

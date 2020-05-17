@@ -1,3 +1,2 @@
-<button *ngIf="etapaEmbaralhar()" class="btn btn-success" (click)="comecar()">
-  Comecar
-</button>
+<jogo-button *ngIf="etapaEmbaralhar()" (acao)="this.comecarRodada.emit()" [label]="label">
+</jogo-button>

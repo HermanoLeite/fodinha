@@ -1,9 +1,17 @@
-<div *ngIf="etapaPalpite()">
-  Palpite
-  <div class="btn btn-success" (click)="palpite(0)">
+<div class="guess" *ngIf="etapaPalpite()">
+  <span>Palpite:</span>
+  <div class="guess-number" (click)="palpite(0)">
     0
   </div>
-  <div *ngFor="let x of palpites; let i = index;" class="btn btn-success" (click)="palpite(i+1)">
+  <div *ngFor="let x of palpites; let i = index;" class="guess-number" (click)="palpite(i+1)">
     {{i+1}}
   </div>
 </div>
+
+<style>
+  .guess {
+    display: flex;
+  }
+
+  .guess-number {}
+</style>

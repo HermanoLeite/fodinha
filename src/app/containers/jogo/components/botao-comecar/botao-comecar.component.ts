@@ -9,6 +9,8 @@ export class BotaoComecarComponent {
   @Input() etapa: Etapa;
   @Output() comecarRodada = new EventEmitter<void>()
 
+  label: string = "Entregar Cartas"
+
   etapaEmbaralhar() {
     return this.etapa === Etapa.embaralhar;
   }
