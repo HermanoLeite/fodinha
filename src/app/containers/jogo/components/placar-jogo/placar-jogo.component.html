@@ -1,16 +1,21 @@
 <div class="etapa">
   <h3>{{status}}</h3>
 </div>
-<table *ngIf="rodada" class="table">
-  <tr *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
-    <td>{{jogador.vidas}}</td>
-    <td>{{jogador.nome}}</td>
-  </tr>
-</table>
+<div *ngIf="rodada" class="players">
+  <div class="player" *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+    <div class="player-name">{{jogador.nome}} </div>
+    <div *ngFor="let x of [].constructor(jogador.vidas)">❤️</div>
+  </div>
+</div>
 
 <style>
-  .etapa {
-    border-bottom: rgb(167, 165, 165);
+  .player {
+    display: flex;
+    justify-content: flex-start;
+    height: 50px;
+  }
 
+  .player-name {
+    margin-right: 20px;
   }
 </style>

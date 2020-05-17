@@ -15,6 +15,7 @@ export class PlacarJogoComponent {
   ngOnChanges() {
     this.status = this.statusJogo()
   }
+
   statusJogo = () => {
     switch (this.rodada.etapa) {
       case Etapa.palpite: return "Palpite"

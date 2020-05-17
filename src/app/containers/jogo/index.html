@@ -5,14 +5,22 @@
 
     <div class="left">
 
-      <div class="card left-top" *ngIf="rodada && rodada.manilha">
-        <span>Vira:</span>
-        <carta [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
+      <div class="card left-top">
+        <div class="title">Vira</div>
+        <carta *ngIf="rodada && rodada.manilha" [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
       </div>
 
-      <div class="card left-bottom">
-        <placar-jogo [jogadores]="jogadores" [rodada]="rodada">
-        </placar-jogo>
+      <div class="card left-bottom" *ngIf="jogadorJogando">
+        <div class="action-button" *ngIf="jogadorJogando.id == rodada.vez">
+          <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
+
+          <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
+            [quantidadeCartas]="jogadorJogando.cartas.length">
+          </botao-palpite>
+        </div>
+        <mao-jogador class="action-deck" [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
+          [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
+        </mao-jogador>
       </div>
 
     </div>
@@ -21,23 +29,11 @@
 
       <div class="right-top">
 
-        <div class="card round-score">
-          <placar-rodada [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas" [visaoCarta]="visaoCarta">
-          </placar-rodada>
-        </div>
+        <placar-rodada class="card round-score" [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas"
+          [visaoCarta]="visaoCarta">
+        </placar-rodada>
 
-        <div class="card action" *ngIf="jogadorJogando">
-          <div *ngIf="jogadorJogando.id == rodada.vez">
-            <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
 
-            <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
-              [quantidadeCartas]="jogadorJogando.cartas.length">
-            </botao-palpite>
-          </div>
-          <mao-jogador [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
-            [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
-          </mao-jogador>
-        </div>
 
       </div>
 
@@ -53,6 +49,22 @@
 </div>
 
 <style>
+  .title {
+    position: relative;
+    top: -28px;
+    width: 100px;
+    height: 34px;
+    background-color: #9c6602;
+    border-radius: 7px;
+    font-family: "Roboto";
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .game {
     flex: 1;
     display: flex;
@@ -76,9 +88,13 @@
     flex-direction: column;
   }
 
-  .left-top {}
+  .left-top {
+    flex: 1;
+  }
 
-  .left-bottom {}
+  .left-bottom {
+    flex: 3;
+  }
 
   .right {
     flex: 3;
@@ -87,13 +103,16 @@
   }
 
   .right-top {
+    flex: 3;
     display: flex;
   }
 
-  .round-score,
-  .action {
-    flex: 1;
+  .round-score {
+    flex: 2;
   }
 
-  .right-bottom {}
+  .right-bottom {
+
+    flex: 1;
+  }
 </style>

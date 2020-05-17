@@ -1,4 +1,4 @@
-<table class="table table-hover" *ngIf="rodada">
+<!-- <table class="table table-hover" *ngIf="rodada">
   <tr>
     <th>Jogador</th>
     <th>Palpite</th>
@@ -13,4 +13,46 @@
       <carta [carta]="cartas[jogador.id]" [visaoCarta]="visaoCarta"></carta>
     </td>
   </tr>
-</table>
+</table> -->
+
+<div class="etapa">
+  <h3>{{status}}</h3>
+</div>
+<div *ngIf="rodada" class="players">
+  <div class="player" *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+    <div class="player-info">
+      <div class="lives">
+        <div *ngFor="let x of [].constructor(jogador.vidas)">❤️</div>
+      </div>
+      <div class="player-name">{{jogador.nome}} </div>
+      <div></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .players {
+    height: 80%;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    row-gap: 10px;
+  }
+
+  .player {
+    background-color: #eff8f4;
+    border: 1px #5d8899 solid;
+    border-radius: 15px;
+    padding: 20px 10px 10px 10px;
+    box-shadow: 0px 0px 10px #999 inset;
+  }
+
+  .player-info {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .lives {
+    display: flex;
+  }
+</style>
