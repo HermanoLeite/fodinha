@@ -1,0 +1,59 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.github {
+  margin-top: 20px;
+}
+
+.screen {
+  width: 1058px;
+  min-height: 790px;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.github {
+  align-self: flex-end;
+}
+
+@media screen and (max-width: 1158px) {
+  .screen {
+    width: 800px;
+    min-height: 790px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .screen {
+    width: 500px;
+    min-height: 790px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .screen {
+    width: 300px;
+    min-height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}

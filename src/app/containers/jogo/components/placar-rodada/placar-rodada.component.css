@@ -1,8 +1,41 @@
-.fora {
+.out {
   text-decoration-line: line-through;
 }
 
-.table > tbody > tr > td {
-  vertical-align: middle;
-  height: 120px;
+.players {
+  height: 80%;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+.player {
+  background-color: #f3f3f3;
+  border: 1px #5d8899 solid;
+  border-radius: 15px;
+  padding: 20px 10px 10px 10px;
+  box-shadow: 0px 0px 10px #999 inset;
+}
+
+.player-info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+
+.lives {
+  display: flex;
+}
+
+.playing {
+  background-color: #f3f3f3;
+  border: 5px #f09217 solid;
+}
+
+@media screen and (max-width: 600px) {
+  .player-info {
+    display: flex;
+    flex-direction: column;
+  }
 }

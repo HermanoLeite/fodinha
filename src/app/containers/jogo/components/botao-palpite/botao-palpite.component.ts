@@ -4,6 +4,7 @@ import { Etapa } from 'src/app/models/jogo.model';
 @Component({
   selector: 'botao-palpite',
   templateUrl: './botao-palpite.component.html',
+  styleUrls: ['./botao-palpite.component.css'],
 })
 export class BotaoPalpiteComponent {
   @Input() etapa: Etapa;

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'listar-jogadores',
   templateUrl: './listar-jogadores.component.html',
+  styleUrls: ['./listar-jogadores.component.css']
 })
 export class ListarJogadoresComponent {
   @Output() removerJogador = new EventEmitter<JogadorDocumento>()
