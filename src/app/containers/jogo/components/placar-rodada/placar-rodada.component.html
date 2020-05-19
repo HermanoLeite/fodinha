@@ -1,0 +1,58 @@
+<div class="etapa">
+  <h3>{{statusJogo()}}</h3>
+</div>
+<div *ngIf="rodada" class="players">
+  <div class="player" [ngClass]="{'playing': jogador.id == rodada.vez}"
+    *ngFor="let jogador of jogadores | async; let i = index;" [attr.data-index]="i">
+    <div class="player-info">
+      <div class="lives">
+        <div *ngFor="let x of [].constructor(jogador.vidas)">❤️</div>
+      </div>
+      <div class="player-name">{{jogador.nome}} </div>
+    </div>
+    <div>Palpite: {{jogador.palpite}}</div>
+    <div>Fez: {{jogador.fez}}</div>
+    <div>Carta: <carta [carta]="cartas[jogador.id]" [visaoCarta]="visaoCarta"></carta>
+    </div>
+  </div>
+</div>
+
+<style>
+  .players {
+    height: 80%;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    row-gap: 10px;
+  }
+
+  .player {
+    background-color: #f3f3f3;
+    border: 1px #5d8899 solid;
+    border-radius: 15px;
+    padding: 20px 10px 10px 10px;
+    box-shadow: 0px 0px 10px #999 inset;
+  }
+
+  .player-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+  }
+
+  .lives {
+    display: flex;
+  }
+
+  .playing {
+    background-color: #f3f3f3;
+    border: 5px #f09217 solid;
+  }
+
+  @media screen and (max-width: 600px) {
+    .player-info {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+</style>

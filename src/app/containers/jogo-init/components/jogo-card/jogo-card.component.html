@@ -1,0 +1,5 @@
+<div class="card-game" [ngClass]="{'card-selected': selecionado}">
+  <span>{{jogo.id.substring(0, 4)}}</span>
+  <span>{{getStatus(jogo.status)}}</span>
+  <span class="game-players">{{jogo.quantidadeJogadores}}</span>
+</div>

@@ -1,0 +1,16 @@
+<div class="games-wrap">
+  <div>
+    <h3>Jogos</h3>
+    <div class="games-scroll">
+      <jogo-card *ngFor="let jogo of jogos | async; let i = index;" [attr.data-index]="i" [jogo]="jogo"
+        [selecionado]="jogo.id == jogoSelecionado?.id" (click)="selecionarJogo(jogo)">
+      </jogo-card>
+    </div>
+  </div>
+  <div class="game-actions">
+    <button *ngIf="jogoSelecionado" class="delete-game-btn btn"
+      (click)="removerJogo.emit(jogoSelecionado.id)"><strong>Deletar</strong></button>
+    <button *ngIf="jogoSelecionado" class="play-game-btn btn"
+      (click)="entrarJogo.emit(jogoSelecionado)"><strong>Entrar</strong></button>
+  </div>
+</div>

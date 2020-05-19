@@ -1,0 +1,37 @@
+<header class="header">
+    <div><img class="header-logo" src="../../../assets/logo2.png" />
+    </div>
+    <div>
+        <button class="get-out" (click)="sair()">
+            x
+        </button>
+    </div>
+</header>
+
+<style>
+    .header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 0 15px;
+    }
+
+    .header-logo {
+        max-width: 50%;
+        height: auto;
+    }
+
+    .get-out {
+        background-color: transparent;
+        border-width: 0px;
+        font-size: 35px;
+        color: white;
+        font-family: "Nunito";
+        cursor: pointer;
+    }
+
+    .get-out:hover {
+        color: rgb(192, 190, 190);
+    }
+</style>

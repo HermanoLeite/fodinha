@@ -1,0 +1,18 @@
+<div>
+  <input [(ngModel)]="jogadorNome" name="jogadorNome" type="text" class="name-input" placeholder="Nome" required>
+</div>
+
+<jogo-button (acao)="criar()" [label]="label"></jogo-button>
+
+<style>
+  .name-input {
+    border-radius: 7px;
+    text-align: left;
+    padding: 0 10px;
+    font-size: 18px;
+    border: 2px #868d96 solid;
+    font-family: "Nunito";
+    color: #797979;
+    height: 30px;
+  }
+</style>
