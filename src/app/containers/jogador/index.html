@@ -98,4 +98,44 @@
     justify-content: space-evenly;
     flex-direction: column;
   }
+
+  @media screen and (max-width: 600px) {
+    .game {
+      width: 300px;
+      height: 300px;
+      overflow-x: auto;
+      display: flex;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .left {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      height: 50%;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-evenly;
+      padding: 20px;
+    }
+
+    .left-bottom,
+    .left-top {
+      flex: 1;
+    }
+
+    .right {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      width: 300px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 20px;
+    }
+  }
 </style>

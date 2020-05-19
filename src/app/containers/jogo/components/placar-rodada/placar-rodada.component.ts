@@ -18,11 +18,12 @@ export class PlacarRodadaComponent {
   mostrarCartas = () => this.jogadas && this.jogadas.length > 0 && this.rodada.etapa == Etapa.jogarCarta
 
   statusJogo = () => {
-    switch (this.rodada.etapa) {
-      case Etapa.palpite: return "Palpite"
-      case Etapa.jogarCarta: return "Jogar Carta"
-      default: return "Embaralhar"
-    }
+    if (this.rodada)
+      switch (this.rodada.etapa) {
+        case Etapa.palpite: return "Palpite"
+        case Etapa.jogarCarta: return "Jogar Carta"
+        default: return "Embaralhar"
+      }
   }
 
   ngOnChanges() {

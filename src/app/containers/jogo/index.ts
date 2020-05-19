@@ -27,6 +27,7 @@ export class JogoComponent implements OnInit {
   Etapa: Etapa
   jogando: boolean = false
   visaoCarta: boolean
+  status: string;
 
   constructor(
     private jogoController: JogoController,
