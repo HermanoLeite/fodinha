@@ -18,9 +18,10 @@ export class JogadorComponent implements OnInit {
   jogoId: string
   jogadorAtual: Jogador
   jogadores: Observable<JogadorDocumento[]>
+  jogoNaoEncontrado: boolean = false;
 
   constructor(
-    private jogadorService: JogadorController,
+    private jogadorController: JogadorController,
     private route: ActivatedRoute,
     private router: Router,
     private storage: StorageService) {
@@ -30,13 +31,13 @@ export class JogadorComponent implements OnInit {
   }
 
   private subscribeJogadorAtual() {
-    var jogadorObservable = this.jogadorService.buscarJogador(this.jogoId, this.jogadorDocId)
+    var jogadorObservable = this.jogadorController.buscarJogador(this.jogoId, this.jogadorDocId)
     jogadorObservable.subscribe(data => this.jogadorAtual = data)
   }
 
   async criarJogador(jogadorNome: string) {
     if (jogadorNome !== null) {
-      this.jogadorDocId = await this.jogadorService.criarJogador(jogadorNome, this.jogoId)
+      this.jogadorDocId = await this.jogadorController.criarJogador(jogadorNome, this.jogoId)
       this.storage.set(Keys.userId, this.jogadorDocId)
       this.subscribeJogadorAtual()
     }
@@ -44,22 +45,22 @@ export class JogadorComponent implements OnInit {
 
   async comecarJogo() {
     this.jogadorAtual.comecar = !this.jogadorAtual.comecar;
-    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId);
-    const todosJogadoresComecaram = await this.jogadorService.todosJogadoresComecaram(this.jogoId)
+    this.jogadorController.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId);
+    const todosJogadoresComecaram = await this.jogadorController.todosJogadoresComecaram(this.jogoId)
 
     if (todosJogadoresComecaram) {
-      this.jogadorService.comecarJogo(this.jogoId)
+      this.jogadorController.comecarJogo(this.jogoId)
       this.router.navigate(['jogo', this.jogoId])
     }
   }
 
   retornarAoJogo() {
     this.jogadorAtual.removido = false;
-    this.jogadorService.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId)
+    this.jogadorController.updatejogador(this.jogadorAtual, this.jogoId, this.jogadorDocId)
   }
 
   removerJogador(jogadorDocument: JogadorDocumento) {
-    this.jogadorService.removerJogador(jogadorDocument, this.jogoId);
+    this.jogadorController.removerJogador(jogadorDocument, this.jogoId);
   }
 
   ngOnInit() {
@@ -67,12 +68,18 @@ export class JogadorComponent implements OnInit {
       this.subscribeJogadorAtual()
     }
 
-    this.jogadores = this.jogadorService.jogadoresStream(this.jogoId)
-    this.jogadorService.jogoStream(this.jogoId).pipe(
+    this.jogadores = this.jogadorController.jogadoresStream(this.jogoId)
+    var jogo$ = this.jogadorController.jogoStream(this.jogoId).pipe(
       map((jogo: Jogo) => {
-        if (jogo && jogo.status === Status.jogando)
+        if (!jogo) {
+          this.jogoNaoEncontrado = true
+        }
+
+        if (jogo && jogo.status === Status.jogando) {
           this.router.navigate(['jogo', this.jogoId])
+        }
       })
-    ).subscribe()
+    )
+    jogo$.subscribe();
   }
 }

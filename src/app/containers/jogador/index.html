@@ -2,7 +2,10 @@
   <jogo-header></jogo-header>
   <div class="game">
     <div class="left">
-      <div class="card left-top">
+      <div *ngIf="jogoNaoEncontrado" class="card left-top">
+        <h2>Esse jogo foi excluído</h2>
+      </div>
+      <div *ngIf="!jogoNaoEncontrado" class="card left-top">
         <criar-jogador class="play" *ngIf="!jogadorAtual" (criarJogador)="criarJogador($event)">
         </criar-jogador>
         <botao-comecar-jogo class="play" *ngIf="jogadorAtual" [comecou]="jogadorAtual.comecar"
