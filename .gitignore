@@ -48,4 +48,3 @@ src/environments/environment.ts
 #firebase
 .firebase/
 .firebaserc
-firebase.json
