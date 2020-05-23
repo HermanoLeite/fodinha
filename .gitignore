@@ -7,6 +7,7 @@
 
 # dependencies
 /node_modules
+/public
 
 # profiling files
 chrome-profiler-events.json
@@ -43,3 +44,8 @@ testem.log
 .DS_Store
 Thumbs.db
 src/environments/environment.ts
+
+#firebase
+.firebase/
+.firebaserc
+firebase.json

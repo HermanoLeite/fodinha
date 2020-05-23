@@ -2,7 +2,8 @@ import { Component, Output, EventEmitter } from '@angular/core'
 
 @Component({
   selector: 'criar-jogador',
-  templateUrl: './criar-jogador.component.html'
+  templateUrl: './criar-jogador.component.html',
+  styleUrls: ['./criar-jogador.component.css']
 })
 export class CriarJogadorComponent {
   jogadorNome: string

@@ -1,0 +1,46 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Nunito";
+}
+
+.github {
+  margin-top: 20px;
+}
+
+.screen {
+  width: 1058px;
+  min-height: 790px;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.github {
+  align-self: flex-end;
+}
+
+@media screen and (max-width: 1158px) {
+  .screen {
+    width: 800px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .screen {
+    width: 550px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .screen {
+    width: 350px;
+    min-height: 700px;
+  }
+}

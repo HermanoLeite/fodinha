@@ -21,5 +21,10 @@ export class ListarJogosComponent {
     }
   }
 
+  deletarJogo = () => {
+    this.removerJogo.emit(this.jogoSelecionado.id)
+    this.jogoSelecionado = null
+  }
+
   selecionarJogo = (jogo) => this.jogoSelecionado = jogo
 }

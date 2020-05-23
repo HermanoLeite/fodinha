@@ -9,7 +9,8 @@ import { JogadorDocumento } from 'src/app/models/jogadorDocumento.model'
 import { StorageService, Keys } from 'src/app/services/storage.service'
 @Component({
   selector: 'jogador',
-  templateUrl: './index.html'
+  templateUrl: './index.html',
+  styleUrls: ['./index.css', '../style.css']
 })
 
 export class JogadorComponent implements OnInit {

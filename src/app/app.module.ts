@@ -44,7 +44,6 @@ import { JogoHeaderComponent } from './components/header/jogo-header.component';
 import { JogoInitHeaderComponent } from './components/header/jogo-init-header.component';
 import { PageComponent } from './components/page/page.component';
 import { JogoButtonComponent } from './components/button/jogo-button.component';
-import { PlacarJogoComponent } from './containers/jogo/components/placar-jogo/placar-jogo.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +64,6 @@ import { PlacarJogoComponent } from './containers/jogo/components/placar-jogo/pl
     CriarJogadorComponent,
     ToggleVisaoCartaComponent,
     PlacarRodadaComponent,
-    PlacarJogoComponent,
     JogadasComponent,
     GanhadorComponent,
     BotaoComecarJogoComponent,

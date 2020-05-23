@@ -1,0 +1,28 @@
+.player {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Nunito";
+  padding: 15px 10px;
+  border-bottom: 1px rgba(120, 155, 176, .34) solid;
+}
+
+.remove {
+  cursor: pointer;
+}
+
+.status {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.comecou {
+  color: rgb(5, 177, 5);
+}
+
+.nao-comecou {
+  color: rgb(129, 129, 122);
+}
+
+.removido {
+  color: red;
+}

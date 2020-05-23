@@ -9,7 +9,7 @@
   </div>
   <div class="game-actions">
     <button *ngIf="jogoSelecionado" class="delete-game-btn btn"
-      (click)="removerJogo.emit(jogoSelecionado.id)"><strong>Deletar</strong></button>
+      (click)="deletarJogo()"><strong>Deletar</strong></button>
     <button *ngIf="jogoSelecionado" class="play-game-btn btn"
       (click)="entrarJogo.emit(jogoSelecionado)"><strong>Entrar</strong></button>
   </div>

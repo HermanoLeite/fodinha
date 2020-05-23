@@ -1,0 +1,16 @@
+.name-input {
+  height: 30px;
+  border-radius: 7px;
+  border: 2px #868d96 solid;
+  padding: 0 10px;
+  text-align: left;
+  font-family: "Nunito";
+  font-size: 18px;
+  color: #797979;
+}
+
+@media screen and (max-width: 700px) {
+  .form-name {
+    margin-bottom: 10px;
+  }
+}

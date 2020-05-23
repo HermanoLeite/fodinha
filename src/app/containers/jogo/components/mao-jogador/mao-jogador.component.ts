@@ -2,7 +2,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'mao-jogador',
-  templateUrl: './mao-jogador.component.html'
+  templateUrl: './mao-jogador.component.html',
+  styleUrls: ['./mao-jogador.component.css']
 })
 export class MaoJogadorComponent {
   @Input() rodada: any;
