@@ -33,7 +33,7 @@
   border: 5px #f09217 solid;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .player-info {
     display: flex;
     flex-direction: column;

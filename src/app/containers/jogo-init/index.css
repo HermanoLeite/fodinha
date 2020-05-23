@@ -68,7 +68,7 @@
   .game-list {
     flex-shrink: 0;
     scroll-snap-align: start;
-    width: 600px;
+    width: 500px;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;

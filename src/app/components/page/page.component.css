@@ -29,19 +29,18 @@
 @media screen and (max-width: 1158px) {
   .screen {
     width: 800px;
-    align-items: center;
   }
 }
 
 @media screen and (max-width: 900px) {
   .screen {
-    width: 500px;
+    width: 550px;
   }
 }
 
 @media screen and (max-width: 700px) {
   .screen {
-    width: 300px;
+    width: 350px;
     min-height: 700px;
   }
 }

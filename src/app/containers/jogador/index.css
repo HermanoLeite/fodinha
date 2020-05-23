@@ -57,7 +57,7 @@
   flex-direction: column;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .game {
     width: 300px;
     overflow-x: auto;
