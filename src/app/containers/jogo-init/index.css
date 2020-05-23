@@ -38,41 +38,27 @@
 }
 
 @media screen and (max-width: 900px) {
-  .game-init {
+  .tab-wrap, .tab {
     width: 500px;
-    height: 300px;
-    overflow-x: auto;
+  }
+
+  .tab-wrap {
     display: flex;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
     justify-content: flex-start;
     align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    padding: 20px;
   }
 
   .divider {
     width: 0px;
-  }
-
-  .new-game {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    height: 100%;
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 20px;
-  }
-
-  .game-list {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    width: 500px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 20px;
   }
 
   .new-game-card {
@@ -81,16 +67,7 @@
 }
 
 @media screen and (max-width: 700px) {
-  .game-init {
-    width: 300px;
-    height: 300px;
-  }
-
-  .new-game {
-    width: 300px;
-  }
-
-  .game-list {
+  .tab-wrap, .tab {
     width: 300px;
   }
 }

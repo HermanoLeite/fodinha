@@ -1,14 +1,14 @@
 <page-jogo-init>
   <jogo-init-header></jogo-init-header>
-  <div class="game-init card">
-    <div class="new-game">
+  <div class="game-init card tab-wrap">
+    <div class="new-game tab">
       <div class="new-game-card">
         <img src="https://deckofcardsapi.com/static/img/KS.png" />
       </div>
       <jogo-button (acao)="criarJogo()" [label]="textoBotao"></jogo-button>
     </div>
     <div class="divider"></div>
-    <listar-jogos class="game-list" [jogos]="jogos" (removerJogo)="removerJogo($event)"
+    <listar-jogos class="game-list tab" [jogos]="jogos" (removerJogo)="removerJogo($event)"
       (entrarJogo)="entrarJogo($event)">
     </listar-jogos>
   </div>
