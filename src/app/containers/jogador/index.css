@@ -6,14 +6,6 @@
   font-family: "Nunito";
 }
 
-.card {
-  padding: 15px 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: -10px 10px 5px 0 rgba(0, 0, 0, .3);
-  margin: 10px;
-}
-
 .left {
   flex: 1;
   display: flex;

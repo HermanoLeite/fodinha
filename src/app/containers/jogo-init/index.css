@@ -1,10 +1,4 @@
 .game-init {
-  padding: 15px 20px;
-  margin: 10px 0;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: -20px 20px 15px 0 rgba(0, 0, 0, .3);
-
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -45,7 +39,7 @@
 
 @media screen and (max-width: 900px) {
   .game-init {
-    width: 600px;
+    width: 500px;
     height: 300px;
     overflow-x: auto;
     display: flex;
@@ -63,7 +57,7 @@
     flex-shrink: 0;
     scroll-snap-align: start;
     height: 100%;
-    width: 600px;
+    width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -81,42 +75,22 @@
     padding: 20px;
   }
 
-  @media screen and (max-width: 600px) {
-    .game-init {
-      width: 300px;
-      height: 300px;
-      overflow-x: auto;
-      display: flex;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      justify-content: flex-start;
-      align-items: center;
-    }
+  .new-game-card {
+    padding-bottom: 20px;
+  }
+}
 
-    .divider {
-      width: 0px;
-    }
+@media screen and (max-width: 700px) {
+  .game-init {
+    width: 300px;
+    height: 300px;
+  }
 
-    .new-game {
-      flex-shrink: 0;
-      scroll-snap-align: start;
-      height: 100%;
-      width: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      padding: 20px;
-    }
+  .new-game {
+    width: 300px;
+  }
 
-    .game-list {
-      flex-shrink: 0;
-      scroll-snap-align: start;
-      width: 300px;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      padding: 20px;
-    }
+  .game-list {
+    width: 300px;
   }
 }

@@ -11,7 +11,7 @@ import { StorageService } from '../../services/storage.service';
 @Component({
   selector: 'app-jogo',
   templateUrl: './index.html',
-  styleUrls: ['./index.css'],
+  styleUrls: ['./index.css', '../style.css'],
 })
 export class JogoComponent implements OnInit {
   jogoId: string

@@ -7,7 +7,7 @@ import { JogoController } from '../../controllers/jogo.controller'
 @Component({
   selector: 'app-jogo-init',
   templateUrl: './index.html',
-  styleUrls: ['./index.css']
+  styleUrls: ['./index.css', '../style.css']
 })
 export class JogoInitComponent implements OnInit {
   jogos: Observable<Jogo[]>

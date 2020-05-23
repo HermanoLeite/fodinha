@@ -10,7 +10,7 @@ import { StorageService, Keys } from 'src/app/services/storage.service'
 @Component({
   selector: 'jogador',
   templateUrl: './index.html',
-  styleUrls: ['./index.css']
+  styleUrls: ['./index.css', '../style.css']
 })
 
 export class JogadorComponent implements OnInit {
