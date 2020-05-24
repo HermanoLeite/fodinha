@@ -47,4 +47,3 @@ src/environments/environment.ts
 
 #firebase
 .firebase/
-.firebaserc
