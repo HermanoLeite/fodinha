@@ -1,10 +1,5 @@
-.carta {
-  font-size:100px; 
-  margin:0; 
-  line-height: 1;
-  font-weight:normal
+.deck-card img {
+  width: 70px;
 }
 
-.cartaVermelha {
-  color: red;
-}
+

@@ -3,9 +3,8 @@ import { Carta } from '../../../../models/carta.model';
 
 @Component({
   selector: 'carta',
-  template: `<div [ngClass]="{'cartaVermelha': cartaVermelha(carta.naipe)}" *ngIf="carta != null">
-              <span *ngIf="visaoCarta" class="carta">{{carta.img}}</span>
-              <span *ngIf="!visaoCarta">{{carta.carta}} de {{carta.naipe}}</span>
+  template: `<div class="deck-card" *ngIf="carta != null">
+              <img src="https://deckofcardsapi.com/static/img/{{carta.url}}.png" />
             <div>`,
   styleUrls: ['./carta.component.css']
 })

@@ -1,6 +1,6 @@
 <h4>Suas cartas</h4>
 <div class="cards-list">
-  <div *ngFor=" let cartaJogador of jogador.cartas; let i=index;" class="col-xs-6 col-md-3">
+  <div *ngFor=" let cartaJogador of jogador.cartas; let i=index;">
     <div *ngIf="!(jogador.id == rodada.vez && podeJogarCarta)" class="carta nao-jogando">
       <carta [carta]="cartaJogador" [visaoCarta]="visaoCarta"></carta>
     </div>

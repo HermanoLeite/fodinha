@@ -2,22 +2,24 @@ export class Carta {
   private carta: String;
   private naipe: String;
   private img: String;
+  private url: String;
   private naipeValor: naipeValor;
   private cartaValor: cartaValor;
-  constructor(cartaValor: cartaValor, naipeValor: naipeValor, carta: string, naipe: string, img: string = null) {
+  constructor(cartaValor: cartaValor, naipeValor: naipeValor, carta: string, naipe: string, img: string = null, url: string = null) {
     this.naipeValor = naipeValor;
     this.cartaValor = cartaValor;
     this.naipe = naipe;
     this.carta = carta;
     this.img = img;
+    this.url = url;
   }
 
-  static fromJogada = ({ carta, cartaValor, naipe, naipeValor, img }) => new Carta(cartaValor, naipeValor, carta, naipe, img)
+  static fromJogada = ({ carta, cartaValor, naipe, naipeValor, img, url }) => new Carta(cartaValor, naipeValor, carta, naipe, img, url)
 
   static fromString(carta: string) {
     if (carta === null) return null;
     const cartaObj = JSON.parse(carta);
-    return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe, cartaObj.img);
+    return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe, cartaObj.img, cartaObj.url);
   }
 
   isManilha(vira: Carta) {
