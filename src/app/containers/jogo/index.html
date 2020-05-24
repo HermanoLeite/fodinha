@@ -21,6 +21,10 @@
         <mao-jogador class="action-deck" [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
           [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
         </mao-jogador>
+
+        <div *ngIf="jogoFinalizado()">
+          <ganhador [vencedor]="jogo.vencedor"></ganhador>
+        </div>
       </div>
 
     </div>
@@ -41,6 +45,3 @@
 
   </div>
 </page-jogo-init>
-<div *ngIf="jogoFinalizado()">
-  <ganhador [vencedor]="jogo.vencedor"></ganhador>
-</div>
