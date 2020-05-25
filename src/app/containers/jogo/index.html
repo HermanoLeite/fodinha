@@ -6,11 +6,13 @@
     <div class="left">
 
       <div class="card left-top">
+        <tooltip>A manilha é a carta uma acima da vira!</tooltip>
         <div class="title">Vira</div>
         <carta *ngIf="rodada && rodada.manilha" [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
       </div>
 
       <div class="card left-bottom" *ngIf="jogadorJogando">
+        <tooltip>4 5 6 7 Q J K A 2 3 <br />♦ ♠ ♥ ♣</tooltip>
         <div class="action-button" *ngIf="jogadorJogando.id == rodada.vez">
           <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
 

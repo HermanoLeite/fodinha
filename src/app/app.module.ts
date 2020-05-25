@@ -31,7 +31,6 @@ import { CartaComponent } from './containers/jogo/components/carta/carta.compone
 import { ListarJogosComponent } from './containers/jogo-init/components/listar-jogos/listar-jogos.component';
 import { ListarJogadoresComponent } from './containers/jogador/components/listar-jogadores/listar-jogadores.component';
 import { CriarJogadorComponent } from './containers/jogador/components/criar-jogador/criar-jogador.component';
-import { ToggleVisaoCartaComponent } from './containers/jogo/components/toggle-visao-carta/toggle-visao-carta.component';
 import { PlacarRodadaComponent } from './containers/jogo/components/placar-rodada/placar-rodada.component';
 import { JogadasComponent } from './containers/jogo/components/jogadas/jogadas.component';
 import { GanhadorComponent } from './containers/jogo/components/ganhador/ganhador.component';
@@ -44,6 +43,7 @@ import { JogoHeaderComponent } from './components/header/jogo-header.component';
 import { JogoInitHeaderComponent } from './components/header/jogo-init-header.component';
 import { PageComponent } from './components/page/page.component';
 import { JogoButtonComponent } from './components/button/jogo-button.component';
+import { TooltipComponent } from './containers/jogo/components/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -62,8 +62,8 @@ import { JogoButtonComponent } from './components/button/jogo-button.component';
     ListarJogosComponent,
     ListarJogadoresComponent,
     CriarJogadorComponent,
-    ToggleVisaoCartaComponent,
     PlacarRodadaComponent,
+    TooltipComponent,
     JogadasComponent,
     GanhadorComponent,
     BotaoComecarJogoComponent,
