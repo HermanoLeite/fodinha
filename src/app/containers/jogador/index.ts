@@ -69,7 +69,7 @@ export class JogadorComponent implements OnInit {
     }
 
     this.jogadores = this.jogadorController.jogadoresStream(this.jogoId)
-    var jogo$ = this.jogadorController.jogoStream(this.jogoId).pipe(
+    this.jogadorController.jogoStream(this.jogoId).pipe(
       map((jogo: Jogo) => {
         if (!jogo) {
           this.jogoNaoEncontrado = true
@@ -79,7 +79,6 @@ export class JogadorComponent implements OnInit {
           this.router.navigate(['jogo', this.jogoId])
         }
       })
-    )
-    jogo$.subscribe();
+    ).subscribe();
   }
 }

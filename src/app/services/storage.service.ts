@@ -16,5 +16,4 @@ export class StorageService {
 
 export enum Keys {
     userId = "userId",
-    visaoCarta = "visaoCarta"
 }

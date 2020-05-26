@@ -190,20 +190,6 @@ export class JogoController {
         return { id, ...data } as Jogo;
     }
 
-    getVisaoCarta(): boolean {
-        var visaoCarta = this.storage.get(Keys.visaoCarta);
-        if (visaoCarta === undefined || visaoCarta === null || visaoCarta === "") {
-            visaoCarta = "true";
-            this.setVisaoCarta(visaoCarta)
-        }
-        return visaoCarta.toString() === "true";
-    }
-
-    setVisaoCarta(visaoCarta) {
-        this.storage.set(Keys.visaoCarta, visaoCarta);
-        return visaoCarta;
-    }
-
     comecar(jogadorVez, quantidadeDeJogadores, rodada, jogoId, rodadaId) {
         var baralho = this.embaralhar();
         baralho = this.tirarManilha(baralho, jogoId, rodadaId);

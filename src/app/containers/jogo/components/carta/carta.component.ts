@@ -11,10 +11,4 @@ import { Carta } from '../../../../models/carta.model';
 
 export class CartaComponent {
   @Input() carta: Carta
-  @Input() visaoCarta: Boolean
-
-  cartaVermelha(naipe: string): boolean {
-    if (naipe === "ouros" || naipe === "copas") return true
-    return false
-  }
 }

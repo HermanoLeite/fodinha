@@ -11,7 +11,6 @@ export class PlacarRodadaComponent {
   @Input() jogadores
   @Input() rodada
   @Input() jogadas
-  @Input() visaoCarta
   cartas = []
   status: string
 

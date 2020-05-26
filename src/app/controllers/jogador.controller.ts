@@ -21,9 +21,7 @@ export class JogadorController {
             .pipe(map((jogadores) => jogadores.map(({ payload }) => this._payloadToJogadorDocumento(payload))))
     }
 
-    jogoStream(jogoId: string) {
-        return this.firebase.jogoStream(jogoId)
-    }
+    jogoStream = (jogoId: string) => this.firebase.jogoStream(jogoId)
 
     async criarJogador(jogadorNome: string, jogoId): Promise<string> {
         var jogador = new Jogador(jogadorNome);

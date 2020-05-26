@@ -8,7 +8,7 @@
       <div class="card left-top">
         <tooltip>A manilha é a carta uma acima da vira!</tooltip>
         <div class="title">Vira</div>
-        <carta *ngIf="rodada && rodada.manilha" [carta]="rodada.manilha" [visaoCarta]="visaoCarta"></carta>
+        <carta *ngIf="rodada && rodada.manilha" [carta]="rodada.manilha"></carta>
       </div>
 
       <div class="card left-bottom" *ngIf="jogadorJogando">
@@ -20,7 +20,7 @@
             [quantidadeCartas]="jogadorJogando.cartas.length">
           </botao-palpite>
         </div>
-        <mao-jogador class="action-deck" [visaoCarta]="visaoCarta" [rodada]="rodada" [jogador]="jogadorJogando"
+        <mao-jogador class="action-deck" [rodada]="rodada" [jogador]="jogadorJogando"
           [podeJogarCarta]="etapaJogarCarta(rodada.etapa)" (jogarCarta)="jogarCarta($event)">
         </mao-jogador>
 
@@ -34,8 +34,7 @@
     <div class="right">
 
       <div class="right-top card">
-        <placar-rodada class="round-score" [jogadores]="jogadores" [rodada]="rodada" [jogadas]="jogadas"
-          [visaoCarta]="visaoCarta">
+        <placar-rodada class="round-score" [jogadores]="jogadores$" [rodada]="rodada" [jogadas]="jogadas">
         </placar-rodada>
 
       </div>
