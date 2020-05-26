@@ -44,6 +44,7 @@ import { JogoInitHeaderComponent } from './components/header/jogo-init-header.co
 import { PageComponent } from './components/page/page.component';
 import { JogoButtonComponent } from './components/button/jogo-button.component';
 import { TooltipComponent } from './containers/jogo/components/tooltip/tooltip.component';
+import { ScrollElementsComponent } from './components/scroll-elements/scroll-elements.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { TooltipComponent } from './containers/jogo/components/tooltip/tooltip.c
     BotaoComecarComponent,
     BotaoPalpiteComponent,
     MaoJogadorComponent,
+    ScrollElementsComponent
   ],
   imports: [
     BrowserModule,

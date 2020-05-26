@@ -27,13 +27,17 @@ export class JogoComponent implements OnInit {
   todosPalpitaram: boolean = false
   Etapa: Etapa
   jogando: boolean = false
+  eventos = []
 
   constructor(
     private jogoController: JogoController,
     private route: ActivatedRoute,
     private storageService: StorageService) {
     this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.novoEvento('Eventos', 'Início')
   }
+
+  novoEvento = (nome, mensagem) => this.eventos.push({ nome: nome, mensagem: mensagem })
 
   comecarRodada() {
     this.jogoController.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)

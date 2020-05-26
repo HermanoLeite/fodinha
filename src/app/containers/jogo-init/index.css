@@ -24,14 +24,6 @@
   transform: rotate(360deg);
 }
 
-.divider {
-  margin-top: 100px;
-  content: '';
-  width: 2px;
-  height: 300px;
-  background-color: #c4c5c6;
-}
-
 .game-list {
   width: 410px;
   margin: 5px 0 20px;

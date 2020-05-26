@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ChatController } from 'src/app/controllers/chat.controller';
 import { Observable } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   templateUrl: './index.html',
   styleUrls: ['./index.css']
 })
-export class ChatComponent implements OnInit, AfterViewChecked {
+export class ChatComponent implements OnInit {
   @Input() jogoId: string
   @Input() nome: string
   container: HTMLElement;
@@ -15,23 +15,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   chat$: Observable<any>
   novaMensagem: string
 
-  @ViewChild('scroll') private scroll: ElementRef;
-
   constructor(private chatController: ChatController) { }
-
-  ngAfterViewChecked() {
-    this.scrollToBottom();
-  }
-
-  scrollToBottom(): void {
-    try {
-      this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
-    } catch (err) { }
-  }
-
-  ngOnInit(): void {
-    this.chat$ = this.chatController.buscaMensagens(this.jogoId)
-  }
 
   mandaMensagem() {
     if (this.nome) {
@@ -40,7 +24,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.novaMensagem = ""
   }
 
-  trackByCreated(i, msg) {
-    return msg.criadoEm;
+  ngOnInit(): void {
+    this.chat$ = this.chatController.buscaMensagens(this.jogoId)
   }
 }

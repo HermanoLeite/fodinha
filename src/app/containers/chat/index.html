@@ -1,13 +1,5 @@
-<div class="title">Chat</div>
 <ng-container *ngIf="chat$ | async as chat">
-  <div id="chat" #scroll>
-    <div class="msg" *ngFor="let msg of chat.mensagens; trackBy: trackByCreated">
-      <div class="user-name">
-        <div>{{ msg.nome }}</div>
-      </div>
-      <span class="user-msg">{{ msg.mensagem }}</span>
-    </div>
-  </div>
+  <scroll-elements [events]="chat.mensagens" title="Chat"></scroll-elements>
 
   <input class="msg-input" [(ngModel)]="novaMensagem" (keydown.enter)="mandaMensagem()"
     placeholder="Mande uma mensagem">

@@ -1,0 +1,9 @@
+<div class="title">{{title}}</div>
+<div id="chat" #scroll>
+    <div class="msg" *ngFor="let msg of events; trackBy: trackByCreated">
+        <div class="user-name">
+            <div>{{ msg.nome }}</div>
+        </div>
+        <span class="user-msg">{{ msg.mensagem }}</span>
+    </div>
+</div>

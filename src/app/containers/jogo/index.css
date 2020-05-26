@@ -55,9 +55,47 @@
 
 .right-bottom {
   flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+.right-bottom--right,
+.right-bottom--left {
+  flex: 1;
+}
+
+.right-bottom--right {
+  margin-left: 20px;
+}
+
+@media screen and (max-width: 900px) {
+  .tab-wrap, .tab {
+    width: 500px;
+  }
+
+  .tab-wrap {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    padding: 20px;
+  }
+
+  .divider {
+    width: 0px;
+  }
 }
 
 @media screen and (max-width: 700px) {
+  .tab-wrap, .tab {
+    width: 300px;
+  }
   .game-play {
     display: flex;
     flex-direction: column;
