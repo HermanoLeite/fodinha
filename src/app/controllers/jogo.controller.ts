@@ -90,7 +90,7 @@ export class JogoController {
             const fezAtualizado = fez + 1
             evento.mensagem = `${nome} fez ${fezAtualizado} ${fezAtualizado > 1 ? 'jogadas' : 'jogada'}`
 
-            await this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { fez: fez + 1 });
+            await this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { fez: fezAtualizado });
         }
         this.novoEvento(jogoId, evento)
     }
@@ -150,9 +150,7 @@ export class JogoController {
         }
     }
 
-    atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => {
-        this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
-    }
+    atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
 
     realizarJogada(carta, jogador, jogada, rodada, jogoId) {
         const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);

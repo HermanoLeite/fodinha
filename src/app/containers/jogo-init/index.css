@@ -30,36 +30,8 @@
 }
 
 @media screen and (max-width: 900px) {
-  .tab-wrap, .tab {
-    width: 500px;
-  }
-
-  .tab-wrap {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-  }
-
-  .tab {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    padding: 20px;
-  }
-
-  .divider {
-    width: 0px;
-  }
-
   .new-game-card {
     padding-bottom: 20px;
   }
 }
 
-@media screen and (max-width: 700px) {
-  .tab-wrap, .tab {
-    width: 300px;
-  }
-}

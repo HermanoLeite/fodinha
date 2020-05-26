@@ -46,3 +46,9 @@
     background: rgba(255, 255, 255, 0.8);
     z-index: 99;
 }
+
+@media screen and (max-width: 700px) {
+    .title {
+      width: 245px;
+    }
+  }

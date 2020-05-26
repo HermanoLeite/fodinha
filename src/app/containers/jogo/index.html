@@ -40,13 +40,9 @@
       </div>
 
       <div *ngIf="jogadorJogando" class="card right-bottom tab-wrap">
-        <div class="right-bottom--left tab">
-          <chat [jogoId]="jogoId" [nome]="jogadorJogando.nome"></chat>
-        </div>
+        <chat class="right-bottom--left tab" [jogoId]="jogoId" [nome]="jogadorJogando.nome"></chat>
         <div class="divider"></div>
-        <div class="right-bottom--right tab">
-          <scroll-elements [events]="eventos" title="Eventos"></scroll-elements>
-        </div>
+        <scroll-elements class="right-bottom--right tab" [events]="eventos" title="Eventos"></scroll-elements>
       </div>
     </div>
 

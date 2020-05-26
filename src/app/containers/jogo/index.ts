@@ -36,8 +36,6 @@ export class JogoComponent implements OnInit {
     this.jogoId = this.route.snapshot.paramMap.get("id")
   }
 
-  novoEvento = (nome, mensagem) => this.eventos.push({ nome: nome, mensagem: mensagem })
-
   comecarRodada() {
     this.jogoController.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)
   }

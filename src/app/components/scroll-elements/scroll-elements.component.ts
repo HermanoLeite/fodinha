@@ -13,8 +13,6 @@ export class ScrollElementsComponent implements AfterViewChecked {
     @ViewChild('scroll') private scroll: ElementRef;
 
     ngAfterViewChecked() {
-        console.log('title => ', this.title)
-        console.log('this.events => ', this.events)
         this.scrollToBottom();
     }
 
