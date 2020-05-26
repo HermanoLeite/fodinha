@@ -27,6 +27,7 @@ export class JogoComponent implements OnInit {
   todosPalpitaram: boolean = false
   Etapa: Etapa
   jogando: boolean = false
+  eventos = []
 
   constructor(
     private jogoController: JogoController,
@@ -41,6 +42,7 @@ export class JogoComponent implements OnInit {
 
   enviarPalpite(palpite: number): void {
     this.jogoController.atualizaPalpiteJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), palpite)
+    this.jogoController.novoEvento(this.jogoId, { nome: this.jogadorJogando.nome, mensagem: `Tem que fazer ${palpite} ${palpite === 1 ? 'carta' : 'cartas'}` })
 
     const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
@@ -153,6 +155,7 @@ export class JogoComponent implements OnInit {
       map(a => {
         const data = a.payload.data() as Jogo;
         const id = a.payload.id;
+        this.eventos = data.eventos
         if (data.rodada.toString() != this.rodadaId) {
           this.rodadaId = data.rodada.toString()
           this.loadRodada(this.rodadaId)

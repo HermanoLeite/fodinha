@@ -10,6 +10,7 @@ export class Jogo {
     rodada: number
     quantidadeJogadores: number
     rodadas: any
+    eventos: any
 }
 
 export enum Status {

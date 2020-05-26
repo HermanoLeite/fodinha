@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   font-family: "Nunito";
+  overflow: hidden;
 }
 
 .github {
@@ -15,6 +16,7 @@
   min-height: 790px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .screen-wrap {
@@ -40,7 +42,7 @@
 
 @media screen and (max-width: 700px) {
   .screen {
-    width: 350px;
+    width: 300px;
     min-height: 700px;
   }
 }

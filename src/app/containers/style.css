@@ -5,3 +5,41 @@
     box-shadow: -10px 10px 5px 0 rgba(0, 0, 0, .3);
     margin: 10px;
 }
+
+.divider {
+    content: '';
+    width: 2px;
+    margin: 10px 0;
+    background-color: #c4c5c6;
+}
+
+@media screen and (max-width: 900px) {
+    .tab-wrap, .tab {
+      width: 500px;
+    }
+  
+    .tab-wrap {
+      display: flex;
+      justify-content: flex-start;
+      align-items: stretch;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+    }
+  
+    .tab {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      padding: 20px;
+    }
+  
+    .divider {
+      width: 0px;
+    }
+  }
+  
+  @media screen and (max-width: 700px) {
+    .tab-wrap, .tab {
+      width: 245px;
+    }
+  }

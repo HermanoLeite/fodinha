@@ -20,7 +20,12 @@ export class JogoController {
 
     jogosStream = (): Observable<Jogo[]> =>
         this.firebase.jogosSnapshot()
-            .pipe(map(jogos => jogos.map(({ payload }) => this._payloadToJogo(payload))));
+            .pipe(map(jogos => jogos.map(({ payload }) => {
+                const data = payload.doc.data() as Jogo;
+                const id = payload.doc.id;
+
+                return { id, ...data } as Jogo;
+            })));
 
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 
@@ -78,11 +83,16 @@ export class JogoController {
     }
 
     async atualizaQuemFezJogada(jogoId, rodadaId, maiorCartaJogador) {
+        var evento = { nome: "Fim de jogada", mensagem: "cangou!" }
         if (maiorCartaJogador !== null) {
             const jogadorId = maiorCartaJogador.toString()
-            const { fez } = await this.firebase.getJogadorRodada(jogoId, rodadaId, jogadorId)
-            await this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { fez: fez + 1 });
+            const { fez, nome } = await this.firebase.getJogadorRodada(jogoId, rodadaId, jogadorId)
+            const fezAtualizado = fez + 1
+            evento.mensagem = `${nome} fez ${fezAtualizado} ${fezAtualizado > 1 ? 'jogadas' : 'jogada'}`
+
+            await this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { fez: fezAtualizado });
         }
+        this.novoEvento(jogoId, evento)
     }
 
     async encerrarJogada(jogoId, rodadaId, rodada) {
@@ -116,6 +126,9 @@ export class JogoController {
             const jogador = doc.data()
             const vidasPerdidas = Math.abs(jogador.fez - jogador.palpite)
 
+            const evento = { nome: "", mensagem: jogador.nome + " perdeu " + vidasPerdidas + (vidasPerdidas > 1 ? " vidas" : " vida") }
+            this.novoEvento(jogoId, evento)
+
             var jogadorJogo = await this.firebase.getJogadorJogo(jogoId, jogador.jogadorId)
             const vidas = jogadorJogo.vidas - vidasPerdidas
             await this.firebase.atualizaJogadorJogo(jogoId, jogador.jogadorId, { vidas, jogando: vidas > 0 })
@@ -141,8 +154,10 @@ export class JogoController {
 
     realizarJogada(carta, jogador, jogada, rodada, jogoId) {
         const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);
+        const evento = { nome: jogador.nome, mensagem: carta.carta + " de " + carta.naipe }
 
         this.firebase.adicionaJogadaJogador(jogoId, rodada.id, rodada.jogadaAtual, { jogador: jogador.nome, ...carta, jogadorId: jogador.id });
+        this.novoEvento(jogoId, evento)
 
         const cartas = jogador.cartas.map(carta => JSON.stringify(carta))
         this.firebase.atualizaJogadorRodada(jogoId, rodada.id, jogador.id.toString(), { cartas });
@@ -158,6 +173,11 @@ export class JogoController {
         }
 
         return jogada.maiorCartaJogador
+    }
+
+    novoEvento = (jogoId, evento) => {
+        evento.criadoEm = Date.now()
+        this.firebase.adicionaEvento(jogoId, evento)
     }
 
     async criarJogada(jogadorComeca, jogoId, rodadaId) {
@@ -182,13 +202,6 @@ export class JogoController {
     }
 
     atualizaRodada = (jogoId, rodadaId, update) => this.firebase.atualizaRodada(jogoId, rodadaId, update)
-
-    private _payloadToJogo(payload): Jogo {
-        const data = payload.doc.data() as Jogo;
-        const id = payload.doc.id;
-
-        return { id, ...data } as Jogo;
-    }
 
     comecar(jogadorVez, quantidadeDeJogadores, rodada, jogoId, rodadaId) {
         var baralho = this.embaralhar();

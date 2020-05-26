@@ -47,6 +47,7 @@ export class FirebaseService {
     adicionaJogadorRodada = (jogoId, rodadaId, jogadorId, jogador) => this.jogadorRodada(jogoId, rodadaId, jogadorId).set(jogador);
 
     mandaMensagem = (jogoId, data) => this.jogo(jogoId).update({ mensagens: firestore.FieldValue.arrayUnion(data) })
+    adicionaEvento = (jogoId, update) => this.jogo(jogoId).update({ eventos: firestore.FieldValue.arrayUnion(update) })
 
     atualizaJogo = (jogoId, update) => this.jogo(jogoId).update(update)
     atualizaRodada = (jogoId, rodadaId, update) => this.rodadaJogo(jogoId, rodadaId).update(update)

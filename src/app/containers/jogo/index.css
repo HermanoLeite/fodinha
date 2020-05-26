@@ -55,6 +55,16 @@
 
 .right-bottom {
   flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+.right-bottom--right,
+.right-bottom--left {
+  flex: 1;
+}
+
+.right-bottom--right {
+  margin-left: 20px;
 }
 
 @media screen and (max-width: 700px) {
