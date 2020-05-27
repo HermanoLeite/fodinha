@@ -56,14 +56,14 @@ export class JogoController {
 
     private adicionaJogadoresRodada(jogadoresParticipantes: any, jogoId: any, rodadaId: any) {
         var count = 0;
-        jogadoresParticipantes.forEach(jogadorParticipantes => {
+        jogadoresParticipantes.forEach(jogadorParticipante => {
             const jogador = {
-                jogadorId: jogadorParticipantes.id,
-                nome: jogadorParticipantes.nome,
+                jogadorId: jogadorParticipante.id,
+                nome: jogadorParticipante.nome,
                 fez: 0,
                 cartas: null,
                 palpite: null,
-                vidas: jogadorParticipantes.vidas
+                vidas: jogadorParticipante.vidas
             };
             this.firebase.adicionaJogadorRodada(jogoId, rodadaId, count.toString(), jogador);
             count++;
@@ -126,7 +126,7 @@ export class JogoController {
             const jogador = doc.data()
             const vidasPerdidas = Math.abs(jogador.fez - jogador.palpite)
 
-            const evento = { nome: "", mensagem: jogador.nome + " perdeu " + vidasPerdidas + (vidasPerdidas > 1 ? " vidas" : " vida") }
+            const evento = { nome: jogador.nome, mensagem: "Perdeu " + vidasPerdidas + (vidasPerdidas > 1 ? " vidas" : " vida") }
             this.novoEvento(jogoId, evento)
 
             var jogadorJogo = await this.firebase.getJogadorJogo(jogoId, jogador.jogadorId)
