@@ -22,6 +22,10 @@ export class Carta {
     return new Carta(cartaObj.cartaValor, cartaObj.naipeValor, cartaObj.carta, cartaObj.naipe, cartaObj.img, cartaObj.url);
   }
 
+  toString() {
+    return `${this.carta} de ${this.naipe}`
+  }
+
   isManilha(vira: Carta) {
     if (vira.cartaValor === cartaValor.tres) {
       return this.cartaValor === cartaValor.quatro;

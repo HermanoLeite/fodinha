@@ -39,6 +39,13 @@ export class JogoController {
 
     deletarJogo = (id: string) => this.firebase.deletarJogo(id)
 
+    atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
+
+    novoEvento = (jogoId, evento) => {
+        evento.criadoEm = Date.now()
+        this.firebase.adicionaEvento(jogoId, evento)
+    }
+
     comecarJogo(jogadoresParticipantes, jogoId): void {
         this.firebase.atualizaJogo(jogoId, { status: Status.jogando })
         this.criarRodada(jogadoresParticipantes, jogoId, 0)
@@ -97,7 +104,7 @@ export class JogoController {
 
     async encerrarJogada(jogoId, rodadaId, rodada) {
         await this.atualizaJogadorVida(jogoId, rodadaId)
-
+        this.novoEvento(jogoId, { nome: "Fim de Rodada", mensagem: "" })
         var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId);
         if (jogadoresProximaRodada.length < 2) {
             this.encerrarJogo(jogoId, jogadoresProximaRodada)
@@ -150,8 +157,6 @@ export class JogoController {
         }
     }
 
-    atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
-
     realizarJogada(carta, jogador, jogada, rodada, jogoId) {
         const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);
         const evento = { nome: jogador.nome, mensagem: carta.carta + " de " + carta.naipe }
@@ -173,11 +178,6 @@ export class JogoController {
         }
 
         return jogada.maiorCartaJogador
-    }
-
-    novoEvento = (jogoId, evento) => {
-        evento.criadoEm = Date.now()
-        this.firebase.adicionaEvento(jogoId, evento)
     }
 
     async criarJogada(jogadorComeca, jogoId, rodadaId) {
@@ -204,6 +204,7 @@ export class JogoController {
     atualizaRodada = (jogoId, rodadaId, update) => this.firebase.atualizaRodada(jogoId, rodadaId, update)
 
     comecar(jogadorVez, quantidadeDeJogadores, rodada, jogoId, rodadaId) {
+        this.novoEvento(jogoId, { nome: "Entregando as cartas...", mensagem: "" })
         var baralho = this.embaralhar();
         baralho = this.tirarManilha(baralho, jogoId, rodadaId);
         this.distribuir(baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId);
@@ -217,6 +218,7 @@ export class JogoController {
 
     tirarManilha(baralho: Baralho, jogoId, rodadaId) {
         var manilha = baralho.tirarVira();
+        this.novoEvento(jogoId, { nome: "Manilha", mensagem: manilha.toString() })
         this.atualizarManilha(manilha, jogoId, rodadaId);
         return baralho;
     }
