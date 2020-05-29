@@ -66,20 +66,13 @@ export class JogadorController {
     }
 
     async todosJogadoresComecaram(jogoId) {
-        var count = 0;
+        var jogadores = await this.firebase.getJogadoresJogo(jogoId)
 
-        var querySnapshot = await this.firebase.getJogadoresJogo(jogoId)
-        querySnapshot.forEach(function (doc) {
-            const data = doc.data();
-            if (!data.removido && !data.comecar) return false;
-            if (!data.removido && data.comecar) count++;
-        });
+        const jogadoresNaoRemovidos = await jogadores.query.where('removido', '==', false)
+        const jogadoresEsperando = await jogadoresNaoRemovidos.where('comecar', '==', false).get()
+        const jogadoresComecaram = await jogadoresNaoRemovidos.where('comecar', '==', true).get()
 
-        if (count > 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ((jogadoresComecaram.size > 1) && (jogadoresEsperando.size === 0))
     }
 
     private _payloadToJogadorDocumento(payload): JogadorDocumento {
