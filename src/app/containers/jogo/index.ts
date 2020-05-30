@@ -28,10 +28,7 @@ export class JogoComponent implements OnInit {
   jogando: boolean = false
   eventos = []
 
-  constructor(private jogoController: JogoController, private route: ActivatedRoute) {
-    this.jogoId = this.route.snapshot.paramMap.get("id")
-    this.jogadorJogandoId = this.jogoController.jogadorJogandoId()
-  }
+  constructor(private jogoController: JogoController, private route: ActivatedRoute) { }
 
   comecarRodada() {
     this.jogoController.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)
@@ -91,76 +88,93 @@ export class JogoComponent implements OnInit {
     return vez === jogadoresCount ? 0 : vez;
   }
 
-  private async loadRodada(rodadaId) {
-    const rodada$ = await this.jogoController.rodadaAtualStream(this.jogoId)
-    rodada$.pipe(
-      map(a => {
-        const data: any = a.payload.data();
-        const id = a.payload.id;
-        if (data) data.manilha = Carta.fromString(data.manilha);
-        if (data.jogadaAtual) {
-          this.jogoController.jogadaStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(
-            map(a => {
-              const data = a.payload.data() as Jogada;
-              if (data.maiorCarta) {
-                data.maiorCartaObj = Carta.fromString(data.maiorCarta);
-              }
-              const id = a.payload.id;
-              return { id, ...data };
-            })
-          ).subscribe(jogada => this.jogada = jogada);
+  private carregaJogada(rodadaId: any, data: any) {
+    const configuraJogada = ({ payload }) => {
+      const data = payload.data() as Jogada;
+      const id = payload.id;
+      if (data.maiorCarta) {
+        data.maiorCartaObj = Carta.fromString(data.maiorCarta);
+      }
+      return { id, ...data };
+    };
 
-          this.jogoController.jogadasStream(this.jogoId, rodadaId, data.jogadaAtual).pipe(
-            map(actions => {
-              return actions.map(a => {
-                const data = a.payload.doc.data()
-                const id = a.payload.doc.id
-                return { id, ...data }
-              });
-            }),
-          ).subscribe(jogadas => this.jogadas = jogadas)
-        }
-        return { id, ...data }
-      })
-    ).subscribe(rodada => this.rodada = rodada)
+    this.jogoController
+      .jogadaStream(this.jogoId, rodadaId, data.jogadaAtual)
+      .pipe(map(configuraJogada))
+      .subscribe(jogada => this.jogada = jogada);
+  }
 
-    this.jogadores$ = this.jogoController.jogadoresRodadaStream(this.jogoId, rodadaId).pipe(
-      map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = parseInt(a.payload.doc.id, 10);
+  private carregaJogadas(rodadaId: any, data: any) {
+    const configuraJogadas = (actions) => actions.map(a => {
+      const data = a.payload.doc.data();
+      const id = a.payload.doc.id;
+      return { id, ...data };
+    });
 
-          if (data.cartas) {
-            data.cartas = data.cartas.map(carta => {
-              let cartaObj = Carta.fromString(carta);
-              return cartaObj;
-            });
-          }
+    this.jogoController
+      .jogadasStream(this.jogoId, rodadaId, data.jogadaAtual)
+      .pipe(map(configuraJogadas))
+      .subscribe(jogadas => this.jogadas = jogadas);
+  }
 
-          if (data.jogadorId === this.jogadorJogandoId) {
-            this.jogadorJogando = { id, ...data };
-          }
-          return { id, ...data };
+  private carregaJogador(rodadaId: any) {
+    const configuraJogador = (actions) => actions.map(a => {
+      const data = a.payload.doc.data();
+      const id = parseInt(a.payload.doc.id, 10);
+      if (data.cartas) {
+        data.cartas = data.cartas.map(carta => {
+          let cartaObj = Carta.fromString(carta);
+          return cartaObj;
         });
-      }),
-    );
+      }
+      if (data.jogadorId === this.jogadorJogandoId) {
+        this.jogadorJogando = { id, ...data };
+      }
+      return { id, ...data };
+    });
+
+    this.jogadores$ = this.jogoController
+      .jogadoresRodadaStream(this.jogoId, rodadaId)
+      .pipe(map(configuraJogador));
+  }
+
+  private async carregaRodada(rodadaId) {
+    const configuraRodada = ({ payload }) => {
+      const data: any = payload.data();
+      const id = payload.id;
+      if (data) {
+        data.manilha = Carta.fromString(data.manilha);
+
+        if (data.jogadaAtual) {
+          this.carregaJogada(rodadaId, data);
+          this.carregaJogadas(rodadaId, data);
+        }
+      }
+      return { id, ...data };
+    };
+
+    this.jogoController
+      .rodadaStream(this.jogoId, rodadaId)
+      .pipe(map(configuraRodada))
+      .subscribe(rodada => this.rodada = rodada)
+  }
+
+  private carregaJogo = (jogo) => {
+    this.eventos = jogo.eventos;
+    if (jogo.rodada.toString() != this.rodadaId) {
+      this.rodadaId = jogo.rodada.toString();
+      this.carregaJogador(this.rodadaId);
+      this.carregaRodada(this.rodadaId);
+    }
+    return jogo;
   }
 
   ngOnInit() {
-    this.jogoController.jogoStream(this.jogoId).pipe(
-      map(jogo => {
-        const data = jogo.payload.data() as Jogo;
-        const id = jogo.payload.id;
+    this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.jogadorJogandoId = this.jogoController.jogadorJogandoId()
 
-        this.eventos = data.eventos
-
-        if (data.rodada.toString() != this.rodadaId) {
-          this.rodadaId = data.rodada.toString()
-          this.loadRodada(this.rodadaId)
-        }
-
-        return { id, ...data };
-      })
-    ).subscribe(jogo => this.jogo = jogo);
+    this.jogoController.jogoStream(this.jogoId)
+      .pipe(map(this.carregaJogo))
+      .subscribe(jogo => this.jogo = jogo);
   }
 }

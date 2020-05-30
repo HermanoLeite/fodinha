@@ -30,7 +30,7 @@ export class FirebaseService {
     rodadaAtual = async (jogoId) => {
         const doc = await this.db.firestore.collection(this.collections.jogo).doc(jogoId).get()
         const { rodada } = doc.data()
-        return rodada
+        return rodada.toString()
     }
 
     jogosSnapshot = () => this.jogos.snapshotChanges()

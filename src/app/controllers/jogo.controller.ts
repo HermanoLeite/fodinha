@@ -17,8 +17,13 @@ export class JogoController {
         const jogo = new Jogo()
         return this.firebase.adicionaJogo(jogo)
     }
+    private configuraDocumento = ({ payload }) => {
+        const data = payload.data()
+        const id = payload.id;
+        return { id, ...data };
+    };
 
-    jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId)
+    jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId).pipe(map(this.configuraDocumento))
 
     jogosStream = (): Observable<Jogo[]> =>
         this.firebase.jogosSnapshot()
@@ -33,6 +38,8 @@ export class JogoController {
         const rodadaAtual = await this.firebase.rodadaAtual(jogoId)
         return this.firebase.rodadaSnapshot(jogoId, rodadaAtual.toString())
     }
+
+    rodadaAtual = (jogoId) => this.firebase.rodadaAtual(jogoId)
 
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 
@@ -231,11 +238,10 @@ export class JogoController {
     }
 
     distribuir(baralho: Baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId) {
-        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada);
+        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada)
         for (var i = 0; i < quantidadeDeJogadores; i++) {
             const cartaArray = baralho.tiraCartas(quantidadeCartas);
             const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
-
             this.entregarCarta(i.toString(), cartaArrayJSON, jogoId, rodadaId)
         }
 
