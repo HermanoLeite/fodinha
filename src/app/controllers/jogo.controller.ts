@@ -45,9 +45,9 @@ export class JogoController {
 
     jogadoresStream = (jogoId) => this.firebase.jogadoresSnapshot(jogoId)
 
-    rodadaStream = (jogoId, rodadaId) => this.firebase.rodadaSnapshot(jogoId, rodadaId)
+    rodadaStream = (jogoId, rodadaId) => this.firebase.rodadaSnapshot(jogoId, rodadaId).pipe(map(this.configuraDocumento))
 
-    jogadaStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadaSnapshot(jogoId, rodadaId, jogadaId)
+    jogadaStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadaSnapshot(jogoId, rodadaId, jogadaId).pipe(map(this.configuraDocumento))
 
     jogadasStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadasSnapshot(jogoId, rodadaId, jogadaId)
 
