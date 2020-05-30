@@ -16,10 +16,14 @@ export class JogadorController {
         return this.firebase.jogadorSnapshot(jogoId, jogadorDocId).pipe(map(({ payload }) => payload.data() as Jogador));
     }
 
-    jogadoresStream(jogoId: string): Observable<JogadorDocumento[]> {
-        return this.firebase.jogadoresSnapshot(jogoId)
-            .pipe(map((jogadores) => jogadores.map(({ payload }) => this._payloadToJogadorDocumento(payload))))
-    }
+    jogadoresStream = (jogoId: string): Observable<JogadorDocumento[]> =>
+        this.firebase.jogadoresSnapshot(jogoId)
+            .pipe(map((jogadores) => jogadores.map(({ payload }) => {
+                const data = payload.doc.data() as Jogador;
+                const id = payload.doc.id;
+
+                return new JogadorDocumento(id, data);
+            })))
 
     jogoStream = (jogoId: string) => this.firebase.jogoStream(jogoId)
 
@@ -73,13 +77,6 @@ export class JogadorController {
         const jogadoresComecaram = await jogadoresNaoRemovidos.where('comecar', '==', true).get()
 
         return ((jogadoresComecaram.size > 1) && (jogadoresEsperando.size === 0))
-    }
-
-    private _payloadToJogadorDocumento(payload): JogadorDocumento {
-        const data = payload.doc.data() as Jogador;
-        const id = payload.doc.id;
-
-        return new JogadorDocumento(id, data);
     }
 }
 

@@ -27,6 +27,12 @@ export class FirebaseService {
     jogadaRodada = (jogoId, rodadaId, jogadaId) => this.jogadasRodada(jogoId, rodadaId).doc(jogadaId)
     jogadorRodada = (jogoId, rodadaId, jogadorId) => this.jogadoresRodada(jogoId, rodadaId).doc(jogadorId)
 
+    rodadaAtual = async (jogoId) => {
+        const doc = await this.db.firestore.collection(this.collections.jogo).doc(jogoId).get()
+        const { rodada } = doc.data()
+        return rodada
+    }
+
     jogosSnapshot = () => this.jogos.snapshotChanges()
     jogoSnapshot = (jogoId) => this.jogo(jogoId).snapshotChanges()
     jogoStream = (jogoId) => this.jogo(jogoId).valueChanges()

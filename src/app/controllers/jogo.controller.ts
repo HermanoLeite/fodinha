@@ -11,6 +11,8 @@ import { Baralho } from '../models/baralho.model';
 export class JogoController {
     constructor(private storage: StorageService, private firebase: FirebaseService) { }
 
+    jogadorJogandoId = () => this.storage.get("userId")
+
     novoJogo() {
         const jogo = new Jogo()
         return this.firebase.adicionaJogo(jogo)
@@ -26,6 +28,11 @@ export class JogoController {
 
                 return { id, ...data } as Jogo;
             })));
+
+    rodadaAtualStream = async (jogoId) => {
+        const rodadaAtual = await this.firebase.rodadaAtual(jogoId)
+        return this.firebase.rodadaSnapshot(jogoId, rodadaAtual.toString())
+    }
 
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 

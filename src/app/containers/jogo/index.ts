@@ -6,7 +6,6 @@ import { JogoController } from '../../controllers/jogo.controller';
 import { Carta } from '../../models/carta.model'
 import { Jogada } from '../../models/jogada.model'
 import { Jogo, Status, Etapa } from '../../models/jogo.model';
-import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-jogo',
@@ -29,11 +28,9 @@ export class JogoComponent implements OnInit {
   jogando: boolean = false
   eventos = []
 
-  constructor(
-    private jogoController: JogoController,
-    private route: ActivatedRoute,
-    private storageService: StorageService) {
+  constructor(private jogoController: JogoController, private route: ActivatedRoute) {
     this.jogoId = this.route.snapshot.paramMap.get("id")
+    this.jogadorJogandoId = this.jogoController.jogadorJogandoId()
   }
 
   comecarRodada() {
@@ -58,17 +55,17 @@ export class JogoComponent implements OnInit {
   async jogarCarta(cartaJogadorIndex) {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
-    var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogo.id);
+    var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogoId);
     var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
-    if (this.completouRodada(proximoJogador)) {
-      await this.jogoController.atualizaQuemFezJogada(this.jogo.id, this.rodada.id, vencedor);
+    if (this.completouRodada(proximoJogador, this.jogada.comeca)) {
+      await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor);
 
-      if (this.acabaramAsCartas()) {
-        this.jogoController.encerrarJogada(this.jogo.id, this.rodada.id, this.jogo.rodada);
+      if (this.acabaramAsCartas(this.jogadorJogando)) {
+        this.jogoController.encerrarJogada(this.jogoId, this.rodada.id, this.jogo.rodada);
       }
       else {
-        this.jogoController.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogo.id, this.rodada.id)
+        this.jogoController.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogoId, this.rodada.id)
       }
     }
     else {
@@ -85,17 +82,18 @@ export class JogoComponent implements OnInit {
 
   etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
 
-  private acabaramAsCartas = () => this.jogadorJogando.cartas.length === 0
+  private acabaramAsCartas = (jogador) => jogador.cartas.length === 0
 
-  private completouRodada = (proximoJogador) => proximoJogador === this.jogada.comeca
+  private completouRodada = (proximoJogador, jogadorQueComecou) => proximoJogador === jogadorQueComecou
 
   private proximoJogador(rodadaVez: number, jogadoresCount: number): number {
     const vez = rodadaVez + 1;
     return vez === jogadoresCount ? 0 : vez;
   }
 
-  private loadRodada(rodadaId): void {
-    this.jogoController.rodadaStream(this.jogoId, rodadaId).pipe(
+  private async loadRodada(rodadaId) {
+    const rodada$ = await this.jogoController.rodadaAtualStream(this.jogoId)
+    rodada$.pipe(
       map(a => {
         const data: any = a.payload.data();
         const id = a.payload.id;
@@ -149,17 +147,18 @@ export class JogoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jogadorJogandoId = this.storageService.get("userId")
-
     this.jogoController.jogoStream(this.jogoId).pipe(
-      map(a => {
-        const data = a.payload.data() as Jogo;
-        const id = a.payload.id;
+      map(jogo => {
+        const data = jogo.payload.data() as Jogo;
+        const id = jogo.payload.id;
+
         this.eventos = data.eventos
+
         if (data.rodada.toString() != this.rodadaId) {
           this.rodadaId = data.rodada.toString()
           this.loadRodada(this.rodadaId)
         }
+
         return { id, ...data };
       })
     ).subscribe(jogo => this.jogo = jogo);
