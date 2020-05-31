@@ -17,8 +17,13 @@ export class JogoController {
         const jogo = new Jogo()
         return this.firebase.adicionaJogo(jogo)
     }
+    private configuraDocumento = ({ payload }) => {
+        const data = payload.data()
+        const id = payload.id;
+        return { id, ...data };
+    };
 
-    jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId)
+    jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId).pipe(map(this.configuraDocumento))
 
     jogosStream = (): Observable<Jogo[]> =>
         this.firebase.jogosSnapshot()
@@ -29,20 +34,42 @@ export class JogoController {
                 return { id, ...data } as Jogo;
             })));
 
-    rodadaAtualStream = async (jogoId) => {
-        const rodadaAtual = await this.firebase.rodadaAtual(jogoId)
-        return this.firebase.rodadaSnapshot(jogoId, rodadaAtual.toString())
-    }
-
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 
     jogadoresStream = (jogoId) => this.firebase.jogadoresSnapshot(jogoId)
 
-    rodadaStream = (jogoId, rodadaId) => this.firebase.rodadaSnapshot(jogoId, rodadaId)
+    setManilha = (rodada) => {
+        rodada.manilha = Carta.fromString(rodada.manilha);
+        return rodada;
+    };
 
-    jogadaStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadaSnapshot(jogoId, rodadaId, jogadaId)
+    rodadaStream = (jogoId, rodadaId) =>
+        this.firebase.rodadaSnapshot(jogoId, rodadaId)
+            .pipe(
+                map(this.configuraDocumento),
+                map(this.setManilha)
+            )
 
-    jogadasStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadasSnapshot(jogoId, rodadaId, jogadaId)
+    configuraJogada = (jogada) => {
+        if (jogada.maiorCarta) {
+            jogada.maiorCartaObj = Carta.fromString(jogada.maiorCarta);
+        }
+        return jogada;
+    };
+
+    jogadaStream = (jogoId, rodadaId, jogadaId) =>
+        this.firebase.jogadaSnapshot(jogoId, rodadaId, jogadaId)
+            .pipe(
+                map(this.configuraDocumento),
+                map(this.configuraJogada))
+
+    configuraDocumentos = (actions) => actions.map(a => {
+        const data = a.payload.doc.data();
+        const id = a.payload.doc.id;
+        return { id, ...data };
+    });
+
+    jogadasStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadasSnapshot(jogoId, rodadaId, jogadaId).pipe(map(this.configuraDocumentos))
 
     deletarJogo = (id: string) => this.firebase.deletarJogo(id)
 
@@ -157,9 +184,11 @@ export class JogoController {
 
     private async encerrarJogo(jogoId, jogadoresProximaRodada) {
         if (jogadoresProximaRodada.length < 1) {
+            this.novoEvento(jogoId, { nome: "Fim de Jogo", mensagem: "Sem ganhador" })
             this.firebase.atualizaJogo(jogoId, { status: Status.finalizado });
         }
         else {
+            this.novoEvento(jogoId, { nome: "Fim de Jogo", mensagem: jogadoresProximaRodada[0].nome + " ganhou!" })
             this.firebase.atualizaJogo(jogoId, { status: Status.finalizado, vencedor: jogadoresProximaRodada[0].nome });
         }
     }
@@ -217,32 +246,31 @@ export class JogoController {
         this.distribuir(baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId);
     }
 
-    embaralhar() {
+    private embaralhar() {
         var baralho = new Baralho();
         baralho.embaralhar();
         return baralho
     }
 
-    tirarManilha(baralho: Baralho, jogoId, rodadaId) {
+    private tirarManilha(baralho: Baralho, jogoId, rodadaId) {
         var manilha = baralho.tirarVira();
         this.novoEvento(jogoId, { nome: "Manilha", mensagem: manilha.toString() })
         this.atualizarManilha(manilha, jogoId, rodadaId);
         return baralho;
     }
 
-    distribuir(baralho: Baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId) {
-        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada);
+    private distribuir(baralho: Baralho, quantidadeDeJogadores, rodada, jogadorVez, jogoId, rodadaId) {
+        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada)
         for (var i = 0; i < quantidadeDeJogadores; i++) {
             const cartaArray = baralho.tiraCartas(quantidadeCartas);
             const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
-
             this.entregarCarta(i.toString(), cartaArrayJSON, jogoId, rodadaId)
         }
 
         this.atualizarRodada(jogadorVez, quantidadeDeJogadores, jogoId, rodadaId);
     }
 
-    quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
+    private quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
         var qtdCartasMax = qtdCartasTotal - 1 / jogadoresCount;
         if (rodada < qtdCartasMax) {
             return rodada + 1;
@@ -254,15 +282,15 @@ export class JogoController {
         return (qtdCartasMax * (rodada / qtdCartasMax)) - rodada;
     }
 
-    atualizarManilha(manilha, jogoId, rodadaId) {
+    private atualizarManilha(manilha, jogoId, rodadaId) {
         this.firebase.atualizaRodada(jogoId, rodadaId, { manilha: JSON.stringify(manilha) })
     }
 
-    entregarCarta(jogador, cartaArrayJSON, jogoId, rodadaId) {
+    private entregarCarta(jogador, cartaArrayJSON, jogoId, rodadaId) {
         this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogador, { cartas: cartaArrayJSON })
     }
 
-    atualizarRodada(jogadorVez, quantidadeDeJogadores, jogoId, rodadaId): void {
+    private atualizarRodada(jogadorVez, quantidadeDeJogadores, jogoId, rodadaId): void {
         var proximoJogador = jogadorVez + 1;
         if (proximoJogador === quantidadeDeJogadores) {
             proximoJogador = 0;
