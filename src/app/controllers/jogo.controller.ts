@@ -34,13 +34,6 @@ export class JogoController {
                 return { id, ...data } as Jogo;
             })));
 
-    rodadaAtualStream = async (jogoId) => {
-        const rodadaAtual = await this.firebase.rodadaAtual(jogoId)
-        return this.firebase.rodadaSnapshot(jogoId, rodadaAtual.toString())
-    }
-
-    rodadaAtual = (jogoId) => this.firebase.rodadaAtual(jogoId)
-
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 
     jogadoresStream = (jogoId) => this.firebase.jogadoresSnapshot(jogoId)
