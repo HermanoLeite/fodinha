@@ -115,7 +115,9 @@ export class JogoComponent implements OnInit {
       .subscribe(jogadas => this.jogadas = jogadas);
   }
 
-  private carregaJogadores(rodadaId: any) {
+  private carregaJogadores = (jogo) => {
+    const rodadaId = jogo.rodada.toString()
+
     const configuraJogador = (jogadores) => jogadores.map(({ payload }) => {
       const data = payload.doc.data();
       const id = parseInt(payload.doc.id, 10);
@@ -131,13 +133,12 @@ export class JogoComponent implements OnInit {
     this.jogadores$ = this.jogoController
       .jogadoresRodadaStream(this.jogoId, rodadaId)
       .pipe(map(configuraJogador));
+
+    return jogo
   }
 
-  private carregaRodada(rodadaId) {
-    const configuraRodada = (rodada) => {
-      rodada.manilha = Carta.fromString(rodada.manilha);
-      return rodada;
-    };
+  private carregaRodada = (jogo) => {
+    const rodadaId = jogo.rodada.toString()
 
     const carregaJogada = (rodada) => {
       if (rodada.jogadaAtual) {
@@ -150,9 +151,10 @@ export class JogoComponent implements OnInit {
     this.jogoController
       .rodadaStream(this.jogoId, rodadaId)
       .pipe(
-        map(configuraRodada),
         map(carregaJogada)
       ).subscribe(rodada => this.rodada = rodada)
+
+    return jogo
   }
 
   private caregaEvento = (jogo) => {
@@ -160,10 +162,8 @@ export class JogoComponent implements OnInit {
     return jogo;
   }
 
-  private carregaJogo = (jogo) => {
+  private setRodadaId = (jogo) => {
     this.rodadaId = jogo.rodada.toString();
-    this.carregaJogadores(this.rodadaId);
-    this.carregaRodada(this.rodadaId);
     return jogo
   }
 
@@ -178,7 +178,9 @@ export class JogoComponent implements OnInit {
       .pipe(
         map(this.caregaEvento),
         filter(this.rodadaMudou),
-        map(this.carregaJogo),
+        map(this.setRodadaId),
+        map(this.carregaRodada),
+        map(this.carregaJogadores),
       ).subscribe(jogo => this.jogo = jogo);
   }
 }

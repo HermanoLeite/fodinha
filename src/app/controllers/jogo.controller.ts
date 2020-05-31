@@ -45,7 +45,17 @@ export class JogoController {
 
     jogadoresStream = (jogoId) => this.firebase.jogadoresSnapshot(jogoId)
 
-    rodadaStream = (jogoId, rodadaId) => this.firebase.rodadaSnapshot(jogoId, rodadaId).pipe(map(this.configuraDocumento))
+    setManilha = (rodada) => {
+        rodada.manilha = Carta.fromString(rodada.manilha);
+        return rodada;
+    };
+
+    rodadaStream = (jogoId, rodadaId) =>
+        this.firebase.rodadaSnapshot(jogoId, rodadaId)
+            .pipe(
+                map(this.configuraDocumento),
+                map(this.setManilha)
+            )
 
     jogadaStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadaSnapshot(jogoId, rodadaId, jogadaId).pipe(map(this.configuraDocumento))
 
