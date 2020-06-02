@@ -25,8 +25,6 @@ export class JogoComponent implements OnInit {
   jogadores$: any
   jogadorJogando: any
 
-  jogadoresJogo: any
-  todosPalpitaram: boolean = false
   Etapa: Etapa
   jogando: boolean = false
 
