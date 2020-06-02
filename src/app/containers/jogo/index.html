@@ -14,7 +14,7 @@
       <div class="card left-bottom" *ngIf="jogadorJogando">
         <tooltip>4 5 6 7 Q J K A 2 3 <br />♦ ♠ ♥ ♣</tooltip>
         <div class="action-button" *ngIf="jogadorJogando.id == rodada.vez">
-          <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="comecarRodada()"></botao-comecar>
+          <botao-comecar [etapa]="rodada.etapa" (comecarRodada)="entregarCartas()"></botao-comecar>
 
           <botao-palpite *ngIf="jogadorJogando.cartas" [etapa]="rodada.etapa" (enviarPalpite)="enviarPalpite($event)"
             [quantidadeCartas]="jogadorJogando.cartas.length">

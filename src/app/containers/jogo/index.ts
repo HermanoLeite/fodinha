@@ -30,22 +30,25 @@ export class JogoComponent implements OnInit {
 
   constructor(private jogoController: JogoController, private route: ActivatedRoute) { }
 
-  comecarRodada() {
-    this.jogoController.comecar(this.rodada.vez, this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId, this.rodadaId)
+  entregarCartas() {
+    this.jogoController.novoEvento(this.jogoId, { nome: "Entregando as cartas...", mensagem: "" })
+    this.jogoController.entregarCartas(this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId)
+
+    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
+    this.jogoController.atualizaEtapa(this.jogoId, this.rodadaId, proximoJogador, Etapa.palpite)
   }
 
   enviarPalpite(palpite: number): void {
-    this.jogoController.atualizaPalpiteJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), palpite)
     this.jogoController.novoEvento(this.jogoId, { nome: this.jogadorJogando.nome, mensagem: `Tem que fazer ${palpite} ${palpite === 1 ? 'carta' : 'cartas'}` })
+    this.jogoController.atualizaPalpiteJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), palpite)
 
-    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
-
+    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
     if (this.rodada.comeca === this.rodada.vez) {
       this.jogoController.criarJogada(proximoJogador, this.jogoId, this.rodadaId)
-      this.jogoController.atualizaRodada(this.jogoId, this.rodadaId, { etapa: Etapa.jogarCarta, vez: proximoJogador });
+      this.jogoController.atualizaEtapa(this.jogoId, this.rodadaId, proximoJogador, Etapa.jogarCarta)
     }
     else {
-      this.jogoController.atualizaRodada(this.jogoId, this.rodadaId, { vez: proximoJogador });
+      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador)
     }
   }
 
@@ -53,12 +56,13 @@ export class JogoComponent implements OnInit {
     var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
 
     var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogoId);
-    var proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
 
     if (this.completouRodada(proximoJogador, this.jogada.comeca)) {
       await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor);
 
       if (this.acabaramAsCartas(this.jogadorJogando)) {
+        this.jogoController.novoEvento(this.jogoId, { nome: "Fim de Rodada", mensagem: "" })
         this.jogoController.encerrarJogada(this.jogoId, this.rodada.id, this.jogo.rodada);
       }
       else {
@@ -66,7 +70,7 @@ export class JogoComponent implements OnInit {
       }
     }
     else {
-      this.jogoController.atualizaRodada(this.jogoId, this.rodadaId, { vez: proximoJogador })
+      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador);
     }
   }
 
@@ -82,11 +86,6 @@ export class JogoComponent implements OnInit {
   private acabaramAsCartas = (jogador) => jogador.cartas.length === 0
 
   private completouRodada = (proximoJogador, jogadorQueComecou) => proximoJogador === jogadorQueComecou
-
-  private proximoJogador(rodadaVez: number, jogadoresCount: number): number {
-    const vez = rodadaVez + 1;
-    return vez === jogadoresCount ? 0 : vez;
-  }
 
   private carregaJogadores = (jogo) => {
     const rodadaId = jogo.rodada.toString()
