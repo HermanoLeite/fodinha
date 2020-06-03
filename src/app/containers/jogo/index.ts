@@ -34,7 +34,7 @@ export class JogoComponent implements OnInit {
     this.jogoController.novoEvento(this.jogoId, { nome: "Entregando as cartas...", mensagem: "" })
     this.jogoController.entregarCartas(this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId)
 
-    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
     this.jogoController.atualizaEtapa(this.jogoId, this.rodadaId, proximoJogador, Etapa.palpite)
   }
 
@@ -42,7 +42,7 @@ export class JogoComponent implements OnInit {
     this.jogoController.novoEvento(this.jogoId, { nome: this.jogadorJogando.nome, mensagem: `Tem que fazer ${palpite} ${palpite === 1 ? 'carta' : 'cartas'}` })
     this.jogoController.atualizaPalpiteJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), palpite)
 
-    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
     if (this.rodada.comeca === this.rodada.vez) {
       this.jogoController.criarJogada(proximoJogador, this.jogoId, this.rodadaId)
       this.jogoController.atualizaEtapa(this.jogoId, this.rodadaId, proximoJogador, Etapa.jogarCarta)
@@ -53,35 +53,40 @@ export class JogoComponent implements OnInit {
   }
 
   async jogarCarta(cartaJogadorIndex) {
-    var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop();
+    var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop()
 
-    var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogoId);
-    const proximoJogador = this.jogoController.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+    var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogoId)
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
 
     if (this.completouRodada(proximoJogador, this.jogada.comeca)) {
-      await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor);
+      await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor)
 
       if (this.acabaramAsCartas(this.jogadorJogando)) {
         this.jogoController.novoEvento(this.jogoId, { nome: "Fim de Rodada", mensagem: "" })
-        this.jogoController.encerrarJogada(this.jogoId, this.rodada.id, this.jogo.rodada);
+        this.jogoController.encerrarJogada(this.jogoId, this.rodada.id, this.jogo.rodada)
       }
       else {
         this.jogoController.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogoId, this.rodada.id)
       }
     }
     else {
-      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador);
+      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador)
     }
   }
 
   jogoFinalizado(): boolean {
     if (this.jogo)
-      return this.jogo.status === Status.finalizado;
+      return this.jogo.status === Status.finalizado
 
-    return false;
+    return false
   }
 
-  etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta;
+  etapaJogarCarta = (etapa) => etapa === Etapa.jogarCarta
+
+  private proximoJogador(jogadorVez: number, jogadoresCount: number): number {
+    const vez = jogadorVez + 1
+    return (vez === jogadoresCount) ? 0 : vez
+  }
 
   private acabaramAsCartas = (jogador) => jogador.cartas.length === 0
 
@@ -91,15 +96,15 @@ export class JogoComponent implements OnInit {
     const rodadaId = jogo.rodada.toString()
 
     const configuraJogador = (jogadores) => jogadores.map(({ payload }) => {
-      const data = payload.doc.data();
-      const id = parseInt(payload.doc.id, 10);
+      const data = payload.doc.data()
+      const id = parseInt(payload.doc.id, 10)
 
       if (data.cartas) data.cartas = data.cartas.map(carta => Carta.fromString(carta))
 
       if (data.jogadorId === this.jogadorJogandoId) {
-        this.jogadorJogando = { id, ...data };
+        this.jogadorJogando = { id, ...data }
       }
-      return { id, ...data };
+      return { id, ...data }
     });
 
     this.jogadores$ = this.jogoController
@@ -112,13 +117,13 @@ export class JogoComponent implements OnInit {
   private carregaJogada(rodadaId: any, jogadaAtual) {
     this.jogoController
       .jogadaStream(this.jogoId, rodadaId, jogadaAtual)
-      .subscribe(jogada => this.jogada = jogada);
+      .subscribe(jogada => this.jogada = jogada)
   }
 
   private carregaJogadas(rodadaId: any, jogadaAtual) {
     this.jogoController
       .jogadasStream(this.jogoId, rodadaId, jogadaAtual)
-      .subscribe(jogadas => this.jogadas = jogadas);
+      .subscribe(jogadas => this.jogadas = jogadas)
   }
 
   private carregaRodada = (jogo) => {
@@ -126,8 +131,8 @@ export class JogoComponent implements OnInit {
 
     const carregaJogada = (rodada) => {
       if (rodada.jogadaAtual) {
-        this.carregaJogada(rodadaId, rodada.jogadaAtual);
-        this.carregaJogadas(rodadaId, rodada.jogadaAtual);
+        this.carregaJogada(rodadaId, rodada.jogadaAtual)
+        this.carregaJogadas(rodadaId, rodada.jogadaAtual)
       }
       return rodada
     }
@@ -165,6 +170,6 @@ export class JogoComponent implements OnInit {
         map(this.setRodadaId),
         map(this.carregaRodada),
         map(this.carregaJogadores),
-      ).subscribe(jogo => this.jogo = jogo);
+      ).subscribe(jogo => this.jogo = jogo)
   }
 }

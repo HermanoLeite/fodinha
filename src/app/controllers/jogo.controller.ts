@@ -13,15 +13,18 @@ export class JogoController {
 
     jogadorJogandoId = () => this.storage.get("userId")
 
+    deletarJogo = (jogoId: string) => this.firebase.deletarJogo(jogoId)
+
     novoJogo() {
         const jogo = new Jogo()
         return this.firebase.adicionaJogo(jogo)
     }
+
     private configuraDocumento = ({ payload }) => {
         const data = payload.data()
         const id = payload.id;
         return { id, ...data };
-    };
+    }
 
     jogoStream = (jogoId) => this.firebase.jogoSnapshot(jogoId).pipe(map(this.configuraDocumento))
 
@@ -32,7 +35,7 @@ export class JogoController {
                 const id = payload.doc.id;
 
                 return { id, ...data } as Jogo;
-            })));
+            })))
 
     jogadoresRodadaStream = (jogoId, rodadaId) => this.firebase.jogadoresRodadaSnapshot(jogoId, rodadaId)
 
@@ -71,12 +74,9 @@ export class JogoController {
 
     jogadasStream = (jogoId, rodadaId, jogadaId) => this.firebase.jogadasSnapshot(jogoId, rodadaId, jogadaId).pipe(map(this.configuraDocumentos))
 
-    deletarJogo = (id: string) => this.firebase.deletarJogo(id)
-
     atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
 
     novoEvento = (jogoId, evento) => {
-        evento.criadoEm = Date.now()
         this.firebase.adicionaEvento(jogoId, evento)
     }
 
@@ -87,13 +87,15 @@ export class JogoController {
 
     async criarRodada(jogadoresParticipantes, jogoId, rodadaNro) {
         const rodadaId = rodadaNro.toString()
-        const jogadorComeca = rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
+        const jogadorComeca = this.jogadorComeca(rodadaNro, jogadoresParticipantes)
 
         await this.novaRodada(jogoId, rodadaId, jogadorComeca, jogadoresParticipantes.length)
         this.adicionaJogadoresRodada(jogadoresParticipantes, jogoId, rodadaId);
 
         this.firebase.atualizaJogo(jogoId, { rodada: rodadaNro })
     }
+
+    private jogadorComeca = (rodadaNro, jogadoresParticipantes) => rodadaNro >= jogadoresParticipantes.length ? rodadaNro % jogadoresParticipantes.length : rodadaNro;
 
     private adicionaJogadoresRodada(jogadoresParticipantes: any, jogoId: any, rodadaId: any) {
         var count = 0;
@@ -240,45 +242,42 @@ export class JogoController {
     atualizaJogadorVez = (jogoId, rodadaId, jogadorVez) => this.firebase.atualizaRodada(jogoId, rodadaId, { vez: jogadorVez })
 
     entregarCartas(quantidadeDeJogadores: number, rodada: number, jogoId: string): void {
-        const rodadaId = rodada.toString()
+        const rodadaId: string = rodada.toString()
 
-        var baralho = this.embaralhar();
-        baralho = this.tirarManilha(baralho, jogoId, rodadaId);
-        this.distribuir(baralho, quantidadeDeJogadores, rodada, jogoId, rodadaId);
+        const baralho = this.embaralhar();
+
+        const vira = baralho.tirarVira();
+        this.salvarVira(jogoId, rodadaId, vira);
+
+        this.distribuir(jogoId, rodadaId, baralho, quantidadeDeJogadores);
     }
 
-    private embaralhar() {
-        var baralho = new Baralho();
+    private embaralhar(): Baralho {
+        const baralho: Baralho = new Baralho();
         baralho.embaralhar();
         return baralho
     }
 
-    private atualizarManilha = (manilha, jogoId, rodadaId) => {
-        this.novoEvento(jogoId, { nome: "Manilha", mensagem: manilha.toString() })
-        this.firebase.atualizaRodada(jogoId, rodadaId, { manilha: JSON.stringify(manilha) })
+    private salvarVira = (jogoId: string, rodadaId: string, vira: Carta): void => {
+        this.novoEvento(jogoId, { nome: "Manilha", mensagem: vira.toString() })
+        this.firebase.atualizaRodada(jogoId, rodadaId, { manilha: JSON.stringify(vira) })
     }
 
-    private tirarManilha(baralho: Baralho, jogoId: string, rodadaId: string): Baralho {
-        var manilha = baralho.tirarVira();
-        this.atualizarManilha(manilha, jogoId, rodadaId);
-        return baralho;
-    }
-
-    private distribuir(baralho: Baralho, quantidadeDeJogadores, rodada, jogoId, rodadaId) {
-        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodada)
+    private distribuir(jogoId: string, rodadaId: string, baralho: Baralho, quantidadeDeJogadores: number): void {
+        const rodadaNumero = parseInt(rodadaId, 10)
+        var quantidadeCartas = this.quantidadeDeCartas(baralho.quantidadeCartasTotal(), quantidadeDeJogadores, rodadaNumero)
         for (var i = 0; i < quantidadeDeJogadores; i++) {
             const cartaArray = baralho.tiraCartas(quantidadeCartas);
             const cartaArrayJSON = cartaArray.map(carta => JSON.stringify(carta));
-            this.entregarCarta(i.toString(), cartaArrayJSON, jogoId, rodadaId)
+            this.entregarCarta(jogoId, rodadaId, i.toString(), cartaArrayJSON)
         }
     }
 
-    private entregarCarta(jogador, cartaArrayJSON, jogoId, rodadaId) {
-        this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogador, { cartas: cartaArrayJSON })
-    }
+    private entregarCarta = (jogoId: string, rodadaId: string, jogadorId: string, cartaArrayJSON: Array<string>): Promise<void> =>
+        this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { cartas: cartaArrayJSON })
 
     private quantidadeDeCartas(qtdCartasTotal: number, jogadoresCount: number, rodada: number): number {
-        var qtdCartasMax = qtdCartasTotal - 1 / jogadoresCount;
+        const qtdCartasMax: number = qtdCartasTotal - 1 / jogadoresCount;
         if (rodada < qtdCartasMax) {
             return rodada + 1;
         }
@@ -287,10 +286,5 @@ export class JogoController {
             return (rodada % qtdCartasMax) + 1
         }
         return (qtdCartasMax * (rodada / qtdCartasMax)) - rodada;
-    }
-
-    proximoJogador(jogadorVez: number, jogadoresCount: number): number {
-        const vez = jogadorVez + 1;
-        return (vez === jogadoresCount) ? 0 : vez;
     }
 }
