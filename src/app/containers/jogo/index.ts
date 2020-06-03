@@ -32,7 +32,7 @@ export class JogoComponent implements OnInit {
 
   entregarCartas() {
     this.jogoController.novoEvento(this.jogoId, { nome: "Entregando as cartas...", mensagem: "" })
-    this.jogoController.entregarCartas(this.rodada.jogadoresCount, this.jogo.rodada, this.jogoId)
+    this.jogoController.entregarCartas(this.jogoId, this.rodadaId, this.rodada.jogadoresCount)
 
     const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
     this.jogoController.atualizaEtapa(this.jogoId, this.rodadaId, proximoJogador, Etapa.palpite)
