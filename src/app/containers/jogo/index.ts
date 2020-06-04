@@ -6,6 +6,7 @@ import { JogoController } from '../../controllers/jogo.controller';
 import { Carta } from '../../models/carta.model'
 import { Jogada } from '../../models/jogada.model'
 import { Jogo, Status, Etapa } from '../../models/jogo.model';
+import { Jogador } from 'src/app/models/jogador.model';
 
 @Component({
   selector: 'app-jogo',
@@ -19,11 +20,11 @@ export class JogoComponent implements OnInit {
   rodadaId: string
   rodada: any
   jogo: any
-  jogada: any = null
+  jogada: Jogada = null
   jogadas: any = null
   eventos = []
   jogadores$: any
-  jogadorJogando: any
+  jogadorJogando: Jogador
 
   Etapa: Etapa
   jogando: boolean = false
@@ -52,25 +53,30 @@ export class JogoComponent implements OnInit {
     }
   }
 
-  async jogarCarta(cartaJogadorIndex) {
-    var carta = this.jogadorJogando.cartas.splice(cartaJogadorIndex, 1).pop()
+  async jogarCarta(cartaIndex) {
+    const carta: Carta = this.jogadorJogando.cartas.splice(cartaIndex, 1).pop()
+    const vencedor = this.jogoController.realizarJogada(this.jogoId, carta, this.jogada, this.jogadorJogando, this.rodada)
+    this.jogoController.atualizarCartasDeJogador(this.jogoId, this.rodadaId, this.jogadorJogando.id.toString(), this.jogadorJogando.cartas)
+    this.passaVez(vencedor);
+  }
 
-    var vencedor = this.jogoController.realizarJogada(carta, this.jogadorJogando, this.jogada, this.rodada, this.jogoId)
-    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount)
-
-    if (this.completouRodada(proximoJogador, this.jogada.comeca)) {
-      await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor)
-
-      if (this.acabaramAsCartas(this.jogadorJogando)) {
-        this.jogoController.novoEvento(this.jogoId, { nome: "Fim de Rodada", mensagem: "" })
-        this.jogoController.encerrarJogada(this.jogoId, this.rodada.id, this.jogo.rodada)
-      }
-      else {
-        this.jogoController.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogoId, this.rodada.id)
-      }
+  private passaVez(vencedor: string) {
+    const proximoJogador = this.proximoJogador(this.rodada.vez, this.rodada.jogadoresCount);
+    if (this.todosJogaram(proximoJogador, this.jogada.comeca)) {
+      this.finalizarJogada(vencedor);
     }
     else {
-      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador)
+      this.jogoController.atualizaJogadorVez(this.jogoId, this.rodadaId, proximoJogador);
+    }
+  }
+
+  private async finalizarJogada(vencedor: string): Promise<void> {
+    await this.jogoController.atualizaQuemFezJogada(this.jogoId, this.rodada.id, vencedor);
+    if (this.acabaramAsCartas(this.jogadorJogando)) {
+      this.jogoController.finalizarRodada(this.jogoId, this.rodada.id);
+    }
+    else {
+      this.jogoController.comecarNovaJogada(vencedor, this.jogada.comeca, this.jogoId, this.rodada.id);
     }
   }
 
@@ -90,7 +96,7 @@ export class JogoComponent implements OnInit {
 
   private acabaramAsCartas = (jogador) => jogador.cartas.length === 0
 
-  private completouRodada = (proximoJogador, jogadorQueComecou) => proximoJogador === jogadorQueComecou
+  private todosJogaram = (proximoJogador, jogadorQueComecou) => proximoJogador === jogadorQueComecou
 
   private carregaJogadores = (jogo) => {
     const rodadaId = jogo.rodada.toString()

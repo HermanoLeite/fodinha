@@ -6,6 +6,8 @@ import { Jogo, Status, Etapa } from '../models/jogo.model';
 import { FirebaseService } from '../services/firebase.service';
 import { StorageService, Keys } from '../services/storage.service';
 import { Baralho } from '../models/baralho.model';
+import { Jogador } from '../models/jogador.model';
+import { Jogada } from '../models/jogada.model';
 
 @Injectable()
 export class JogoController {
@@ -77,6 +79,7 @@ export class JogoController {
     atualizaPalpiteJogador = (jogoId, rodadaId, jogadorId, palpite) => this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { palpite })
 
     novoEvento = (jogoId, evento) => {
+        evento.criadoEm = Date.now()
         this.firebase.adicionaEvento(jogoId, evento)
     }
 
@@ -125,7 +128,7 @@ export class JogoController {
         await this.firebase.adicionaRodada(jogoId, rodadaId, rodada)
     }
 
-    async atualizaQuemFezJogada(jogoId, rodadaId, maiorCartaJogador) {
+    async atualizaQuemFezJogada(jogoId: string, rodadaId: string, maiorCartaJogador: string): Promise<void> {
         var evento = { nome: "Fim de jogada", mensagem: "cangou!" }
         if (maiorCartaJogador !== null) {
             const jogadorId = maiorCartaJogador.toString()
@@ -138,14 +141,19 @@ export class JogoController {
         this.novoEvento(jogoId, evento)
     }
 
-    async encerrarJogada(jogoId, rodadaId, rodada) {
+    async finalizarRodada(jogoId: string, rodadaId: string) {
+        const rodadaNumero = parseInt(rodadaId, 10)
+
+        this.novoEvento(jogoId, { nome: "Fim de Rodada", mensagem: "" });
+
         await this.atualizaJogadorVida(jogoId, rodadaId)
+
         var jogadoresProximaRodada = await this.jogadoresProximaRodada(jogoId);
         if (jogadoresProximaRodada.length < 2) {
             this.encerrarJogo(jogoId, jogadoresProximaRodada)
         }
         else {
-            this.criarRodada(jogadoresProximaRodada, jogoId, rodada + 1);
+            this.criarRodada(jogadoresProximaRodada, jogoId, rodadaNumero + 1);
         }
     }
 
@@ -194,27 +202,37 @@ export class JogoController {
         }
     }
 
-    realizarJogada(carta, jogador, jogada, rodada, jogoId) {
-        const resultado = carta.combate(Carta.fromString(jogada.maiorCarta), rodada.manilha);
-        const evento = { nome: jogador.nome, mensagem: carta.carta + " de " + carta.naipe }
+    atualizarCartasDeJogador(jogoId: string, rodadaId: string, jogadorId: string, cartas: Array<Carta>): void {
+        const cartasAsString: Array<string> = cartas.map(carta => JSON.stringify(carta))
+        this.firebase.atualizaJogadorRodada(jogoId, rodadaId, jogadorId, { cartas: cartasAsString });
+    }
 
-        this.firebase.adicionaJogadaJogador(jogoId, rodada.id, rodada.jogadaAtual, { jogador: jogador.nome, ...carta, jogadorId: jogador.id });
+    private combate = (carta: Carta, maiorCarta: string, vira: Carta): combate => carta.combate(Carta.fromString(maiorCarta), vira)
+
+    private executarJogada(jogoId: string, carta: Carta, jogada: Jogada, jogador: Jogador, rodada): string {
+        const resultado = this.combate(carta, jogada.maiorCarta, rodada.manilha)
+        switch (resultado) {
+            case combate.ganhou:
+                this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogador.id });
+                return jogador.id
+            case combate.empate:
+                this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCartaJogador: null });
+                return null
+            default:
+                return jogada.maiorCartaJogador
+        }
+    }
+
+    private adicionarJogadaJogador(jogoId: string, carta: Carta, jogador: Jogador, rodada): void {
+        const evento = { nome: jogador.nome, mensagem: carta.toString() }
         this.novoEvento(jogoId, evento)
 
-        const cartas = jogador.cartas.map(carta => JSON.stringify(carta))
-        this.firebase.atualizaJogadorRodada(jogoId, rodada.id, jogador.id.toString(), { cartas });
+        this.firebase.adicionaJogadaJogador(jogoId, rodada.id, rodada.jogadaAtual, { jogador: jogador.nome, ...carta, jogadorId: jogador.id });
+    }
 
-        if (resultado === combate.ganhou) {
-            this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCarta: JSON.stringify(carta), maiorCartaJogador: jogador.id });
-            return jogador.id
-        }
-
-        if (resultado === combate.empate) {
-            this.firebase.atualizaJogada(jogoId, rodada.id, rodada.jogadaAtual, { maiorCartaJogador: null });
-            return null
-        }
-
-        return jogada.maiorCartaJogador
+    realizarJogada(jogoId: string, carta: Carta, jogada: Jogada, jogador: Jogador, rodada): string {
+        this.adicionarJogadaJogador(jogoId, carta, jogador, rodada)
+        return this.executarJogada(jogoId, carta, jogada, jogador, rodada)
     }
 
     async criarJogada(jogadorComeca, jogoId, rodadaId) {
